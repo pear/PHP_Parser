@@ -31,13 +31,97 @@
  
 require_once 'System.php';
      
-require_once 'PHP/Parser/Core.php';
-require_once 'PHP/Parser/Tokenizer.php';
 
 class PHP_Parser {
-        
-     
+    var $_parser;
+    var $_tokenizer;
+
+    /**
+     * Choose the parser and tokenizer
+     * @static
+     * @return PHP_Parser
+     */
+    function &factory($parser, $tokenizer)
+    {
+        $ret = new PHP_Parser;
+        $a = $ret->setParser($parser);
+        // trick: a PEAR_Error evaluates to true, so we use false as success
+        if ($a) {
+            return $a;
+        }
+        $a = $ret->setTokenizer($tokenizer);
+        if ($a) {
+            return $a;
+        }
+        return $ret;
+    }
     
+    /**
+     * @param string|object
+     * @return PEAR_Error|false
+     */
+    function setParser($parser)
+    {
+        if (is_object($parser)) {
+            $this->_parser = $parser;
+            return false;
+        }
+        if ($this->isIncludeable('PHP/Parser/' . $parser . '.php')) {
+            include_once 'PHP/Parser/' . $parser . '.php';
+        }
+        if (!class_exists($parser)) {
+            return $this->raiseError('no parser driver found');
+        }
+        $this->_parser = new $parser;
+        return false;
+    }
+    
+    /**
+     * @param string|object
+     * @return PEAR_Error|false
+     */
+    function setTokenizer($tokenizer)
+    {
+        if (is_object($tokenizer)) {
+            $this->_tokenizer = $tokenizer;
+            return false;
+        }
+        if ($this->isIncludeable('PHP/Parser/Tokenizer' . $tokenizer . '.php')) {
+            include_once 'PHP/Parser/Tokenizer/' . $tokenizer . '.php';
+        }
+        if (!class_exists($tokenizer)) {
+            return $this->raiseError('no tokenizer driver found');
+        }
+        $this->_tokenizer = new $tokenizer;
+        return false;
+    }
+    
+    function raiseError($msg, $code)
+    {
+        require_once 'PEAR.php';
+        return PEAR::raiseError($msg, $code);
+    }
+    
+    /**
+     * @param string $path relative or absolute include path
+     * @return boolean
+     * @static
+     */
+    function isIncludeable($path)
+    {
+        if (file_exists($path) && is_readable($path)) {
+            return true;
+        }
+        $ipath = explode(PATH_SEPARATOR, ini_get('include_path'));
+        foreach ($ipath as $include) {
+            $test = realpath($include . DIRECTORY_SEPARATOR . $path);
+            if (file_exists($test) && is_readable($test)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
     * Parse a file with wddx caching options.
     *
@@ -53,10 +137,11 @@ class PHP_Parser {
     */
   
    
-    function parseFile($file,$cacheDir=false) {
+    function parseFile($file,$cacheDir=false)
+    {
         
-        
-    
+        require_once 'PHP/Parser/Core.php';
+        require_once 'PHP/Parser/Tokenizer.php';
     
         if ($cacheDir === false) {
             return PHP_Parser::parse(file_get_contents($file));
@@ -115,7 +200,12 @@ class PHP_Parser {
     */
   
     
-    function parse($string, $options = array(), $tokenizeroptions = array()) {
+    function parse($string, $options = array(), $tokenizeroptions = array())
+    {
+        
+        require_once 'PHP/Parser/Core.php';
+        require_once 'PHP/Parser/Tokenizer.php';
+
         if (!trim($string)) {
             return PEAR::raiseError('No thing to parse');
         }
