@@ -1,4 +1,5 @@
 <?php
+require_once 'PHP/Parser/DocBlock/CommonLexer.php';
 /**
  * @package PHP_Parser
  */
