@@ -51,13 +51,31 @@ class PHP_Parser_Core {
      * publishing of data while parsing, to allow other
      * classes to hook into functionality if they desire
      * @var array
+     * @access private
      */
-    private $_options = array();
+    var $_options = array();
     
     /**
      * @var boolean
      */
-    private $_get_class = false;
+    var $_get_class = false;
+    
+    /**
+     * @access private
+     */
+    var $_grabDefine = false;
+    /**
+     * @access private
+     */
+    var $_inGlobal = false;
+    
+    /**
+     * @see __construct
+     */
+    function PHP_Parser_Core($options = array())
+    {
+        $this->__construct($options);
+    }
     
     /**
      * Set up options for parsing
@@ -144,14 +162,14 @@ class PHP_Parser_Core {
      * @access public 
      */
 
-    public $classes = array();
+    var $classes = array();
     /**
      * array of includes
      *
      * @var array
      * @access public 
      */
-    public $includes = array();
+    var $includes = array();
 
     /**
      * array of functions
@@ -159,7 +177,7 @@ class PHP_Parser_Core {
      * @var array
      * @access public 
      */
-    public $functions = array();
+    var $functions = array();
 
     /**
      * array of global variables
@@ -167,7 +185,7 @@ class PHP_Parser_Core {
      * @var array
      * @access public 
      */
-    public $globals = array();
+    var $globals = array();
 
     /**
      * array of super-global variables used in
@@ -176,14 +194,22 @@ class PHP_Parser_Core {
      * @var array
      * @access public 
      */
-    public $filesuperglobals = array();
+    var $filesuperglobals = array();
+
+    /**
+     * array of variables referenced in source code
+     *
+     * @var array
+     * @access public 
+     */
+    var $referencedVars = array();
     
     /**
      * File Summary documentation (page-level DocBlock in phpDocumentor)
      * @var string
      * @access public
      */
-    public $documentation;
+    var $documentation;
 
     /**
      * array of global constants
@@ -191,16 +217,16 @@ class PHP_Parser_Core {
      * @var array
      * @access public 
      */
-    public $constants = array();
+    var $constants = array();
 
     /**
      * global variable name of parser arrays
      * should match the build options  
      *
      * @var string
-     * @access public 
+     * @access private 
      */
-    private $yyGlobalName = '_PHP_PARSER';
+    var $yyGlobalName = '_PHP_PARSER';
 
     /**
      * Global Variable helper routine
@@ -568,7 +594,6 @@ unticked_function_declaration_statement:
         $this->functionComment = $lc[0];
         $this->functionCommentToken = $this->yyLex->lastCommentToken;
         $this->params = array();
-        $this->referencedVars = array();
         $this->statics = array();
         $this->funcglobals = array();
         $this->superglobals = array();
@@ -589,7 +614,6 @@ unticked_function_declaration_statement:
             $this->functions[$3]->setName($3);
             $this->functions[$3]->setReference($2);
             $this->functions[$3]->setParams($this->params);
-            $this->functions[$3]->setReferencedVars($this->referencedVars);
             $this->functions[$3]->setGlobals($this->funcglobals);
             $this->functions[$3]->setSuperGlobals($this->superglobals);
             $this->functions[$3]->setStatics($this->statics);
@@ -603,7 +627,6 @@ unticked_function_declaration_statement:
                 'params' => $this->params,
                 'globals' => $this->funcglobals,
                 'statics' => $this->statics,
-                'referencedVars' => $this->referencedVars,
                 'returns' => $this->returns,
                 'throws' => $this->throws,
                 'superglobals' => $this->superglobals,
@@ -631,7 +654,6 @@ unticked_function_declaration_statement:
         }
         unset($this->params);
         unset($this->returns);
-        unset($this->referencedVars);
         unset($this->statics);
         unset($this->funcglobals);
         unset($this->superglobals);
@@ -651,7 +673,6 @@ unticked_class_declaration_statement:
         $this->methods = array();
         $this->vars = array();
         $this->consts = array();
-        $this->referencedVars = array();
         $this->implements = array();
     } 
 			implements_list
@@ -669,7 +690,6 @@ unticked_class_declaration_statement:
             $this->classes[$3]->setVars($this->vars);
             $this->classes[$3]->setConsts($this->consts);
             $this->classes[$3]->setImplements($this->implements);
-            $this->classes[$3]->setReferencedVars($this->referencedVars);
             $this->classes[$3]->setDocumentation($this->classComment);
             $this->classes[$3]->setStartLine($this->classLine);
             $this->classes[$3]->setEndLine($this->yyLex->line);
@@ -682,7 +702,6 @@ unticked_class_declaration_statement:
                  'vars' => $this->vars,
                  'consts' => $this->consts,
                  'implements' => $this->implements,
-                 'referencedVars' => $this->referencedVars,
                  'startline' => $this->classLine,
                  'endline' => $this->yyLex->line,
                  'documentation' => $this->classComment,
@@ -709,7 +728,6 @@ unticked_class_declaration_statement:
         unset($this->vars);
         unset($this->consts);
         unset($this->throws);
-        unset($this->referencedVars);
         unset($this->implements);
     }
 ;
@@ -1987,6 +2005,11 @@ rw_variable:
 
 variable:
 		base_variable_with_function_calls T_OBJECT_OPERATOR object_property method_or_not variable_properties
+    {
+        if (isset($this->referencedVars)) {
+            
+        }
+    }
 	|	base_variable_with_function_calls
 ;
 

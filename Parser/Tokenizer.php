@@ -160,7 +160,13 @@ class PHP_Parser_Tokenizer {
     */
   
     
-    function PHP_Parser_Tokenizer($data, $options = array()) 
+    function PHP_Parser_Tokenizer()
+    {
+        $a = func_get_args();
+        call_user_func_array(array(&$this, '__construct'), $a);
+    }
+    
+    function __construct($data, $options = array()) 
     {
         $this->_options['documentationParser'] =
         $this->_options['documentationLexer'] =
@@ -287,11 +293,18 @@ class PHP_Parser_Tokenizer {
         $this->lastCommentToken = $this->pos;
         if ($this->_options['documentationParser']) {
             $parser = &$this->_options['documentationParser'];
-            $this->lastComment = $parser->parse(array('comment' => $this->lastComment,
-                                                      'commentline' => $this->lastCommentLine,
-                                                      'commenttoken' => $this->lastCommentToken,
-                                                      'lexer' => $this->_options['documentationLexer'],
+            $err = $parser->parse(array('comment' => $this->lastComment,
+                                        'commentline' => $this->lastCommentLine,
+                                        'commenttoken' => $this->lastCommentToken,
+                                        'lexer' => $this->_options['documentationLexer'],
                                                       ));
+            if (PEAR::isError($err)) {
+                $this->lastComment = false;
+                $this->lastCommentLine = -1;
+                $this->lastCommentToken = -1;
+            } else {
+                $this->lastComment = $err;
+            }
         }
         if ($this->_options['publishAllDocumentation']) {
             $publish = $this->_options['publishMethod'];
@@ -368,7 +381,6 @@ class PHP_Parser_Tokenizer {
                     $this->pos++;
                     continue;
                     
-                case $T_DOC_COMMENT;
                     $this->_handleDocumentation();
                 // ... continues into m/l skipeed tags..
                 
@@ -441,8 +453,15 @@ class PHP_Parser_Tokenizer {
         $hash = @array_flip($GLOBALS['_PHP_PARSER']['yyName']);
         for ($i=$start;$i< count($GLOBALS['_PHP_PARSER']['yyName']) + $start - 257;$i++) {
             $lt = token_name($i);
+            if ($lt == 'T_OLD_FUNCTION') {
+                continue;
+            }
             $lt = ($i - ($start - 257) == 350 && $lt == 'UNKNOWN') ? 'T_INTERFACE' : $lt;
             $lt = ($i - ($start - 257) == 352 && $lt == 'UNKNOWN') ? 'T_IMPLEMENTS' : $lt;
+            if ($lt == 'UNKNOWN') {
+                break;
+            }
+            $lt = ($lt == 'T_ML_COMMENT') ? 'T_COMMENT' : $lt;
             $lt = ($lt == 'T_DOUBLE_COLON') ?  'T_PAAMAYIM_NEKUDOTAYIM' : $lt;
 //            echo "$lt has hash? ".$hash[$lt]."\n";
 //            continue;

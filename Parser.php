@@ -126,25 +126,16 @@ class PHP_Parser {
     * Parse a file with wddx caching options.
     *
     * parses a php file, 
-    * 
-    * 
     * @param    string  name of file to parse
     * @param    false|string  false = no caching, '' = write to same directory, '/some/dir/' - cache directory
-    * 
     *
     * @return   array| object PEAR_Error   should return an array of includes and classes.. will grow...
     * @access   public
     */
-  
-   
-    function parseFile($file,$cacheDir=false)
+    function parseFile($file, $options = array(), $tokenizeroptions = array(), $tokenizerClass = 'PHP_Parser_Tokenizer', $cacheDir=false)
     {
-        
-        require_once 'PHP/Parser/Core.php';
-        require_once 'PHP/Parser/Tokenizer.php';
-    
         if ($cacheDir === false) {
-            return PHP_Parser::parse(file_get_contents($file));
+            return PHP_Parser::parse(file_get_contents($file), $options, $tokenizeroptions, $tokenizerClass);
         }
         if (!strlen($cacheDir)) {
             $cacheFile = dirname($file).'/.PHP_Parser/' . basename($file) . '.wddx';
@@ -168,10 +159,8 @@ class PHP_Parser {
             //echo "get cache";
             return wddx_deserialize(file_get_contents($tmpCacheFile));
         }
-        
-        
-         
-        $result = PHP_Parser::parse(file_get_contents($file));
+
+        $result = PHP_Parser::parse(file_get_contents($file), $options, $tokenizeroptions, $tokenizerClass);
         if (function_exists('wddx_set_indent')) {
             wddx_set_indent(2);
         }
@@ -200,18 +189,13 @@ class PHP_Parser {
     */
   
     
-    function parse($string, $options = array(), $tokenizeroptions = array())
-    {
-        
-        require_once 'PHP/Parser/Core.php';
-        require_once 'PHP/Parser/Tokenizer.php';
-
+    function parse($string, $options = array(), $tokenizeroptions = array(), $tokenizerClass = 'PHP_Parser_Tokenizer') {
         if (!trim($string)) {
-            return PEAR::raiseError('No thing to parse');
+            return PEAR::raiseError('Nothing to parse');
         }
     
         
-        $yyInput = new PHP_Parser_Tokenizer($string, $tokenizeroptions);
+        $yyInput = new $tokenizerClass($string, $tokenizeroptions);
         //xdebug_start_profiling();
         $t = new PHP_Parser_Core($options);
         if (PEAR::isError($e = $t->yyparse($yyInput))) {
