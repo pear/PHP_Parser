@@ -163,6 +163,7 @@ class PHP_Parser_Tokenizer {
     function PHP_Parser_Tokenizer($data, $options = array()) 
     {
         $this->_options['documentationParser'] =
+        $this->_options['documentationLexer'] =
         $this->_options['publishAllDocumentation'] =
         $this->_options['publisher'] =
         $this->_options['publishMethod'] =
@@ -174,10 +175,13 @@ class PHP_Parser_Tokenizer {
         if (!class_exists($this->_options['methodContainer'])) {
             $this->_options['documentationContainer'] = false;
         }
-        if (!is_object($this->_options['documentationParser'])) {
+        if (!is_object($this->_options['documentationParser']) ||
+                !is_object($this->_options['documentationLexer'])) {
             $this->_options['documentationParser'] = false;
+            $this->_options['documentationLexer'] = false;
         } else {
             $this->_options['documentationParser'] = &$options['documentationParser'];
+            $this->_options['documentationLexer'] = &$options['documentationLexer'];
             // make sure it's an exact match
         }
         if (!is_object($this->_options['publisher'])) {
@@ -285,7 +289,8 @@ class PHP_Parser_Tokenizer {
             $parser = &$this->_options['documentationParser'];
             $this->lastComment = $parser->parse($this->lastComment,
                                                 $this->lastCommentLine,
-                                                $this->lastCommentToken);
+                                                $this->lastCommentToken,
+                                                $this->_options['documentationLexer']);
         }
         if ($this->_options['publishAllDocumentation']) {
             $publish = $this->_options['publishMethod'];
