@@ -1312,6 +1312,13 @@ simplelist_line:
 
 simplelist_line_with_p:
     T_SIMPLELIST
+        {
+            $$ = array($1);
+        }
+    |   T_DOUBLE_NL
+        {
+            $$ = array("\n\n");
+        }
     |   T_ESCAPED_TAG
         {
             $$ = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $1);
@@ -1329,10 +1336,6 @@ simplelist_line_with_p:
             } else {
                 $$ = array('');
             }
-        }
-    |   T_DOUBLE_NL
-        {
-            $$ = array($1);
         }
     |   htmltag_with_p
         {
@@ -1375,20 +1378,15 @@ simplelist_line_with_p:
                 $$[] = $t;
             }
         }
-    |   simplelist_line_with_p T_DOUBLE_NL
-        {
-            $$ = $1;
-            $index = count($$) - 1;
-            if (is_string($$[$index])) {
-                $$[$index] .= $2;
-            } else {
-                $$[] = $2;
-            }
-        }
     |   simplelist_line_with_p htmltag_with_p
         {
             $$ = $1;
             $$[] = $2;
+        }
+    |   simplelist_line_with_p T_DOUBLE_NL
+        {
+            $$ = $1;
+            $$[] = "\n\n";
         }
 ;
 

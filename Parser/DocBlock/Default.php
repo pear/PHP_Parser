@@ -1519,17 +1519,27 @@ class PHP_Parser_DocBlock_Default {
             $this->yyVal[] = "\n\n";
         }
 
-    function _125($yyTop)  					// line 1316 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
-    {
-            $this->yyVal = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $this->yyVals[0+$yyTop]);
-        }
-
-    function _126($yyTop)  					// line 1320 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _124($yyTop)  					// line 1315 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = array($this->yyVals[0+$yyTop]);
         }
 
-    function _127($yyTop)  					// line 1324 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _125($yyTop)  					// line 1319 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    {
+            $this->yyVal = array("\n\n");
+        }
+
+    function _126($yyTop)  					// line 1323 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    {
+            $this->yyVal = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $this->yyVals[0+$yyTop]);
+        }
+
+    function _127($yyTop)  					// line 1327 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    {
+            $this->yyVal = array($this->yyVals[0+$yyTop]);
+        }
+
+    function _128($yyTop)  					// line 1331 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             if ($this->yyVals[0+$yyTop] == '{@}') {
                 $this->yyVal = array('{@');
@@ -1540,23 +1550,18 @@ class PHP_Parser_DocBlock_Default {
             }
         }
 
-    function _128($yyTop)  					// line 1334 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _129($yyTop)  					// line 1341 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = array($this->yyVals[0+$yyTop]);
         }
 
-    function _129($yyTop)  					// line 1338 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
-    {
-            $this->yyVal = array($this->yyVals[0+$yyTop]);
-        }
-
-    function _130($yyTop)  					// line 1342 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _130($yyTop)  					// line 1345 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->yyVals[-1+$yyTop];
             $this->yyVal[] = $this->yyVals[0+$yyTop];
         }
 
-    function _131($yyTop)  					// line 1347 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _131($yyTop)  					// line 1350 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->yyVals[-1+$yyTop];
             $index = count($this->yyVal) - 1;
@@ -1567,13 +1572,13 @@ class PHP_Parser_DocBlock_Default {
             }
         }
 
-    function _132($yyTop)  					// line 1357 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _132($yyTop)  					// line 1360 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->yyVals[-1+$yyTop];
             $this->yyVal[] = $this->yyVals[0+$yyTop];
         }
 
-    function _133($yyTop)  					// line 1362 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _133($yyTop)  					// line 1365 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             if ($this->yyVals[0+$yyTop] == '{@}') {
                 $t = array('{@');
@@ -1591,34 +1596,29 @@ class PHP_Parser_DocBlock_Default {
             }
         }
 
-    function _134($yyTop)  					// line 1379 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
-    {
-            $this->yyVal = $this->yyVals[-1+$yyTop];
-            $index = count($this->yyVal) - 1;
-            if (is_string($this->yyVal[$index])) {
-                $this->yyVal[$index] .= $this->yyVals[0+$yyTop];
-            } else {
-                $this->yyVal[] = $this->yyVals[0+$yyTop];
-            }
-        }
-
-    function _135($yyTop)  					// line 1389 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _134($yyTop)  					// line 1382 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->yyVals[-1+$yyTop];
             $this->yyVal[] = $this->yyVals[0+$yyTop];
         }
 
-    function _136($yyTop)  					// line 1397 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _135($yyTop)  					// line 1387 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    {
+            $this->yyVal = $this->yyVals[-1+$yyTop];
+            $this->yyVal[] = "\n\n";
+        }
+
+    function _136($yyTop)  					// line 1395 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->_parseInlineTag($this->yyVals[-2+$yyTop], $this->yyVals[-1+$yyTop]);
         }
 
-    function _137($yyTop)  					// line 1401 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _137($yyTop)  					// line 1399 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->_parseInlineTag($this->yyVals[-1+$yyTop], array());
         }
 
-    function _138($yyTop)  					// line 1408 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _138($yyTop)  					// line 1406 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             if ($this->_options['parseInternal']) {
                 $this->yyVal = $this->yyVals[-1+$yyTop];
@@ -1627,7 +1627,7 @@ class PHP_Parser_DocBlock_Default {
             }
         }
 
-    function _139($yyTop)  					// line 1419 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _139($yyTop)  					// line 1417 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             if ($this->_options['parseInternal']) {
                 $this->yyVal = $this->yyVals[-1+$yyTop];
@@ -1637,7 +1637,7 @@ class PHP_Parser_DocBlock_Default {
         }
 					// line 1639 "-"
 
-					// line 1427 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+					// line 1425 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
 
     /**#@-*/
 }
@@ -1688,12 +1688,12 @@ class PHP_Parser_DocBlock_Default {
    16,    0,   85,   86,    0,  112,  114,  116,  113,  115,
   117,    0,    0,    0,    0,   81,    0,    0,    0,    0,
     0,    0,    0,   30,   25,   31,   32,   26,   27,   28,
-   29,    0,   88,   89,    0,  124,  125,  127,  128,  129,
-  126,    0,    0,    0,   77,   80,   69,    0,   67,   73,
+   29,    0,   88,   89,    0,  124,  126,  128,  125,  129,
+  127,    0,    0,    0,   77,   80,   69,    0,   67,   73,
    75,   71,  138,    0,  137,    0,    0,    3,    0,   94,
     0,   87,    0,  118,  119,  121,  123,  120,  122,    0,
    78,   82,   70,   68,   74,   76,   72,  139,   51,    0,
-   98,    0,   90,    0,  130,  131,  133,  134,  135,  132,
+   98,    0,   90,    0,  130,  131,  133,  135,  134,  132,
    83,    0,  136,  106,   96,    0,   84,  107,  100,    0,
   );
   $GLOBALS['_PHP_PARSER_DOCBLOCK_DEFAULT']['yyDgoto']  = array(            20,
@@ -2032,17 +2032,17 @@ class PHP_Parser_DocBlock_Default {
 //t    "simplelist_line :  simplelist_line   htmltag ",
 //t    "simplelist_line :  simplelist_line   T_DOUBLE_NL ",
 //t    "simplelist_line_with_p :  T_SIMPLELIST ",
+//t    "simplelist_line_with_p :  T_DOUBLE_NL ",
 //t    "simplelist_line_with_p :  T_ESCAPED_TAG ",
 //t    "simplelist_line_with_p :  inlinetag ",
 //t    "simplelist_line_with_p :  T_INLINE_ESC ",
-//t    "simplelist_line_with_p :  T_DOUBLE_NL ",
 //t    "simplelist_line_with_p :  htmltag_with_p ",
 //t    "simplelist_line_with_p :  simplelist_line_with_p   T_SIMPLELIST ",
 //t    "simplelist_line_with_p :  simplelist_line_with_p   T_ESCAPED_TAG ",
 //t    "simplelist_line_with_p :  simplelist_line_with_p   inlinetag ",
 //t    "simplelist_line_with_p :  simplelist_line_with_p   T_INLINE_ESC ",
-//t    "simplelist_line_with_p :  simplelist_line_with_p   T_DOUBLE_NL ",
 //t    "simplelist_line_with_p :  simplelist_line_with_p   htmltag_with_p ",
+//t    "simplelist_line_with_p :  simplelist_line_with_p   T_DOUBLE_NL ",
 //t    "inlinetag :  T_INLINE_TAG_OPEN   T_INLINE_TAG_NAME   T_INLINE_TAG_CONTENTS   T_INLINE_TAG_CLOSE ",
 //t    "inlinetag :  T_INLINE_TAG_OPEN   T_INLINE_TAG_NAME   T_INLINE_TAG_CLOSE ",
 //t    "internaltag :  T_INTERNAL   paragraphs   T_ENDINTERNAL ",
