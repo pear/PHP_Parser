@@ -405,19 +405,18 @@ class PHP_Parser_DocBlock_Default {
 %token T_XML_TAG 29
 %token T_ESCAPED_TAG 30
 %token T_TEXT 31
-%token T_NL 32
-%token T_INLINE_ESC 33
-%token T_INTERNAL 34
-%token T_ENDINTERNAL 35
-%token T_DOUBLE_NL 36
-%token T_TAG 37
-%token T_INLINE_TAG_OPEN 38
-%token T_INLINE_TAG_CLOSE 39
-%token T_INLINE_TAG_NAME 40
-%token T_INLINE_TAG_CONTENTS 41
+%token T_INLINE_ESC 32
+%token T_INTERNAL 33
+%token T_ENDINTERNAL 34
+%token T_DOUBLE_NL 35
+%token T_TAG 36
+%token T_INLINE_TAG_OPEN 37
+%token T_INLINE_TAG_CLOSE 38
+%token T_INLINE_TAG_NAME 39
+%token T_INLINE_TAG_CONTENTS 40
 %token EOF 258
 
-%left T_SIMPLELIST_NL T_NL T_CLOSE_P
+%left T_SIMPLELIST_NL T_CLOSE_P
 %nonassoc T_CLOSE_LI
 %nonassoc T_OPEN_LI
 %right T_BULLET T_WHITESPACE T_NBULLET T_NDBULLET
@@ -548,10 +547,6 @@ paragraph:
                 $$ = array('');
             }
         }
-    |   T_NL
-        {
-            $$ = array($1);
-        }
     |   paragraph T_TEXT
         {
             $$ = $1;
@@ -622,16 +617,6 @@ paragraph:
                 $$[$index] .= $temp;
             } else {
                 $$[] = $temp;
-            }
-        }
-    |   paragraph T_NL
-        {
-            $$ = $1;
-            $index = count($$) - 1;
-            if (is_string($$[$index])) {
-                $$[$index] .= $2;
-            } else {
-                $$[] = $2;
             }
         }
     |   paragraph internaltag

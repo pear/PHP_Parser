@@ -117,11 +117,32 @@ class PHP_Parser_DocBlock_DefaultTagLexer_test extends PHPUnit_TestCase
         if (!$this->_methodExists('setOptions')) {
             return;
         }
-        $this->assertEquals(array('separator' => false), $this->lexer->_options);
+        $this->assertEquals(
+            array(
+                'desclexer' => false,
+                'descparser' => false,
+                'linenumber' => 1,
+                'separator' => false
+                
+            ), $this->lexer->_options);
         $this->lexer->setOptions(array('separator' => ','));
-        $this->assertEquals(array('separator' => ','), $this->lexer->_options);
+        $this->assertEquals(
+            array(
+                'desclexer' => false,
+                'descparser' => false,
+                'linenumber' => 1,
+                'separator' => ','
+                
+            ), $this->lexer->_options);
         $this->lexer->setOptions();
-        $this->assertEquals(array('separator' => false), $this->lexer->_options);
+        $this->assertEquals(
+            array(
+                'desclexer' => false,
+                'descparser' => false,
+                'linenumber' => 1,
+                'separator' => false
+                
+            ), $this->lexer->_options);
     }
 
     function test_newTag_empty()

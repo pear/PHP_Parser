@@ -52,7 +52,6 @@ define('PHP_PARSER_DOCLEX_CLOSE_SAMP', ++$a); // close </samp>
 define('PHP_PARSER_DOCLEX_XML_TAG', ++$a); // complete <tag />
 define('PHP_PARSER_DOCLEX_ESCAPED_TAG', ++$a); // escaped <<tag>> or <<tag />>
 define('PHP_PARSER_DOCLEX_TEXT', ++$a); // normal text
-define('PHP_PARSER_DOCLEX_NL', ++$a); // newline character
 define('PHP_PARSER_DOCLEX_INLINE_ESC', ++$a); // inline escape {@} or {@*}
 define('PHP_PARSER_DOCLEX_INTERNAL', ++$a); // {@internal
 define('PHP_PARSER_DOCLEX_ENDINTERNAL', ++$a); // }} ending an {@internal }}
@@ -450,12 +449,12 @@ NOBRACKETS = [^}]*
 
 %%
 
-<INCODE> \n {
+<INCODE, INPRE> \n {
     if ($this->debug) echo '<code> newline ['.$this->yytext()."]\n";
-    return array(PHP_PARSER_DOCLEX_NL, $this->yytext());
+    return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
 }
 
-<INCODE> [^<{]+ {
+<INCODE, INPRE> [^<{]+ {
         if ($this->debug) echo "normal code text [".$this->yytext()."]\n";
         return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
 }
@@ -463,16 +462,6 @@ NOBRACKETS = [^}]*
 <INCODE> <<\/code[\ \t\b\012]*>> {
     if ($this->debug) echo "escaped tag [".$this->yytext()."]\n";
     return array(PHP_PARSER_DOCLEX_ESCAPED_TAG, $this->yytext());
-}
-
-<INPRE> \n {
-    if ($this->debug) echo '<pre> newline ['.$this->yytext()."]\n";
-    return array(PHP_PARSER_DOCLEX_NL, $this->yytext());
-}
-
-<INPRE> [^<{]+ {
-        if ($this->debug) echo "normal pre text [".$this->yytext()."]\n";
-        return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
 }
 
 <INPRE> <<\/pre[\ \t\b\012]*>> {
@@ -562,19 +551,15 @@ NOBRACKETS = [^}]*
         if ($this->debug) echo "initial double newline ".strlen($this->yytext())."\n";
         return array(PHP_PARSER_DOCLEX_DOUBLENL, $this->yytext());
     }
-    if ($this->yy_lexical_state == INLINEINTERNALTAG) $this->fuck = true;
     if ($this->debug) echo "initial newline ".strlen($this->yytext())."\n";
-    if (isset($this->fuck)) {
-        $this->fuckyou = true;
-    }
-    return array(PHP_PARSER_DOCLEX_NL, $this->yytext());
+    return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
 }
 
 <INTAG> [\n]+ {
     if ($this->debug) echo "tags newline\n";
     $this->_atNewLine = true;
     $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start + 1;
-    return array(PHP_PARSER_DOCLEX_NL, $this->yytext());
+    return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
 }
 
 <INTAG> [^\n{]+ {
@@ -845,7 +830,6 @@ NOBRACKETS = [^}]*
             break;
         }
     } else {
-        $this->fuck = true;
         if ($this->debug) echo "3 normal desc text [".$this->yytext()."]\n";
         return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
     }
