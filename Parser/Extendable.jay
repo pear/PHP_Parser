@@ -325,6 +325,7 @@ class PHP_Parser_Extendable {
 %token T_DOLLAR_OPEN_CURLY_BRACES 369
 %token T_CURLY_OPEN 370
 %token T_PAAMAYIM_NEKUDOTAYIM 371
+%token T_CLONE 372
 
 %right T_STATIC T_ABSTRACT T_FINAL T_PRIVATE T_PROTECTED T_PUBLIC
 %left T_ELSEIF
@@ -350,7 +351,7 @@ class PHP_Parser_Extendable {
 %left '*' '/' '%'
 %right '!' '~' T_INC T_DEC T_INT_CAST T_DOUBLE_CAST T_STRING_CAST T_ARRAY_CAST T_OBJECT_CAST T_BOOL_CAST T_UNSET_CAST '@'
 %right '['
-%nonassoc T_NEW T_INSTANCEOF
+%nonassoc T_NEW T_INSTANCEOF T_CLONE
 
 %start top_statement_list
 
@@ -1403,6 +1404,10 @@ expr_without_variable:
         } else {
             $$ = $this->concat($1, $2, $3);//'new '.$2 . $3;
         }
+    }
+    |   T_CLONE expr
+    {
+        $$ = $2;
     }
 	|	variable T_PLUS_EQUAL expr
     {
