@@ -176,16 +176,19 @@ class PHP_Parser_MsgServer
      * Register a new Message Listener
      *
      * A Message Listener is any object.  To catch particular messages, use {@link catchMessage()}
-     * @param string|int unique identifier for this class
      * @param object any object that implements the handleMessage() method
+     * @param string|int unique identifier for this class
      * @throws PHP_PARSER_MSGSERVER_ERR_INVALID_INPUT if either the
      *    unique ID isn't a string/integer or $obj isn't an object
      * @throws PHP_PARSER_MSGSERVER_ERR_UNIQUEID_ALREADY_REGISTERED if
      *    the unique ID has already been assigned to another object
-     * @return true|exception
+     * @return string|integer|exception Returns the Unique ID or an exception
      */
-    function registerListener($unique_id, &$obj)
+    function registerListener(&$obj, $unique_id = false)
     {
+        if ($unique_id === false) {
+            $unique_id = $this->getUniqueId();
+        }
         // $obj must be an object
         if (!is_object($obj)) {
             return PHP_Parser_Stack::staticPush(
@@ -215,7 +218,7 @@ class PHP_Parser_MsgServer
                 array('id' => $unique_id . ''));
         }
         $this->_ref_store[$unique_id] =& $obj;
-        return true;
+        return $unique_id;
     }
     
     /**

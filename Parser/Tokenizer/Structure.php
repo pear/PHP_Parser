@@ -23,6 +23,7 @@
 // differently than the compiled 
 
 $GLOBALS['_PHP_PARSER_TOKENIZER_STRUCTURE']['map'] = null;
+require_once 'PHP/Parser/MsgServer.php';
 
 /**
 * The tokenizer wrapper for parser - implements the 'standard?' yylex interface
@@ -165,6 +166,18 @@ class PHP_Parser_Tokenizer_Structure {
     var $_options;
     
     /**
+     * @var PHP_Parser_MsgServer
+     * @access private
+     */
+    var $_server;
+    
+    /**
+     * Unique MsgServer ID assigned when registering as a listener
+     * @access private
+     */
+    var $_serverId;
+    
+    /**
     * Constructor
     *
     * Load the tokenizer - with a string to tokenize.
@@ -176,6 +189,13 @@ class PHP_Parser_Tokenizer_Structure {
     * @return   none
     * @access   public
     */
+    function PHP_Parser_Tokenizer_Structure()
+    {
+        $this->_server = &PHP_Parser_MsgServer::singleton();
+        $this->_serverId = $this->_server->registerListener($this);
+        $this->_server->catchMessage($this->_serverId, 'parsed docblock', 'handleDocBlock');
+        $this->_server->catchMessage($this->_serverId, '@global definition', 'handleGlobalSearch');
+    }
   
     function setOptions($data, $options = array()) 
     {
@@ -235,20 +255,19 @@ class PHP_Parser_Tokenizer_Structure {
     }
     
     /**
-     * @param MsgServer_Msg
+     * @param unused
+     * @param mixed a parsed docblock from the docblock parser
      */
-    function handleMessage($msg)
+    function handleDocBlock($msgtype, $msg)
     {
-        if ($msg->getMsg() == 'find global') {
-            $this->_setGlobalSearch($msg->getData());
-        }
+        $this->lastComment = $msg;
     }
     
     /**
+     * @param unused
      * @param string
-     * @access private
      */
-    function _setGlobalSearch($var)
+    function handleGlobalSearch($msgtype, $var)
     {
         $this->_globalSearch = $var;
     }
@@ -309,12 +328,10 @@ class PHP_Parser_Tokenizer_Structure {
                                         'commenttoken' => $this->lastCommentToken,
                                         'lexer' => $this->_options['documentationLexer'],
                                                       ));
-            if (PEAR::isError($err)) {
+            if (PHP_Parser_Stack::staticHasErrors()) {
                 $this->lastComment = false;
                 $this->lastCommentLine = -1;
                 $this->lastCommentToken = -1;
-            } else {
-                $this->lastComment = $err;
             }
         }
         if ($this->_options['publishAllDocumentation']) {

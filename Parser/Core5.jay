@@ -58,6 +58,17 @@ class PHP_Parser_Structure {
     var $_options = array();
     
     /**
+     * @var PHP_Parser_MsgServer
+     */
+    var $_server;
+    
+    /**
+     * Unique MsgServer id assigned upon registerListener
+     * @var integer
+     */
+    var $_serverId;
+    
+    /**
      * @var boolean
      */
     var $_get_class = false;
@@ -81,7 +92,9 @@ class PHP_Parser_Structure {
 
     function PHP_Parser_Structure($options = array())
     {
-        $this->_errors = PHP_Parser_Stack::singleton('PHP_Parser_Structure');
+        $this->_errors = &PHP_Parser_Stack::singleton('PHP_Parser_Structure');
+        $this->_server = &PHP_Parser_MsgServer::singleton();
+        $this->_serverId = $this->_server->registerListener($this);
         $this->_options['classContainer'] =
         $this->_options['interfaceContainer'] =
         $this->_options['includeContainer'] =

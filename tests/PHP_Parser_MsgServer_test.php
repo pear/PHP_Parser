@@ -153,7 +153,7 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
     function testRegisterListener_invalid1()
     {
         $a = 6;
-        $a = $this->_msgserver->registerListener(5, $a);
+        $a = $this->_msgserver->registerListener($a);
         $this->assertErrors(
             array(
                 array(
@@ -171,7 +171,7 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
     function testRegisterListener_invalid2()
     {
         $a = new noHandleMessage;
-        $a = $this->_msgserver->registerListener(array(), $a);
+        $a = $this->_msgserver->registerListener($a, array());
         $b = 'Unique ID must be string or integer,' .
                 ' not array';
         $this->assertErrors(
@@ -189,12 +189,12 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
     function testRegisterListener_valid1()
     {
         $a = new noHandleMessage;
-        $aa = $this->_msgserver->registerListener(5, $a);
-        $this->assertSame(true, $aa, 'registration failed');
+        $aa = $this->_msgserver->registerListener($a, 5);
+        $this->assertEquals(5, $aa, 'registration failed');
         $this->assertNoErrors('testRegisterListener_valid1', 'first registration failed');
         $this->assertEquals(array(5 => $a), $this->_msgserver->_ref_store, 'registration unexpectedly different');
         $ar = new noHandleMessage;
-        $aa = $this->_msgserver->registerListener(5, $ar);
+        $aa = $this->_msgserver->registerListener($ar, 5);
         $b = 'Unique ID "5" is ' .
                 'already registered';
         $this->assertErrors(
@@ -208,26 +208,38 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
             ),
         'testRegisterListener_valid1');
         $ar = new noHandleMessage;
-        $aa = $this->_msgserver->registerListener(6, $ar);
-        $this->assertSame(true, $aa, 'duplicate registration failed');
+        $aa = $this->_msgserver->registerListener($ar, 6);
+        $this->assertEquals(6, $aa, 'duplicate registration failed');
+    }
+    
+    function testRegisterListener_simple_valid1()
+    {
+        $a = new noHandleMessage;
+        $aa = $this->_msgserver->registerListener($a);
+        $this->assertNoErrors('testRegisterListener_simple_valid1', 'first registration failed');
+        $this->assertEquals(array($aa => $a), $this->_msgserver->_ref_store, 'registration unexpectedly different');
+        $ar = new noHandleMessage;
+        $ab = $this->_msgserver->registerListener($ar);
+        $this->assertEquals(array($aa=> $a, $ab => $ar), $this->_msgserver->_ref_store, 'registration unexpectedly different 2');
+        $this->assertNoErrors('testRegisterListener_simple_valid1', 'second registration failed');
     }
     
     function testRegisterListener4()
     {
         $a = new noHandleMessage;
-        $b = $this->_msgserver->registerListener('string', $a);
-        $this->assertSame(true, $b, 'registration of string unique_id failed');
+        $b = $this->_msgserver->registerListener($a, 'string');
+        $this->assertEquals('string', $b, 'registration of string unique_id failed');
         $this->assertNoErrors('testRegisterListener4', 'first registration failed');
     }
     
     function test_unregisterAll1()
     {
         $a = new noHandleMessage;
-        $aa = $this->_msgserver->registerListener(5, $a);
-        $this->assertSame(true, $aa, 'registration failed');
+        $aa = $this->_msgserver->registerListener($a, 5);
+        $this->assertEquals(5, $aa, 'registration failed');
         $this->assertNoErrors('test_unregisterAll1', 'first registration failed');
         $a = new noHandleMessage;
-        $aa = $this->_msgserver->registerListener(5, $a);
+        $aa = $this->_msgserver->registerListener($a, 5);
         $b = 'Unique ID "5" is ' .
                 'already registered';
         $this->assertErrors(
@@ -242,8 +254,8 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
         'test_unregisterAll1');
         PHP_Parser_Stack::staticGetErrors(true);
         $ar = new noHandleMessage;
-        $aa = $this->_msgserver->registerListener(6, $ar);
-        $this->assertSame(true, $aa, 'duplicate registration failed');
+        $aa = $this->_msgserver->registerListener($ar, 6);
+        $this->assertEquals(6, $aa, 'duplicate registration failed');
 
         $ae = $this->_msgserver->_unregisterAll();
         $this->assertSame(true, $ae, 'total unregistration didn\'t return true');
@@ -254,10 +266,10 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
     function test_unregisterAll2()
     {
         $a = new noHandleMessage;
-        $aa = $this->_msgserver->registerListener(5, $a);
-        $this->assertSame(true, $aa, 'registration failed');
+        $aa = $this->_msgserver->registerListener($a, 5);
+        $this->assertEquals(5, $aa, 'registration failed');
         $ae = new noHandleMessage;
-        $aa = $this->_msgserver->registerListener(5, $ae);
+        $aa = $this->_msgserver->registerListener($ae, 5);
         $b = 'Unique ID "5" is ' .
                 'already registered';
         $this->assertErrors(
@@ -272,8 +284,8 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
         'test_unregisterAll2');
         PHP_Parser_Stack::staticGetErrors(true);
         $ra = new noHandleMessage;
-        $ah = $this->_msgserver->registerListener(6, $ra);
-        $this->assertSame(true, $ah, 'duplicate registration failed');
+        $ah = $this->_msgserver->registerListener($ra, 6);
+        $this->assertEquals(6, $ah, 'duplicate registration failed');
 
         $ah = $this->_msgserver->_unregisterAll(array());
         $b = 'Unique ID must be string or integer,' .
@@ -293,10 +305,10 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
     function test_unregisterAll3()
     {
         $a = new noHandleMessage;
-        $res = $this->_msgserver->registerListener(5, $a);
-        $this->assertSame(true, $res, 'registration failed');
+        $res = $this->_msgserver->registerListener($a, 5);
+        $this->assertEquals(5, $res, 'registration failed');
         $ar = new noHandleMessage;
-        $res = $this->_msgserver->registerListener(5, $ar);
+        $res = $this->_msgserver->registerListener($ar, 5);
         $b = 'Unique ID "5" is ' .
                 'already registered';
         $this->assertErrors(
@@ -311,8 +323,8 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
         'test_unregisterAll3');
         PHP_Parser_Stack::staticGetErrors(true);
         $aq = new noHandleMessage;
-        $res = $this->_msgserver->registerListener(6, $aq);
-        $this->assertSame(true, $res, 'duplicate registration failed');
+        $res = $this->_msgserver->registerListener($aq, 6);
+        $this->assertEquals(6, $res, 'duplicate registration failed');
         $this->assertNoErrors('test_unregisterAll3', 'errors after dupe registration');
 
         $res = $this->_msgserver->_unregisterAll(7);
@@ -334,10 +346,10 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
     function test_unregisterAll4()
     {
         $a = new noHandleMessage;
-        $res = $this->_msgserver->registerListener(5, $a);
-        $this->assertSame(true, $res, 'registration failed');
+        $res = $this->_msgserver->registerListener($a, 5);
+        $this->assertEquals(5, $res, 'registration failed');
         $ar = new noHandleMessage;
-        $res = $this->_msgserver->registerListener(5, $ar);
+        $res = $this->_msgserver->registerListener($ar, 5);
         $b = 'Unique ID "5" is ' .
                 'already registered';
         $this->assertErrors(
@@ -352,8 +364,8 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
         'test_unregisterAll3');
         PHP_Parser_Stack::staticGetErrors(true);
         $ra = new noHandleMessage;
-        $res = $this->_msgserver->registerListener(6, $ra);
-        $this->assertSame(true, $res, 'duplicate registration failed');
+        $res = $this->_msgserver->registerListener($ra, 6);
+        $this->assertEquals(6, $res, 'duplicate registration failed');
         $this->assertNoErrors('test_unregisterAll4', 'dupe reg failed');
 
         $res = $this->_msgserver->_unregisterAll(5);
@@ -391,8 +403,8 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
     function testcatchMessage2()
     {
         $a = new hasHandleMessageDefault;
-        $res = $this->_msgserver->registerListener(5, $a);
-        $this->assertSame(true, $res, 'registration failed');
+        $res = $this->_msgserver->registerListener($a, 5);
+        $this->assertEquals(5, $res, 'registration failed');
         $this->assertNoErrors('testcatchMessage2', 'setup failed');
         $res = $this->_msgserver->catchMessage(6, 6);
         $b = 'Unique ID "6" is not a ' .
@@ -412,8 +424,8 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
     function testcatchMessage3()
     {
         $a = new hasHandleMessageDefault;
-        $res = $this->_msgserver->registerListener(5, $a);
-        $this->assertSame(true, $res, 'registration failed');
+        $res = $this->_msgserver->registerListener($a, 5);
+        $this->assertEquals(5, $res, 'registration failed');
         $this->assertNoErrors('testcatchMessage3', 'setup failed');
         $res = $this->_msgserver->catchMessage(5, array());
         $b = 'Invalid parameter passed to $message_type, ' .
@@ -433,8 +445,8 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
     function testcatchMessage4()
     {
         $a = new hasHandleMessageDefault;
-        $res = $this->_msgserver->registerListener(5, $a);
-        $this->assertSame(true, $res, 'registration failed');
+        $res = $this->_msgserver->registerListener($a, 5);
+        $this->assertEquals(5, $res, 'registration failed');
         $this->assertNoErrors('testcatchMessage4', 'registration failed- errors');
         $res = $this->_msgserver->catchMessage(5, 5);
         $this->assertSame(true, $res, 'integer message type, default handler failed');
@@ -447,8 +459,8 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
     function testcatchMessage5()
     {
         $a = new hasHandleMessageOther;
-        $res = $this->_msgserver->registerListener(5, $a);
-        $this->assertSame(true, $res, 'registration failed');
+        $res = $this->_msgserver->registerListener($a, 5);
+        $this->assertEquals(5, $res, 'registration failed');
         $this->assertNoErrors('testcatchMessage5', 'registration failed- errors');
         $res = $this->_msgserver->catchMessage(5, 5, 'Other');
         $this->assertSame(true, $res, 'integer message type, different handler failed');
@@ -461,8 +473,8 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
     function testcatchMessage6()
     {
         $a = new hasHandleMessageOther;
-        $res = $this->_msgserver->registerListener(5, $a);
-        $this->assertSame(true, $res, 'registration failed');
+        $res = $this->_msgserver->registerListener($a, 5);
+        $this->assertEquals(5, $res, 'registration failed');
         $this->assertNoErrors('testcatchMessage6', 'registration failed- errors');
         $res = $this->_msgserver->catchMessage(5, 5);
         $b = 'Message handler method ' .
@@ -514,8 +526,8 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
     function teststopCatchingMessages2()
     {
         $a = new hasHandleMessageOther;
-        $res = $this->_msgserver->registerListener(5, $a);
-        $this->assertSame(true, $res, 'registration failed');
+        $res = $this->_msgserver->registerListener($a, 5);
+        $this->assertEquals(5, $res, 'registration failed');
         $this->assertNoErrors('teststopCatchingMessages2', 'registration failed- errors');
         $res = $this->_msgserver->catchMessage(5, 5, 'other');
         $this->assertSame(true, $res, 'catchmessage failed');
@@ -702,8 +714,8 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
     {
         $this->testcatchMessage5();
         $a = new noHandleMessage;
-        $res = $this->_msgserver->registerListener(6, $a);
-        $this->assertSame(true, $res, 'registration of other failed');
+        $res = $this->_msgserver->registerListener($a, 6);
+        $this->assertEquals(6, $res, 'registration of other failed');
         $this->assertNoErrors('testunRegisterIds2', 'registration of other failed- errors');
         $res = $this->_msgserver->unregisterIds(array(5, 6));
         $this->assertSame(true, $res, 'unregisterId failed, should work');
@@ -733,8 +745,8 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
     function testsendMessage2()
     {
         $a = new noHandleMessage;
-        $res = $this->_msgserver->registerListener(6, $a);
-        $this->assertSame(true, $res, 'registration of other failed');
+        $res = $this->_msgserver->registerListener($a, 6);
+        $this->assertEquals(6, $res, 'registration of other failed');
         $res = $this->_msgserver->sendMessage(5, 5);
         $this->assertSame(true, $res, 'sendmessage should work');
         $b = 'Message "5" has no registered' .
@@ -754,8 +766,8 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
     function testsendMessage3()
     {
         $a = new hasHandleMessageDefault;
-        $res = $this->_msgserver->registerListener(6, $a);
-        $this->assertSame(true, $res, 'registration of 6 failed');
+        $res = $this->_msgserver->registerListener($a, 6);
+        $this->assertEquals(6, $res, 'registration of 6 failed');
         $this->assertNoErrors('testsendMessage3', 'registration of 6 failed- errors');
         $res = $this->_msgserver->catchMessage(6, 7);
         $this->assertSame(true, $res, 'catchmessage of 7 failed');
@@ -778,8 +790,8 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
     
     function testsendMessage4()
     {
-        $res = $this->_msgserver->registerListener(6, $this);
-        $this->assertSame(true, $res, 'registration of 6 failed');
+        $res = $this->_msgserver->registerListener($this, 6);
+        $this->assertEquals(6, $res, 'registration of 6 failed');
         $this->assertNoErrors('testsendMessage4', 'registration of 6 failed- errors');
         $res = $this->_msgserver->catchMessage(6, 7, '_catch3');
         $this->assertSame(true, $res, 'catchmessage of 7 failed');
@@ -812,8 +824,8 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
     function testsendMessageGetAnswer2()
     {
         $a = new noHandleMessage;
-        $res = $this->_msgserver->registerListener(6, $a);
-        $this->assertSame(true, $res, 'registration of other failed');
+        $res = $this->_msgserver->registerListener($a, 6);
+        $this->assertEquals(6, $res, 'registration of other failed');
         $this->assertNoErrors('testsendMessageGetAnswer2', 'sendmessage failed- errors');
         $res = $this->_msgserver->sendMessageGetAnswer(5, 5);
         $this->assertEquals(array(), $res, 'sendmessage should work');
@@ -834,8 +846,8 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
     function testsendMessageGetAnswer3()
     {
         $a = new hasHandleMessageDefault;
-        $res = $this->_msgserver->registerListener(6, $a);
-        $this->assertSame(true, $res, 'registration of 6 failed');
+        $res = $this->_msgserver->registerListener($a, 6);
+        $this->assertEquals(6, $res, 'registration of 6 failed');
         $this->assertNoErrors('testsendMessageGetAnswer3', 'registration of 6 failed- errors');
         $res = $this->_msgserver->catchMessage(6, 7);
         $this->assertSame(true, $res, 'catchmessage of 7 failed');
@@ -858,8 +870,8 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
     
     function testsendMessageGetAnswer4()
     {
-        $res = $this->_msgserver->registerListener(6, $this);
-        $this->assertSame(true, $res, 'registration of 6 failed');
+        $res = $this->_msgserver->registerListener($this, 6);
+        $this->assertEquals(6, $res, 'registration of 6 failed');
         $this->assertNoErrors('testsendMessageGetAnswer4', 'registration of 6 failed- errors');
         $res = $this->_msgserver->catchMessage(6, 7, '_catch3');
         $this->assertNoErrors('testsendMessageGetAnswer4', 'catchmessage of 7 failed- errors');
@@ -873,8 +885,8 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
     
     function testsendMessageGetAnswer5()
     {
-        $res = $this->_msgserver->registerListener(6, $this);
-        $this->assertSame(true, $res, 'registration of 6 failed');
+        $res = $this->_msgserver->registerListener($this, 6);
+        $this->assertEquals(6, $res, 'registration of 6 failed');
         $this->assertNoErrors('testsendMessageGetAnswer5', 'registration of 6 failed- errors');
         $res = $this->_msgserver->catchMessage(6, 7, '_catch4');
         $this->assertSame(true, $res, 'catchmessage of 7 failed');
