@@ -398,7 +398,6 @@ class PHP_Parser_Tokenizer {
                 case T_OPEN_TAG:
                 case T_INLINE_HTML:
                 case T_WHITESPACE:
-                case T_ENCAPSED_AND_WHITESPACE:
                     $this->line += substr_count ($this->tokens[$this->pos][1], "\n");
                     $this->pos++;
                     continue;
