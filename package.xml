@@ -112,6 +112,8 @@ Moved DocBlock parsing in from phpDocumentor 2.0 development</notes>
        <dir name="tests">
         <file role="test" name="HTML_TestListener.php"/>
         <file role="test" name="PHP_Parser_DocBlock_DefaultInlineTagLexer_test.php"/>
+        <file role="test" name="PHP_Parser_DocBlock_DefaultLexer_test.php"/>
+        <file role="test" name="PHP_Parser_DocBlock_DefaultTagLexer_test.php"/>
         <file role="test" name="PHP_Parser_MsgServer_test.php"/>
         <file role="test" name="PHP_Parser_test_class.php"/>
         <file role="test" name="PHP_Parser_test_class_php5.php"/>

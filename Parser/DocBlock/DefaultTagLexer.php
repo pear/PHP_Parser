@@ -36,17 +36,25 @@ class PHP_Parser_DocBlock_DefaultTagLexer extends PHP_Parser_DocBlock_CommonLexe
      *              values, and will split the contents
      *              on the separator, and loop over each
      *              segment as if it were a separate tag
+     * - descparser: The DocBlock parser that can be used to parse
+     *               a general tag description
+     * - desclexer: The DocBlock lexer that can be used to parse
+     *              a general tag description
      * @param array
      */
     function setOptions($options = array())
     {
-        $this->_options['descParserClass'] = 
-        $this->_options['descLexerClass'] = 
+        $this->_options['separator'] =
+        $this->_options['descparser'] = 
+        $this->_options['desclexer'] = 
         false;
-        $this->_options['lineNumber'] = 1;
+        $this->_options['linenumber'] = 1;
         $this->_options = array_merge($this->_options, $options);
-        if (!is_object($this->_options['descParserClass']) ||
-                !is_object($this->_options['descLexerClass'])) {
+        if (!is_object($this->_options['descparser']) ||
+                !is_object($this->_options['desclexer'])) {
+            $this->_options['descparser'] = 
+            $this->_options['desclexer'] = 
+            false;
             return false;
         }
     }
@@ -86,8 +94,8 @@ class PHP_Parser_DocBlock_DefaultTagLexer extends PHP_Parser_DocBlock_CommonLexe
      */
     function _parseDesc($desc)
     {
-        $lex = $this->_options['descLexerClass'];
-        $parser = $this->_options['descParserClass'];
+        $lex = $this->_options['descparser'];
+        $parser = $this->_options['descparser'];
         $description = $parser->parse(
             array('lexer' => $lex,
                   'nosummary' => true,

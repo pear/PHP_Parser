@@ -105,7 +105,7 @@ define ('YY_EOF' , 258);
         $this->_bulletStack = array();
         $this->_bulletLenStack = array();
         $this->_break = false;
-        $this->debug = true;
+        $this->debug = false;
         $this->yyline = 1;
 %init}
 
@@ -178,20 +178,61 @@ define ('YY_EOF' , 258);
         $this->_options = array_merge($this->_options, $options);
     }
     
+    var $_nextToken = false;
+    
     function advance()
     {
         $lex = $this->yylex();
         if ($lex) {
-            $this->token = $lex[0];
+            if ($lex[0] == PHP_PARSER_DOCLEX_TEXT) {
+                $save = array(
+                    'yy_reader' => $this->yy_reader,
+                    'yy_buffer_index' => $this->yy_buffer_index,
+                    'yy_buffer_read' => $this->yy_buffer_read,
+                    'yy_buffer_start' => $this->yy_buffer_start,
+                    'yy_buffer_end' => $this->yy_buffer_end,
+                    'yychar' => $this->yychar,
+                    'yyline' => $this->yyline,
+                    'yyEndOfLine' => $this->yyEndOfLine,
+                    'yy_at_bol' => $this->yy_at_bol,
+                    'yy_lexical_state' => $this->yy_lexical_state,
+                    'token' => $this->token,
+                    'value' => $this->value,
+                );
+                do {
+                    $next = $this->yylex();
+                    if ($next[0] == PHP_PARSER_DOCLEX_TEXT) {
+                        $save = array(
+                            'yy_reader' => $this->yy_reader,
+                            'yy_buffer_index' => $this->yy_buffer_index,
+                            'yy_buffer_read' => $this->yy_buffer_read,
+                            'yy_buffer_start' => $this->yy_buffer_start,
+                            'yy_buffer_end' => $this->yy_buffer_end,
+                            'yychar' => $this->yychar,
+                            'yyline' => $this->yyline,
+                            'yyEndOfLine' => $this->yyEndOfLine,
+                            'yy_at_bol' => $this->yy_at_bol,
+                            'yy_lexical_state' => $this->yy_lexical_state,
+                            'token' => $this->token,
+                            'value' => $this->value,
+                        );
+                        $lex[1] .= $next[1];
+                    }
+                } while ($next && $next[0] == PHP_PARSER_DOCLEX_TEXT);
+                foreach ($save as $name => $value) {
+                    $this->$name = $value;
+                }
+            }
             $this->tokenWithWhitespace = $lex[0];
+            $this->token = $lex[0];
             $this->value = $lex[1];
             $this->valueWithWhitespace = $lex[1];
         } elseif ($this->yy_lexical_state == SIMPLELIST ||
-             $this->yy_lexical_state == INTERNALSIMPLELIST) {
-             $this->token = YY_EOF;
-             $this->value = '';
-             $this->yy_lexical_state = $this->_listOriginal;
-             return true;
+            $this->yy_lexical_state == INTERNALSIMPLELIST) {
+            $this->token = YY_EOF;
+            $this->value = '';
+            $this->yy_lexical_state = $this->_listOriginal;
+            return true;
         }
         return (boolean) $lex;
     }
