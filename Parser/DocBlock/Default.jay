@@ -230,9 +230,9 @@ class PHP_Parser_DocBlock_Default {
     /**
      * @param array $options
      * @param:array string $comment DocBlock to parse
-     * @param:array integer $line line number
-     * @param:array array $token T_DOC_COMMENT token
-     * @param:array PhpDocumentor_DocBlock_Lexer $lex DocBlock lexer
+     * @param:array integer $commentline line number
+     * @param:array array $commenttoken T_DOC_COMMENT token
+     * @param:array PHP_Parser_DocBlock_Lexer $lex DocBlock lexer
      * @param:array boolean $nosummary if true, then the description will not
      *                      be separated into summary/long description
      * @param:array boolean $preformatted if true, then the documentation
@@ -296,7 +296,93 @@ class PHP_Parser_DocBlock_Default {
             return $parsed_docs;
         }
     }
-    
+
+    /**
+     * Extract the summary from the description, and set it.
+     *
+     * This can be overridden in child classes to do other methods of
+     * summary extraction, such as the doxygen method of extracting
+     * a certain number of characters, or Javadoc's method of extracting
+     * to the first period
+     */
+    function setSummary()
+    {
+        if (!isset($this->paragraphs[0])) {
+            return;
+        }
+        $this->summary = $this->paragraphs[0];
+        $lineindex = 0;
+        $nlcount = 0;
+        $oldnlcount = 0;
+        $retsummary = $retdescription = array();
+        foreach($this->summary as $i => $item) {
+            $oldnlcount = $nlcount;
+            if (is_array($item)) {
+                // no way to calculate arrays since they can be nested
+                $retsummary = array_slice($this->summary, 0, $i);
+                $retdescription = array_slice($this->summary, $i);
+                $this->summary = $retsummary;
+                $this->paragraphs[0] = $retdescription;
+                return;
+            }
+            if (is_object($item)) {
+                if ((method_exists($item, 'hasmultiplecr') && $item->hasMultipleCR())
+                        || is_a($item, 'PHP_Parser_DocBlock_List')) {
+                    $retsummary = array_slice($this->summary, 0, $i);
+                    $retdescription = array_slice($this->summary, $i);
+                    $this->summary = $retsummary;
+                    $this->paragraphs[0] = $retdescription;
+                    return;
+                }
+                // all other objects can't contain \n
+                continue;
+            }
+            if (count(explode("\n\n", $item)) - 1) {
+                // contains a double newline - this is it
+                $summary = array_shift($a = explode("\n\n", $item));
+                $description = join($a);
+                $retsummary[$i] = $summary;
+                break;
+            }
+            if (count($a = explode("\n", $item)) - 1) {
+                $nlcount += count($a) - 1;
+                // contains newlines
+                if ($nlcount > 3) {
+                    // we've found our summary in this block
+                    if ($oldnlcount == 2) {
+                        $retsummary = array_slice($this->summary, 0, $i);
+                        $retsummary[] = array_shift($a);
+                        $retdescription = array_merge(array(join($a, "\n")),
+                                                      array_slice($this->summary, $i + 1));
+                    }
+                    if ($oldnlcount == 3) {
+                        $retsummary = array_slice($this->summary, 0, $i - 1);
+                        $retdescription = array_slice($this->summary, $i - 1);
+                    }
+                    $this->summary = $retsummary;
+                    $this->paragraphs[0] = $retdescription;
+                    return;
+                }
+            }
+        }
+        if (isset($description)) {
+            for($j = 0; $j < $i; $j++) {
+                $retsummary[$j] = $this->summary[$i];
+            }
+            $retdescription = array($description);
+            for($j = $i; $j < count($this->summary); $j++) {
+                $retdescription[] = $this->summary[$i];
+            }
+            $this->summary = $retsummary;
+            $this->paragraphs[0] = $retdescription;
+            return;
+        }
+        
+        
+        unset($this->paragraphs[0]);
+        $this->paragraphs = array_values($this->paragraphs);
+    }
+
     function getSummary()
     {
         return $this->summary;
@@ -321,7 +407,8 @@ class PHP_Parser_DocBlock_Default {
      */
     function stripNonEssentials($comment)
     {
-        $comment = str_replace("\r", '', trim($comment));
+        $comment = str_replace("\r\n", "\n", trim($comment));
+        $comment = str_replace("\n\r", "\n", trim($comment));
         if (strpos($comment, '/**#@+') === 0)
         { // docblock template definition
             // strip /**#@+ and */
@@ -1044,7 +1131,7 @@ simplelistend:
     T_SIMPLELIST_NL
     |   T_SIMPLELIST_END
     |   EOF
-    |   T_SIMPLELIEST_NL T_WHITESPACE T_SIMPLELIST_END
+    |   T_SIMPLELIST_NL T_WHITESPACE T_SIMPLELIST_END
 ;
 
 

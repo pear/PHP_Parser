@@ -4,11 +4,11 @@
  // modified by cellog@users.sourceforge.net to fit PEAR CS
  // %token constants
 
- require_once 'PHP/Parser/Stack.php';
+ require_once 'PEAR/ErrorStack.php';
 
- define('PHP_PARSER_ERROR_UNEXPECTED', 1);
- define('PHP_PARSER_ERROR_SYNTAX', 2);
- define('PHP_PARSER_ERROR_SYNTAX_EOF', 3);
+ if (!defined('PHP_PARSER_ERROR_UNEXPECTED')) { define('PHP_PARSER_ERROR_UNEXPECTED', 1); }
+ if (!defined('PHP_PARSER_ERROR_SYNTAX')) { define('PHP_PARSER_ERROR_SYNTAX', 2); }
+ if (!defined('PHP_PARSER_ERROR_SYNTAX_EOF')) { define('PHP_PARSER_ERROR_SYNTAX_EOF', 3); }
 if (!defined('TOKEN_yyErrorCode')) {   define('TOKEN_yyErrorCode', 256);
 }
  // Class now
@@ -16,6 +16,25 @@ if (!defined('TOKEN_yyErrorCode')) {   define('TOKEN_yyErrorCode', 256);
 					// line 1 "C:/devel/PHP_Parser/Parser/DocBlock/Extendable.jay"
 
 ?><?php
+//
+// +----------------------------------------------------------------------+
+// | PHP_Parser                                                           |
+// +----------------------------------------------------------------------+
+// | Copyright (c) 1997-2004 The PHP Group                                |
+// +----------------------------------------------------------------------+
+// | This source file is subject to version 3.0 of the PHP license,       |
+// | that is bundled with this package in the file LICENSE, and is        |
+// | available through the world-wide-web at the following url:           |
+// | http://www.php.net/license/3_0.txt.                                  |
+// | If you did not receive a copy of the PHP license and are unable to   |
+// | obtain it through the world-wide-web, please send a note to          |
+// | license@php.net so we can mail you a copy immediately.               |
+// +----------------------------------------------------------------------+
+// | Authors: Greg Beaver <cellog@php.net>                                |
+// +----------------------------------------------------------------------+
+//
+// $Id$
+//
 define('PHP_PARSER_DOCBLOCK_DEFAULTEXTENDABLE_ERROR_PARSE', 1);
 
 /**
@@ -466,7 +485,7 @@ class PHP_Parser_DocBlock_DefaultExtendable {
             return array('inlinetag' => $name, 'value' => $contents);
         }
     }
-					// line 470 "-"
+					// line 489 "-"
 
     /**
      * thrown for irrecoverable syntax errors and stack overflow.
@@ -733,11 +752,11 @@ class PHP_Parser_DocBlock_DefaultExtendable {
     }
 
 
-					// line 768 "C:/devel/PHP_Parser/Parser/DocBlock/Extendable.jay"
+					// line 787 "C:/devel/PHP_Parser/Parser/DocBlock/Extendable.jay"
 
     /**#@-*/
 }
-					// line 741 "-"
+					// line 760 "-"
 
   $GLOBALS['_PHP_PARSER_DOCBLOCK_DEFAULTEXTENDABLE']['yyLhs']  = array(              -1,
     0,    0,    0,    0,    0,    1,    2,    4,    5,    3,

@@ -6,9 +6,9 @@
 
  require_once 'PEAR/ErrorStack.php';
 
- define('PHP_PARSER_ERROR_UNEXPECTED', 1);
- define('PHP_PARSER_ERROR_SYNTAX', 2);
- define('PHP_PARSER_ERROR_SYNTAX_EOF', 3);
+ if (!defined('PHP_PARSER_ERROR_UNEXPECTED')) { define('PHP_PARSER_ERROR_UNEXPECTED', 1); }
+ if (!defined('PHP_PARSER_ERROR_SYNTAX')) { define('PHP_PARSER_ERROR_SYNTAX', 2); }
+ if (!defined('PHP_PARSER_ERROR_SYNTAX_EOF')) { define('PHP_PARSER_ERROR_SYNTAX_EOF', 3); }
 if (!defined('TOKEN_yyErrorCode')) {   define('TOKEN_yyErrorCode', 256);
 }
  // Class now
