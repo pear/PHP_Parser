@@ -46,6 +46,7 @@ class PHP_Parser_DocBlock_Default_basic_test extends PHPUnit_TestCase
         $this->parser = new PHP_Parser_DocBlock_Default;
         $this->_expectedErrors = array();
         $this->_testMethod = 'unknown';
+        $this->parser->debug = false;
         $this->parseOptions =
         array(
             'commentline' => 1,
@@ -324,7 +325,7 @@ class PHP_Parser_DocBlock_Default_basic_test extends PHPUnit_TestCase
                      ), $this->parser->parse($this->getOptions($comment, true)), 'parse');
     }
 
-    function test_parse_simplelist()
+    function test_parse_simplelist1()
     {
         if (!$this->_methodExists('parse')) {
             return;
@@ -332,6 +333,8 @@ class PHP_Parser_DocBlock_Default_basic_test extends PHPUnit_TestCase
         $comment = ' - first item
  - second item
  - third item';
+//        $this->parser->debug = true;
+//        echo '<pre>';
         $this->assertEquals(array(
                     'summary' => array(),
                     'documentation' => array(
@@ -350,8 +353,16 @@ class PHP_Parser_DocBlock_Default_basic_test extends PHPUnit_TestCase
                     'startline' => 1,
                     'endline' => 4,
                      ), $this->parser->parse($this->getOptions($comment, true)), 'parse');
+//        echo '</pre>';
+//        $this->parser->debug = false;
         $this->assertNoErrors('test_parse_simplelist', 'oops 1');
+    }
 
+    function test_parse_simplelist2()
+    {
+        if (!$this->_methodExists('parse')) {
+            return;
+        }
         $comment = ' o first item
  o second item
  o third item';
@@ -374,7 +385,13 @@ class PHP_Parser_DocBlock_Default_basic_test extends PHPUnit_TestCase
                     'endline' => 4,
                      ), $this->parser->parse($this->getOptions($comment, true)), 'parse');
         $this->assertNoErrors('test_parse_simplelist', 'oops 1');
+    }
 
+    function test_parse_simplelist3()
+    {
+        if (!$this->_methodExists('parse')) {
+            return;
+        }
         $comment = ' + first item
  + second item
  + third item';
@@ -397,6 +414,13 @@ class PHP_Parser_DocBlock_Default_basic_test extends PHPUnit_TestCase
                     'endline' => 4,
                      ), $this->parser->parse($this->getOptions($comment, true)), 'parse');
         $this->assertNoErrors('test_parse_simplelist', 'oops 1');
+    }
+
+    function test_parse_simplelist4()
+    {
+        if (!$this->_methodExists('parse')) {
+            return;
+        }
 
         $comment = ' 1 first item
  2 second item
@@ -420,6 +444,13 @@ class PHP_Parser_DocBlock_Default_basic_test extends PHPUnit_TestCase
                     'endline' => 4,
                      ), $this->parser->parse($this->getOptions($comment, true)), 'parse');
         $this->assertNoErrors('test_parse_simplelist', 'oops 1');
+    }
+
+    function test_parse_simplelist5()
+    {
+        if (!$this->_methodExists('parse')) {
+            return;
+        }
 
         $comment = ' 1. first item
  2. second item
@@ -461,7 +492,8 @@ class PHP_Parser_DocBlock_Default_basic_test extends PHPUnit_TestCase
          + a third
        2 nested second
 ';
-        $this->parser->debug = true;
+//        $this->parser->debug = true;
+//        echo '<pre>';
         $this->assertEquals(array(
                     'summary' => array(),
                     'documentation' => array(
@@ -506,8 +538,9 @@ class PHP_Parser_DocBlock_Default_basic_test extends PHPUnit_TestCase
                     ),
                     'tags' => array(),
                     'startline' => 1,
-                    'endline' => 11,
+                    'endline' => 12,
                      ), $this->parser->parse($this->getOptions($comment, true)), 'parse');
+//        echo '</pre>';
         $this->assertNoErrors('test_parse_simplelist', 'oops');
     }
 }

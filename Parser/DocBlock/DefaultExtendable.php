@@ -630,7 +630,7 @@ class PHP_Parser_DocBlock_DefaultExtendable {
                         if ($this->debug) {
                             echo "\tA:token is now " .
                             "{$GLOBALS[$this->yyGlobalName]['yyName'][$yyToken]} " .token_name($yyToken).  "\n";
-                            var_dump($yyToken);
+//                            var_dump($yyToken);
                         }
                         //if ($this->debug) echo "GOT TOKEN $yyToken";
                         //if ($this->debug) echo "Sindex:  {$GLOBALS[$this->yyGlobalName]['yySindex'][$this->yyState]}\n";

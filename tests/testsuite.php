@@ -61,7 +61,7 @@ $title = 'PhpUnit test run, PHP_Parser package';
             $testcases[] = $case . '_php5';
         }
     }
-    
+
     $testcases[] = 'PHP_Parser_MsgServer_test';
     $testcases[] = 'PHP_Parser_DocBlock_DefaultInlineTagLexer_test';
     $testcases[] = 'PHP_Parser_DocBlock_DefaultTagLexer_test';
