@@ -21,6 +21,7 @@
    +----------------------------------------------------------------------+
 */
 
+define('PHP_PARSER_EXTENDABLE_ERROR_PARSE', 1);
 
 //
 // This does nothing on it's own - refer to PHP_Parser
@@ -72,11 +73,36 @@ class PHP_Parser_Extendable {
     /**
      * @see __construct
      */
-    function PHP_Parser_Core($options = array())
+    function PHP_Parser_Extendable($options = array())
     {
         $this->__construct($options);
     }
     
+    /**
+     * (syntax) error message.
+     * Can be overwritten to control message format.
+     * @param message text to be displayed.
+     * @param expected vector of acceptable tokens, if available.
+     */
+    function raiseError ($message, $expected = null)
+    {     
+        if ($expected !== null ) {
+            $m = "$message expecting";
+            foreach($expected as $e) {
+                $m .= " $e";
+            }
+        } else {
+            $m = $message;
+        }
+        if ($expected === null) {
+            $expected = array();
+        }
+        return PHP_Parser_Stack::staticPush('PHP_Parser_Extendable',
+            PHP_PARSER_EXTENDABLE_ERROR_PARSE,
+            'error', $expected,
+            $message);  
+    }
+
     /**
      * Set up options for parsing
      *
