@@ -808,7 +808,7 @@ class PHP_Parser_DocBlock_Default {
 
     function _9($yyTop)  					// line 582 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
-            $this->tags[] = $this->_parseTag($this->yyVals[0+$yyTop], array());
+            $this->tags[] = $this->_parseTag($this->yyVals[0+$yyTop], false);
         }
 
     function _10($yyTop)  					// line 586 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
@@ -1616,7 +1616,7 @@ class PHP_Parser_DocBlock_Default {
 
     function _137($yyTop)  					// line 1400 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
-            $this->yyVal = $this->_parseInlineTag($this->yyVals[-1+$yyTop], array());
+            $this->yyVal = $this->_parseInlineTag($this->yyVals[-1+$yyTop], false);
         }
 
     function _138($yyTop)  					// line 1407 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"

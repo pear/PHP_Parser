@@ -580,7 +580,7 @@ text:
 tags:
     T_TAG
         {
-            $this->tags[] = $this->_parseTag($1, array());
+            $this->tags[] = $this->_parseTag($1, false);
         }
     |   T_TAG T_TEXT
         {
@@ -1398,7 +1398,7 @@ inlinetag:
         }
     |   T_INLINE_TAG_OPEN T_INLINE_TAG_NAME T_INLINE_TAG_CLOSE
         {
-            $$ = $this->_parseInlineTag($2, array());
+            $$ = $this->_parseInlineTag($2, false);
         }
 ;
 
