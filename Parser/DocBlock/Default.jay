@@ -1,6 +1,7 @@
 %{
 ?><?php
 define('PHP_PARSER_DOCBLOCK_DEFAULT_ERROR_PARSE', 1);
+require_once 'PHP/Parser/MsgServer.php';
 
 /**
  * Default phpDocumentor DocBlock Parser
@@ -35,9 +36,15 @@ class PHP_Parser_DocBlock_Default {
     
     /**
      * The global message server
-     * @var MsgServer
+     * @var PHP_Parser_MsgServer
      */
     var $_server;
+    
+    /**
+     * The error stack
+     * @var PHP_Parser_Stack
+     */
+    var $_errorStack;
     
     /**
      * Tags from parsing
@@ -64,7 +71,8 @@ class PHP_Parser_DocBlock_Default {
      */
     function PHP_Parser_DocBlock_Default($options = array())
     {
-        //$this->_server = &MsgServer::getServer();
+        $this->_server = &PHP_Parser_MsgServer::singleton();
+        $this->_errorStack = &PHP_Parser_Stack::singleton('PHP_Parser_Docblock_Default');
         $this->_options['publishConstMessage'] =
         $this->_options['parseInternal'] =
         false;
@@ -166,7 +174,7 @@ class PHP_Parser_DocBlock_Default {
         } else {
             $m = $message;
         }
-        return PHP_Parser_Stack::staticPush('PHP_Parser_Docblock_Default',
+        return $this->_errorStack->push(
             PHP_PARSER_DOCBLOCK_DEFAULT_ERROR_PARSE,
             'error', $params,
             $m);  
@@ -261,10 +269,10 @@ class PHP_Parser_DocBlock_Default {
                      );
         }
         if ($dtemplate) {
-            $this->_server->sendMessage(PHPDOCUMENTOR_PARSED_DOCTEMPLATE, $parsed_docs);
+            $this->_server->sendMessage('parsed docblock template', $parsed_docs);
         } else {
             if (!isset($options['tagdesc'])) {
-                $this->_server->sendMessage(PHPDOCUMENTOR_PARSED_DOCBLOCK, $parsed_docs);
+                $this->_server->sendMessage('parsed docblock', $parsed_docs);
             }
             return $parsed_docs;
         }

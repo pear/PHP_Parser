@@ -165,7 +165,7 @@ class PHP_Parser_MsgServer
         }
         foreach($unique_ids as $id) {
             $result = $this->_unregisterAll($id);
-            if (count(PHP_Parser_Stack::staticGetErrors($result, true))) {
+            if (PHP_Parser_Stack::staticHasErrors()) {
                 return $result;
             }
         }

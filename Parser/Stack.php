@@ -628,6 +628,15 @@ class PHP_Parser_Stack {
     }
     
     /**
+     * Determine whether there are any errors on the stack
+     * @return boolean
+     */
+    function hasErrors()
+    {
+        return count($this->_errors);
+    }
+    
+    /**
      * Retrieve all errors since last purge
      * 
      * @param boolean $purge set in order to empty the error stack
@@ -641,6 +650,21 @@ class PHP_Parser_Stack {
         $ret = $this->_errors;
         $this->_errors = array();
         return $ret;
+    }
+    
+    /**
+     * Determine whether there are any errors on any error stack
+     * @return boolean
+     * @static
+     */
+    function staticHasErrors()
+    {
+        foreach ($GLOBALS['_PHP_PARSER_STACK_SINGLETON'] as $package => $obj) {
+            if ($obj->hasErrors()) {
+                return true;
+            }
+        }
+        return false;
     }
     
     /**
