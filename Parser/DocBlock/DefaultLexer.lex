@@ -205,23 +205,17 @@ define ('YY_EOF' , 258);
     
     var $_nextToken = false;
     var $_getNestedList = false;
+    var $_lastNum = false;
     
     function saveState()
     {
-        $save = array(
-            'yy_reader' => $this->yy_reader,
-            'yy_buffer_index' => $this->yy_buffer_index,
-            'yy_buffer_read' => $this->yy_buffer_read,
-            'yy_buffer_start' => $this->yy_buffer_start,
-            'yy_buffer_end' => $this->yy_buffer_end,
-            'yychar' => $this->yychar,
-            'yyline' => $this->yyline,
-            'yyEndOfLine' => $this->yyEndOfLine,
-            'yy_at_bol' => $this->yy_at_bol,
-            'yy_lexical_state' => $this->yy_lexical_state,
-            'token' => $this->token,
-            'value' => $this->value,
-        );
+        $save = get_object_vars($this);
+        unset($save['yy_nxt']);
+        unset($save['yy_acpt']);
+        unset($save['yy_cmap']);
+        unset($save['yy_rmap']);
+        unset($save['_tagMap']);
+        unset($save['yy_state_dtrans']);
         return $save;
     }
     
@@ -451,11 +445,12 @@ define ('YY_EOF' , 258);
                     if ($this->debug) echo "found pre-list text whitespace[$whitespace]\n";
                     return array(PHP_PARSER_DOCLEX_WHITESPACE, $whitespace);
                 } else {
-                    if ($this->debug) echo "going to parent list\n";
+                    if ($this->debug) echo "going to parent list (_doList)\n";
                     array_pop($this->_listLevel);
                     if (!count($this->_listLevel)) {
                         $this->yybegin($this->_listOriginal);
                         $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
+                        return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
                         $this->_break = true;
                         return;
                     } else {
@@ -562,6 +557,8 @@ NOBRACKETS = [^}]*
         array_pop($this->_listLevel);
         if (!count($this->_listLevel)) {
             $this->yybegin($this->_listOriginal);
+            $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
+            return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
         } else {
             $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
             return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
@@ -607,8 +604,16 @@ NOBRACKETS = [^}]*
     if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
         array_pop($this->_listLevel);
         if (!count($this->_listLevel)) {
+            if ($this->debug) {
+                echo "end simple list in </tag>\n";
+            }
             $this->yybegin($this->_listOriginal);
+            $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
+            return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
         } else {
+            if ($this->debug) {
+                echo "go to parent list in </tag>\n";
+            }
             $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
             return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
         }
@@ -655,6 +660,8 @@ NOBRACKETS = [^}]*
         array_pop($this->_listLevel);
         if (!count($this->_listLevel)) {
             $this->yybegin($this->_listOriginal);
+            $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
+            return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
         } else {
             $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
             return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
@@ -711,14 +718,45 @@ NOBRACKETS = [^}]*
 }
 
 <SIMPLELIST, INTERNALSIMPLELIST> [\n]+ {
-    if ($this->debug) echo "simplelist newline\n";
     if (strlen($this->yytext()) > 1) {
         // A simple list may not contain double newlines
         $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
         $this->yybegin($this->_listOriginal);
+        if ($this->debug) echo "end simple list (in \\n handler)\n";
+        $this->_atNewLine = true;
         return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
     }
     $this->_atNewLine = true;
+    $old = $this->yy_lexical_state;
+    $save = $this->saveState();
+    if ($this->debug) {
+        echo "**testing tokens**\n";
+    }
+    $this->advance();
+    if ($this->token == PHP_PARSER_DOCLEX_WHITESPACE) {
+        if ($this->debug) {
+            echo "**testing tokens**\n";
+        }
+        $this->advance();
+        $estack = &PEAR_ErrorStack::singleton('PHP_Parser_DocBlock_DefaultLexer');
+        if ($this->token == PHP_PARSER_DOCLEX_SIMPLELIST_END && !$estack->hasErrors()) {
+            if ($this->debug) {
+                echo "end simple list early\n";
+            }
+            $this->restoreState($save);
+            array_pop($this->_listLevel);
+            if (!count($this->_listLevel)) {
+                $this->yybegin($this->_listOriginal);
+            } else {
+                $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
+            }
+            return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, $this->yytext());
+        } else {
+            $estack->getErrors(true);
+        }
+    }
+    $this->restoreState($save);
+    if ($this->debug) echo "simplelist newline\n";
     return array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, $this->yytext());
 }
 
@@ -786,6 +824,8 @@ NOBRACKETS = [^}]*
         array_pop($this->_listLevel);
         if (!count($this->_listLevel)) {
             $this->yybegin($this->_listOriginal);
+            $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
+            return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
         } else {
             $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
             return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
