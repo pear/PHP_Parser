@@ -464,5 +464,103 @@ again some more');
                 array(YY_EOF, ''),
             ), $data, 'simple list 3');
     }
+
+    function test_simplelist_nested()
+    {
+        if (!$this->_methodExists('setup')) {
+            return;
+        }
+        if (!$this->_methodExists('advance')) {
+            return;
+        }
+        $this->lexer->setup(' - first item
+   1 nested first
+   2 nested second
+ - second item
+ - third item
+       1 nested first
+         + another item
+         + yet another
+         + a third
+       2 nested second
+');
+        $data = array();
+        while ($a = $this->lexer->advance()) {
+            $data[] = array($this->lexer->token, $this->lexer->value);
+        }
+        $this->assertEquals(
+            array(
+                array(PHP_PARSER_DOCLEX_WHITESPACE, " "),
+                array(PHP_PARSER_DOCLEX_BULLET, "-"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' first item'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, "   "),
+                array(PHP_PARSER_DOCLEX_NBULLET, "1"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' nested first'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, "   "),
+                array(PHP_PARSER_DOCLEX_NBULLET, "2"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' nested second'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, " "),
+                array(PHP_PARSER_DOCLEX_BULLET, "-"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' second item'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, " "),
+                array(PHP_PARSER_DOCLEX_BULLET, "-"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' third item'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, "       "),
+                array(PHP_PARSER_DOCLEX_NBULLET, "1"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' nested first'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, "         "),
+                array(PHP_PARSER_DOCLEX_BULLET, "+"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' another item'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, "         "),
+                array(PHP_PARSER_DOCLEX_BULLET, "+"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' yet another'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, "         "),
+                array(PHP_PARSER_DOCLEX_BULLET, "+"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' a third'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, "       "),
+                array(PHP_PARSER_DOCLEX_NBULLET, "2"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' nested second'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(YY_EOF, ''),
+            ), $data, 'simple list 1');
+    }
+
+    function test_simplelist_invalid()
+    {
+        if (!$this->_methodExists('setup')) {
+            return;
+        }
+        if (!$this->_methodExists('advance')) {
+            return;
+        }
+        $this->lexer->setup(' - first item
+   1 nested first
+   3 unnested second');
+        $data = array();
+        while ($a = $this->lexer->advance()) {
+            $data[] = array($this->lexer->token, $this->lexer->value);
+        }
+        $this->assertEquals(
+            array(
+                array(PHP_PARSER_DOCLEX_WHITESPACE, " "),
+                array(PHP_PARSER_DOCLEX_BULLET, "-"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' first item'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, "   "),
+                array(PHP_PARSER_DOCLEX_NBULLET, "1"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' nested first'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_TEXT, '   3 nested second'),
+            ), $data, 'simple list 1');
+    }
 }
 ?>

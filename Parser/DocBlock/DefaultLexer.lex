@@ -20,6 +20,9 @@ define('LIST_NUMBERED',0);
 define('LIST_NUMBERED_DOT',1);
 define('LIST_UNORDERED',2);
 
+define('PHP_PARSER_DOCLEX_ERROR_NUMWRONG', -1);
+define('PHP_PARSER_DOCLEX_ERROR_NODOT', -2);
+
 $a = 0;
 define('PHP_PARSER_DOCLEX_BULLET', ++$a); // unordered '-' list item bullet
 define('PHP_PARSER_DOCLEX_NBULLET', ++$a); // numbered '1' list number bullet
@@ -250,9 +253,6 @@ define ('YY_EOF' , 258);
             PHP_PARSER_DOCBLOCK_DEFAULTLEXER_ERROR,
             'error', $params,
             $m);
-        if ($params['fatal']) {
-            exit;
-        }
         return $ret;
     }
     
@@ -297,8 +297,10 @@ define ('YY_EOF' , 258);
                     $this->_lastBulletLen = $this->yylength();
                     return array(PHP_PARSER_DOCLEX_NBULLET, $this->yytext());
                 } else {
-                    echo "error, number should be ".($this->_lastNum + 1)." and is [".$this->yytext()."]\n";
-                    exit;
+                    $this->raiseError("simple list number should be ".($this->_lastNum + 1)." and is [".$this->yytext()."]\n",
+                    PHP_PARSER_DOCLEX_ERROR_NUMWRONG, true);
+                    $this->_fatal = true;
+                    return false;
                 }
             } elseif ($this->_listType == LIST_NUMBERED_DOT) {
                 $text = $this->yytext();
@@ -320,8 +322,10 @@ define ('YY_EOF' , 258);
                             $this->yy_buffer_end++;
                             $this->yy_buffer_index++;
                         } else {
-                            echo "error, no dot[".$this->yytext()."]\n";
-                            exit;
+                            $this->raiseError("error, no dot[".$this->yytext()."]\n",
+                            PHP_PARSER_DOCLEX_ERROR_NODOT, true);
+                            $this->_fatal = true;
+                            return false;
                         }
                     }
                 }

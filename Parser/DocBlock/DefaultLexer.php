@@ -16,6 +16,8 @@ define('INPRE',11);
 define('LIST_NUMBERED',0);
 define('LIST_NUMBERED_DOT',1);
 define('LIST_UNORDERED',2);
+define('PHP_PARSER_DOCLEX_ERROR_NUMWRONG', -1);
+define('PHP_PARSER_DOCLEX_ERROR_NODOT', -2);
 $a = 0;
 define('PHP_PARSER_DOCLEX_BULLET', ++$a); // unordered '-' list item bullet
 define('PHP_PARSER_DOCLEX_NBULLET', ++$a); // numbered '1' list number bullet
@@ -208,9 +210,6 @@ class PHP_Parser_DocBlock_DefaultLexer
             PHP_PARSER_DOCBLOCK_DEFAULTLEXER_ERROR,
             'error', $params,
             $m);
-        if ($params['fatal']) {
-            exit;
-        }
         return $ret;
     }
     function setup($data)
@@ -253,8 +252,10 @@ class PHP_Parser_DocBlock_DefaultLexer
                     $this->_lastBulletLen = $this->yylength();
                     return array(PHP_PARSER_DOCLEX_NBULLET, $this->yytext());
                 } else {
-                    echo "error, number should be ".($this->_lastNum + 1)." and is [".$this->yytext()."]\n";
-                    exit;
+                    $this->raiseError("simple list number should be ".($this->_lastNum + 1)." and is [".$this->yytext()."]\n",
+                    PHP_PARSER_DOCLEX_ERROR_NUMWRONG, true);
+                    $this->_fatal = true;
+                    return false;
                 }
             } elseif ($this->_listType == LIST_NUMBERED_DOT) {
                 $text = $this->yytext();
@@ -276,8 +277,10 @@ class PHP_Parser_DocBlock_DefaultLexer
                             $this->yy_buffer_end++;
                             $this->yy_buffer_index++;
                         } else {
-                            echo "error, no dot[".$this->yytext()."]\n";
-                            exit;
+                            $this->raiseError("error, no dot[".$this->yytext()."]\n",
+                            PHP_PARSER_DOCLEX_ERROR_NODOT, true);
+                            $this->_fatal = true;
+                            return false;
                         }
                     }
                 }
@@ -400,6 +403,7 @@ class PHP_Parser_DocBlock_DefaultLexer
     var $yy_buffer_index;
     var $yy_buffer_read;
     var $yy_buffer_start;
+    var $_fatal = false;
     var $yy_buffer_end;
     var $yy_buffer;
     var $yychar;
@@ -540,6 +544,7 @@ class PHP_Parser_DocBlock_DefaultLexer
     function yy_error ($code,$fatal)
     {
         if (method_exists($this,'raiseError')) { 
+        $this->fatal = $fatal;
  	    return $this->raiseError($code, $this->yy_error_string[$code], $fatal); 
  	}
         echo $this->yy_error_string[$code];
@@ -1268,6 +1273,9 @@ class PHP_Parser_DocBlock_DefaultLexer
             } else {
                 if (YY_NO_STATE == $yy_last_accept_state) {
                     $this->yy_error(1,1);
+                    if ($this->_fatal) {
+                        return;
+                    }
                 } else {
                     $yy_anchor = $this->yy_acpt[$yy_last_accept_state];
                     if (0 != (YY_END & $yy_anchor)) {
@@ -1275,9 +1283,12 @@ class PHP_Parser_DocBlock_DefaultLexer
                     }
                     $this->yy_to_mark();
                     if ($yy_last_accept_state < 0) {
-                       if ($yy_last_accept_state < 151) {
-                           $this->yy_error(YY_E_INTERNAL, false);
-                       }
+                        if ($yy_last_accept_state < 151) {
+                            $this->yy_error(YY_E_INTERNAL, false);
+                            if ($this->_fatal) {
+                                return;
+                            }
+                        }
                     } else {
 
                         switch ($yy_last_accept_state) {
@@ -1288,11 +1299,7 @@ case 2:
         if ($this->debug) echo "initial double newline ".strlen($this->yytext())."\n";
         return array(PHP_PARSER_DOCLEX_DOUBLENL, $this->yytext());
     }
-    if ($this->yy_lexical_state == INLINEINTERNALTAG) $this->fuck = true;
     if ($this->debug) echo "initial newline ".strlen($this->yytext())."\n";
-    if (isset($this->fuck)) {
-        $this->fuckyou = true;
-    }
     return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
 }
 case 3:
@@ -1559,7 +1566,6 @@ case 17:
             break;
         }
     } else {
-        $this->fuck = true;
         if ($this->debug) echo "3 normal desc text [".$this->yytext()."]\n";
         return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
     }
@@ -1864,7 +1870,6 @@ case 40:
             break;
         }
     } else {
-        $this->fuck = true;
         if ($this->debug) echo "3 normal desc text [".$this->yytext()."]\n";
         return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
     }
@@ -2090,7 +2095,6 @@ case 51:
             break;
         }
     } else {
-        $this->fuck = true;
         if ($this->debug) echo "3 normal desc text [".$this->yytext()."]\n";
         return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
     }
@@ -2289,7 +2293,6 @@ case 60:
             break;
         }
     } else {
-        $this->fuck = true;
         if ($this->debug) echo "3 normal desc text [".$this->yytext()."]\n";
         return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
     }
@@ -2483,7 +2486,6 @@ case 68:
             break;
         }
     } else {
-        $this->fuck = true;
         if ($this->debug) echo "3 normal desc text [".$this->yytext()."]\n";
         return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
     }
@@ -2606,7 +2608,6 @@ case 72:
             break;
         }
     } else {
-        $this->fuck = true;
         if ($this->debug) echo "3 normal desc text [".$this->yytext()."]\n";
         return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
     }
@@ -2729,7 +2730,6 @@ case 76:
             break;
         }
     } else {
-        $this->fuck = true;
         if ($this->debug) echo "3 normal desc text [".$this->yytext()."]\n";
         return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
     }
@@ -2852,7 +2852,6 @@ case 80:
             break;
         }
     } else {
-        $this->fuck = true;
         if ($this->debug) echo "3 normal desc text [".$this->yytext()."]\n";
         return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
     }
@@ -2975,7 +2974,6 @@ case 84:
             break;
         }
     } else {
-        $this->fuck = true;
         if ($this->debug) echo "3 normal desc text [".$this->yytext()."]\n";
         return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
     }
@@ -3046,7 +3044,6 @@ case 87:
             break;
         }
     } else {
-        $this->fuck = true;
         if ($this->debug) echo "3 normal desc text [".$this->yytext()."]\n";
         return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
     }
@@ -3108,7 +3105,6 @@ case 89:
             break;
         }
     } else {
-        $this->fuck = true;
         if ($this->debug) echo "3 normal desc text [".$this->yytext()."]\n";
         return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
     }
@@ -3177,7 +3173,6 @@ case 129:
             break;
         }
     } else {
-        $this->fuck = true;
         if ($this->debug) echo "3 normal desc text [".$this->yytext()."]\n";
         return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
     }
@@ -3305,7 +3300,6 @@ case 137:
             break;
         }
     } else {
-        $this->fuck = true;
         if ($this->debug) echo "3 normal desc text [".$this->yytext()."]\n";
         return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
     }
@@ -3428,7 +3422,6 @@ case 141:
             break;
         }
     } else {
-        $this->fuck = true;
         if ($this->debug) echo "3 normal desc text [".$this->yytext()."]\n";
         return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
     }
@@ -3583,6 +3576,9 @@ case 150:
 }
 
                         }
+                    }
+                    if ($this->_fatal) {
+                        return;
                     }
                     $yy_initial = true;
                     $yy_state = $this->yy_state_dtrans[$this->yy_lexical_state];
