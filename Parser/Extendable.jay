@@ -80,144 +80,14 @@ class PHP_Parser_Extendable {
     /**
      * Set up options for parsing
      *
+     * This class is designed to be extended, and so does not contain
+     * any options
      * @see $_options
      */
     function __construct($options = array())
     {
-        $this->_options['classContainer'] =
-        $this->_options['includeContainer'] =
-        $this->_options['functionContainer'] =
-        $this->_options['globalContainer'] =
-        $this->_options['varContainer'] =
-        $this->_options['constContainer'] =
-        $this->_options['classConstContainer'] =
-        $this->_options['methodContainer'] =
-        $this->_options['publisher'] =
-        $this->_options['publishMethod'] =
-        $this->_options['publishMessageClass'] =
-        $this->_options['publishClasses'] =
-        $this->_options['publishClassMessage'] =
-        $this->_options['publishIncludes'] =
-        $this->_options['publishIncludeMessage'] =
-        $this->_options['publishFunctions'] =
-        $this->_options['publishFunctionMessage'] =
-        $this->_options['publishGlobals'] =
-        $this->_options['publishGlobalMessage'] =
-        $this->_options['publishVars'] =
-        $this->_options['publishVarMessage'] =
-        $this->_options['publishClassConsts'] =
-        $this->_options['publishClassConstMessage'] =
-        $this->_options['publishMethods'] =
-        $this->_options['publishMethodMessage'] =
-        $this->_options['publishConsts'] =
-        $this->_options['publishConstMessage'] =
-        false;
-        $this->_options = array_merge($this->_options, $options);
-        if (!class_exists($this->_options['classContainer'])) {
-            $this->_options['classContainer'] = false;
-        }
-        if (!class_exists($this->_options['includeContainer'])) {
-            $this->_options['includeContainer'] = false;
-        }
-        if (!class_exists($this->_options['functionContainer'])) {
-            $this->_options['functionContainer'] = false;
-        }
-        if (!class_exists($this->_options['globalContainer'])) {
-            $this->_options['globalContainer'] = false;
-        }
-        if (!class_exists($this->_options['varContainer'])) {
-            $this->_options['varContainer'] = false;
-        }
-        if (!class_exists($this->_options['constContainer'])) {
-            $this->_options['constContainer'] = false;
-        }
-        if (!class_exists($this->_options['classConstContainer'])) {
-            $this->_options['classConstContainer'] = false;
-        }
-        if (!class_exists($this->_options['methodContainer'])) {
-            $this->_options['methodContainer'] = false;
-        }
-        if (!is_object($this->_options['publisher'])) {
-            $this->_options['publisher'] = false;
-        } else {
-            if (!method_exists($this->_options['publisher'], $this->_options['publishMethod'])) {
-                $this->_options['publishMethod'] = false;
-                if (!method_exists($this->_options['publisher'], 'publish')) {
-                    $this->_options['publisher'] = false;
-                } else {
-                    $this->_options['publishMethod'] = 'publish';
-                }
-            } else {
-                if (!class_exists($this->_options['publishMessageClass'])) {
-                    $this->_options['publishMessageClass'] = false;
-                }
-            }
-        }
+        $this->_errors = PHP_Parser_Stack::singleton('PHP_Parser_Extendable');
     }
-
-    /**
-     * array of classes => array(methods => ...., vars => ....)
-     *
-     * @var array
-     * @access public 
-     */
-
-    var $classes = array();
-    /**
-     * array of includes
-     *
-     * @var array
-     * @access public 
-     */
-    var $includes = array();
-
-    /**
-     * array of functions
-     *
-     * @var array
-     * @access public 
-     */
-    var $functions = array();
-
-    /**
-     * array of global variables
-     *
-     * @var array
-     * @access public 
-     */
-    var $globals = array();
-
-    /**
-     * array of super-global variables used in
-     * non-procedural global code (page-level parameters)
-     *
-     * @var array
-     * @access public 
-     */
-    var $filesuperglobals = array();
-
-    /**
-     * array of variables referenced in source code
-     *
-     * @var array
-     * @access public 
-     */
-    var $referencedVars = array();
-    
-    /**
-     * File Summary documentation (page-level DocBlock in phpDocumentor)
-     * @var string
-     * @access public
-     */
-    var $documentation;
-
-    /**
-     * array of global constants
-     *
-     * @var array
-     * @access public 
-     */
-    var $constants = array();
 
     /**
      * global variable name of parser arrays
@@ -226,7 +96,7 @@ class PHP_Parser_Extendable {
      * @var string
      * @access private 
      */
-    var $yyGlobalName = '_PHP_PARSER';
+    var $yyGlobalName = '_PHP_PARSER_EXTENDABLE';
 
     /**
      * Global Variable helper routine
