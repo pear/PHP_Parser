@@ -91,7 +91,7 @@ define ('YY_BUFFER_SIZE', 4096);
 define ('YY_F' , -1);
 define ('YY_NO_STATE', -1);
 define ('YY_NOT_ACCEPT' ,  0);
-define ('yybegin' , 1);
+define ('YY_START' , 1);
 define ('YY_END' , 2);
 define ('YY_NO_ANCHOR' , 4);
 define ('YY_BOL' , 257);
