@@ -286,11 +286,11 @@ class PHP_Parser_Tokenizer {
         $this->lastCommentLine = $this->line;
         $this->lastCommentToken = $this->pos;
         if ($this->_options['documentationParser']) {
-            $parser = &$this->_options['documentationParser'];
-            $this->lastComment = $parser->parse($this->lastComment,
-                                                $this->lastCommentLine,
-                                                $this->lastCommentToken,
-                                                $this->_options['documentationLexer']);
+            $parser = $this->_options['documentationParser'];
+            $this->lastComment = $parser->parse(array('lastcomment' => $this->lastComment,
+                                                      'lastcommentline' => $this->lastCommentLine,
+                                                      'lastcommentoken' => $this->lastCommentToken,
+                                                      'lexer' => $this->_options['documentationLexer']));
         }
         if ($this->_options['publishAllDocumentation']) {
             $publish = $this->_options['publishMethod'];
