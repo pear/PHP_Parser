@@ -1025,6 +1025,7 @@ simplelistend:
     T_SIMPLELIST_NL
     |   T_SIMPLELIST_END
     |   EOF
+    |   T_SIMPLELIEST_NL T_WHITESPACE T_SIMPLELIST_END
 ;
 
 

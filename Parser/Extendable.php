@@ -52,26 +52,16 @@ class PHP_Parser_Extendable {
      * Options, used to control how the parser collects
      * and distributes the data it finds.
      *
-     * Currently, options are grouped into two categories:
-     * - containers for data
-     * - publishing of data
-     *
-     * Default action is to return arrays of parsed data
-     * for use by other applications.  The first set of
-     * options, container options, provide a means to
-     * tell the parser to encapsulate data in objects
-     * instead of in arrays.  The option tells the parser which
-     * class to instantiate for each documentable element.  The
-     * default value of false will prompt the usage of arrays
-     * instead.
-     *
-     * The second set of options provide for intermediary
-     * publishing of data while parsing, to allow other
-     * classes to hook into functionality if they desire
+     * - preservewhitespace: This option, if set to true, tells the
+     *   parser to prepend all whitespace to each token.  This is useful
+     *   for parsers that wish to preserve the exact look of the source, like
+     *   syntax highlighters
      * @var array
      * @access private
      */
-    var $_options = array();
+    var $_options = array(
+            'preservewhitespace' => false,
+        );
     
     /**
      * @var boolean
@@ -92,11 +82,11 @@ class PHP_Parser_Extendable {
      */
     var $_lastConst = false;
     /**
-     * @var PHP_Parser_Stack
+     * @var PEAR_ErrorStack
      */
     function PHP_Parser_Extendable($options = array())
     {
-        $this->_errors = PHP_Parser_Stack::singleton('PHP_Parser_Extendable');
+        $this->_errors = PEAR_ErrorStack::singleton('PHP_Parser_Extendable');
     }
     
     /**
@@ -118,7 +108,7 @@ class PHP_Parser_Extendable {
         } else {
             $m = $message;
         }
-        return PHP_Parser_Stack::staticPush('PHP_Parser_Extendable',
+        return PEAR_ErrorStack::staticPush('PHP_Parser_Extendable',
             PHP_PARSER_EXTENDABLE_ERROR_PARSE,
             'error', $params,
             $m);  
@@ -204,7 +194,84 @@ class PHP_Parser_Extendable {
     {
         $this->documentation = $message;
     }
-					// line 208 "-"
+    
+    /**
+     * Handles the top_statement_list rule
+     * @see top_statement()
+     * @param integer top of the stack, use with $this->yyVal and $this->yW
+     * @param mixed
+     * @param mixed
+     */
+    function top_statement_list($yyTop, $top_statement_list, $top_statement)
+    {
+        return $this->yyVal[$yyTop];
+    }
+    
+    /**
+     * Handles the top_statement rule
+     * @see top_statement()
+     * @param integer top of the stack, use with $this->yyVal and $this->yW
+     * @param mixed
+     * @param statement|function_declaration_statement|class_declaration_statement
+     */
+    function top_statement($yyTop, $param, $top_statementType)
+    {
+        return $this->yyVal[$yyTop];
+    }
+    
+    /**
+     * Handles the inner_statement_list rule
+     * @see inner_statement()
+     * @param integer top of the stack, use with $this->yyVal and $this->yW
+     * @param mixed
+     * @param statement|function_declaration_statement|class_declaration_statement
+     */
+    function inner_statement_list($yyTop, $inner_statement_list, $inner_statement)
+    {
+        return $this->yyVal[$yyTop];
+    }
+    
+    /**
+     * Handles the inner_statement rule
+     * @see top_statement()
+     * @param integer top of the stack, use with $this->yyVal and $this->yW
+     * @param mixed
+     * @param statement|function_declaration_statement|class_declaration_statement
+     */
+    function inner_statement($yyTop, $param, $inner_statementType)
+    {
+        return $this->yyVal[$yyTop];
+    }
+    
+    /**
+     * Handles the unticked_statement '{' inner_statement_list '}' rule
+     * @param integer top of the stack, use with $this->yyVal and $this->yW
+     * @param { With whitespace if preservewhitespace option is true
+     * @param mixed an {@link inner_statement_list() inner_statement_list} rule
+     * @param } With whitespace if preservewhitespace option is true
+     */
+    function unticked_statement_isl($yyTop, $leftBracket, $inner_statement_list, $rightBracket)
+    {
+        return $this->yyVal[$yyTop];
+    }
+    
+    /**
+     * Handles the unticked_statement T_IF '(' expr ')'  statement  elseif_list else_single rule
+     * @param integer top of the stack, use with $this->yyVal and $this->yW
+     * @param T_IF With whitespace if preservewhitespace option is true
+     * @param ( With whitespace if preservewhitespace option is true
+     * @param mixed an expr rule
+     * @param ) With whitespace if preservewhitespace option is true
+     * @param mixed a statement
+     * @param mixed an elseif_list rule
+     * @param mixed an else_single rule
+     */
+    function unticked_statement_if1($yyTop, $if, $leftParens, $expr, $rightParens, $statement,
+                                    $elseif_list, $else_single)
+    {
+        return $this->yyVal[$yyTop];
+    }
+					// line 275 "-"
 
     /**
      * thrown for irrecoverable syntax errors and stack overflow.
@@ -471,21 +538,80 @@ class PHP_Parser_Extendable {
     }
 
 
-    function _24($yyTop)  					// line 394 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _1($yyTop)  					// line 412 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    {
+		    $this->yyVal = $this->top_statement_list($yyTop, $this->yyVals[-1+$yyTop], $this->yyVals[0+$yyTop]);
+		}
+
+    function _3($yyTop)  					// line 420 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    {
+		    $this->yyVal = $this->top_statement($yyTop, $this->yyVals[0+$yyTop], 'statement');
+		}
+
+    function _4($yyTop)  					// line 424 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    {
+		    $this->yyVal = $this->top_statement($yyTop, $this->yyVals[0+$yyTop], 'function_declaration_statement');
+		}
+
+    function _5($yyTop)  					// line 428 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    {
+		    $this->yyVal = $this->top_statement($yyTop, $this->yyVals[0+$yyTop], 'class_declaration_statement');
+		}
+
+    function _6($yyTop)  					// line 436 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    {
+		    $this->yyVal = $this->inner_statement_list($yyTop, $this->yyVals[-1+$yyTop], $this->yyVals[0+$yyTop]);
+		}
+
+    function _8($yyTop)  					// line 445 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    {
+		    $this->yyVal = $this->inner_statement($yyTop, $this->yyVals[0+$yyTop], 'statement');
+		}
+
+    function _9($yyTop)  					// line 449 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    {
+		    $this->yyVal = $this->inner_statement($yyTop, $this->yyVals[0+$yyTop], 'function_declaration_statement');
+		}
+
+    function _10($yyTop)  					// line 453 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    {
+		    $this->yyVal = $this->inner_statement($yyTop, $this->yyVals[0+$yyTop], 'class_declaration_statement');
+		}
+
+    function _12($yyTop)  					// line 465 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    {
+		    if ($this->_options['preservewhitespace']) {
+		        $this->yyVal = $this->unticked_statement_isl($yyTop, $this->yW[$yyTop - 2], $this->yyVals[-1+$yyTop], $this->yW[$yyTop]);
+		    } else {
+		        $this->yyVal = $this->unticked_statement_isl($yyTop, $this->yyVals[-2+$yyTop], $this->yyVals[-1+$yyTop], $this->yyVals[0+$yyTop]);
+		    }
+		}
+
+    function _13($yyTop)  					// line 473 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    {
+	    if ($this->_options['preservewhitespace']) {
+	        $this->yyVal = $this->unticked_statement_if1($yyTop, $this->yW[$yyTop - 6], $this->yW[$yyTop - 5], $this->yyVals[-4+$yyTop], $this->yW[$yyTop - 3],
+	               $this->yyVals[-2+$yyTop], $this->yyVals[-1+$yyTop], $this->yyVals[0+$yyTop]);
+	    } else {
+	        $this->yyVal = $this->unticked_statement_if1($yyTop, $this->yyVals[-6+$yyTop], $this->yyVals[-5+$yyTop], $this->yyVals[-4+$yyTop], $this->yyVals[-3+$yyTop], $this->yyVals[-2+$yyTop], $this->yyVals[-1+$yyTop], $this->yyVals[0+$yyTop]);
+	    }
+	}
+
+    function _24($yyTop)  					// line 500 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if (isset($this->returns)) {
             $this->returns[] = trim($this->yyVals[-1+$yyTop]);
         }
     }
 
-    function _25($yyTop)  					// line 400 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _25($yyTop)  					// line 506 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if (isset($this->returns)) {
             $this->returns[] = trim($this->yyVals[-1+$yyTop]);
         }
     }
 
-    function _37($yyTop)  					// line 420 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _37($yyTop)  					// line 526 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if (isset($this->catches)) {
             $this->catches[] = trim($this->yyVals[-6+$yyTop]);
@@ -495,12 +621,12 @@ class PHP_Parser_Extendable {
         }
     }
 
-    function _38($yyTop)  					// line 429 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _38($yyTop)  					// line 535 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->_get_class = true;
     }
 
-    function _39($yyTop)  					// line 432 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _39($yyTop)  					// line 538 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->_get_class = false;
         if (isset($this->throws)) {
@@ -508,7 +634,7 @@ class PHP_Parser_Extendable {
         }
     }
 
-    function _44($yyTop)  					// line 452 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _44($yyTop)  					// line 558 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if (isset($this->catches)) {
             $this->catches[] = trim($this->yyVals[-5+$yyTop]);
@@ -518,7 +644,7 @@ class PHP_Parser_Extendable {
         }
     }
 
-    function _45($yyTop)  					// line 461 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _45($yyTop)  					// line 567 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if (isset($this->catches)) {
             $this->catches[] = trim($this->yyVals[-5+$yyTop]);
@@ -528,22 +654,22 @@ class PHP_Parser_Extendable {
         }
     }
 
-    function _47($yyTop)  					// line 475 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _47($yyTop)  					// line 581 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _53($yyTop)  					// line 501 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _53($yyTop)  					// line 607 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = false;
     }
 
-    function _54($yyTop)  					// line 505 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _54($yyTop)  					// line 611 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = true;
     }
 
-    function _55($yyTop)  					// line 513 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _55($yyTop)  					// line 619 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->functionLine = $this->yyLex->line; 
         $this->functionPos = $this->yyLex->pos;
@@ -567,7 +693,7 @@ class PHP_Parser_Extendable {
         }
     }
 
-    function _56($yyTop)  					// line 536 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _56($yyTop)  					// line 642 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->referencedClasses = array_values(array_unique($this->referencedClasses));
         $this->referencedFunctions = array_values(array_unique($this->referencedFunctions));
@@ -632,7 +758,7 @@ class PHP_Parser_Extendable {
         unset($this->referencedClasses);
     }
 
-    function _57($yyTop)  					// line 602 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _57($yyTop)  					// line 708 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->classLine = $this->yyLex->line; 
         $this->classPos = $this->yyLex->pos;
@@ -641,7 +767,7 @@ class PHP_Parser_Extendable {
         $this->classCommentToken = $this->yyLex->lastCommentToken;
     }
 
-    function _58($yyTop)  					// line 609 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _58($yyTop)  					// line 715 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->methods = array();
         $this->vars = array();
@@ -649,7 +775,7 @@ class PHP_Parser_Extendable {
         $this->implementsInterfaces = array();
     }
 
-    function _59($yyTop)  					// line 619 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _59($yyTop)  					// line 725 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $name = trim($this->yyVals[-6+$yyTop]);
         if ($this->_options['classContainer']) {
@@ -705,7 +831,7 @@ class PHP_Parser_Extendable {
         unset($this->implementsInterfaces);
     }
 
-    function _60($yyTop)  					// line 672 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _60($yyTop)  					// line 778 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->classLine = $this->yyLex->line; 
         $this->classPos = $this->yyLex->pos;
@@ -715,14 +841,14 @@ class PHP_Parser_Extendable {
         $this->implementsInterfaces = array();
     }
 
-    function _61($yyTop)  					// line 680 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _61($yyTop)  					// line 786 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->methods = array();
         $this->vars = array();
         $this->consts = array();
     }
 
-    function _62($yyTop)  					// line 686 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _62($yyTop)  					// line 792 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $name = trim($this->yyVals[-5+$yyTop]);
         if ($this->_options['interfaceContainer']) {
@@ -775,111 +901,111 @@ class PHP_Parser_Extendable {
         unset($this->implementsInterfaces);
     }
 
-    function _63($yyTop)  					// line 740 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _63($yyTop)  					// line 846 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = '';
     }
 
-    function _64($yyTop)  					// line 744 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _64($yyTop)  					// line 850 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = 'abstract';
     }
 
-    function _65($yyTop)  					// line 748 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _65($yyTop)  					// line 854 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = 'final';
     }
 
-    function _66($yyTop)  					// line 755 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _66($yyTop)  					// line 861 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = '';
     }
 
-    function _67($yyTop)  					// line 759 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _67($yyTop)  					// line 865 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[0+$yyTop];
     }
 
-    function _68($yyTop)  					// line 766 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _68($yyTop)  					// line 872 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = 'interface';
     }
 
-    function _73($yyTop)  					// line 783 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _73($yyTop)  					// line 889 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if (isset($this->implementsInterfaces)) {
             $this->implementsInterfaces[] = trim($this->yyVals[0+$yyTop]);
         }
     }
 
-    function _74($yyTop)  					// line 789 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _74($yyTop)  					// line 895 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if (isset($this->implementsInterfaces)) {
             $this->implementsInterfaces[] = trim($this->yyVals[0+$yyTop]);
         }
     }
 
-    function _106($yyTop)  					// line 885 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _106($yyTop)  					// line 991 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->params[$this->yyVals[0+$yyTop]] = array('default' => null, 'type' => $this->yyVals[-1+$yyTop], 'isReference' => false);
     }
 
-    function _107($yyTop)  					// line 889 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _107($yyTop)  					// line 995 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->params[$this->yyVals[0+$yyTop]] = array('default' => null, 'type' => $this->yyVals[-2+$yyTop], 'isReference' => true);
     }
 
-    function _108($yyTop)  					// line 893 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _108($yyTop)  					// line 999 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->params[$this->yyVals[-2+$yyTop]] = array('default' => trim($this->yyVals[0+$yyTop]), 'type' => $this->yyVals[-4+$yyTop], 'isReference' => true);
     }
 
-    function _109($yyTop)  					// line 897 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _109($yyTop)  					// line 1003 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->params[$this->yyVals[-2+$yyTop]] = array('default' => trim($this->yyVals[0+$yyTop]), 'type' => $this->yyVals[-3+$yyTop], 'isReference' => false);
     }
 
-    function _110($yyTop)  					// line 901 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _110($yyTop)  					// line 1007 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->params[$this->yyVals[0+$yyTop]] = array('default' => null, 'type' => $this->yyVals[-1+$yyTop], 'isReference' => false);
     }
 
-    function _111($yyTop)  					// line 905 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _111($yyTop)  					// line 1011 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->params[$this->yyVals[0+$yyTop]] = array('default' => null, 'type' => $this->yyVals[-2+$yyTop], 'isReference' => true);
     }
 
-    function _112($yyTop)  					// line 909 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _112($yyTop)  					// line 1015 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->params[$this->yyVals[-2+$yyTop]] = array('default' => trim($this->yyVals[0+$yyTop]), 'type' => $this->yyVals[-4+$yyTop], 'isReference' => true);
     }
 
-    function _113($yyTop)  					// line 913 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _113($yyTop)  					// line 1019 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->params[$this->yyVals[-2+$yyTop]] = array('default' => trim($this->yyVals[0+$yyTop]), 'type' => $this->yyVals[-3+$yyTop], 'isReference' => false);
     }
 
-    function _114($yyTop)  					// line 921 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _114($yyTop)  					// line 1027 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = '';
     }
 
-    function _115($yyTop)  					// line 925 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _115($yyTop)  					// line 1031 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[0+$yyTop];
     }
 
-    function _117($yyTop)  					// line 934 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _117($yyTop)  					// line 1040 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = '';
     }
 
-    function _120($yyTop)  					// line 944 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _120($yyTop)  					// line 1050 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _121($yyTop)  					// line 948 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _121($yyTop)  					// line 1054 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if ($this->_grabDefine) {
             $this->defineName = trim($this->yyVals[-2+$yyTop]);
@@ -888,7 +1014,7 @@ class PHP_Parser_Extendable {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _122($yyTop)  					// line 956 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _122($yyTop)  					// line 1062 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if ($this->_grabDefine) {
             $this->defineName = trim($this->yyVals[-2+$yyTop]);
@@ -897,7 +1023,7 @@ class PHP_Parser_Extendable {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _123($yyTop)  					// line 964 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _123($yyTop)  					// line 1070 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if ($this->_grabDefine) {
             $this->defineName = trim($this->yyVals[-3+$yyTop]);
@@ -906,42 +1032,42 @@ class PHP_Parser_Extendable {
         $this->yyVal = $this->yyVals[-3+$yyTop] . $this->yW[$yyTop - 2] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _126($yyTop)  					// line 981 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _126($yyTop)  					// line 1087 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->funcglobals[] = $this->yyVals[0+$yyTop];
     }
 
-    function _127($yyTop)  					// line 985 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _127($yyTop)  					// line 1091 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->funcglobals[] = '$' . $this->yyVals[-1+$yyTop];
     }
 
-    function _128($yyTop)  					// line 989 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _128($yyTop)  					// line 1095 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->funcglobals[] = '${' . $this->yyVals[-1+$yyTop] . '}';
     }
 
-    function _129($yyTop)  					// line 997 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _129($yyTop)  					// line 1103 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->statics[] = array('name' => $this->yyVals[0+$yyTop], 'default' => null);
     }
 
-    function _130($yyTop)  					// line 1001 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _130($yyTop)  					// line 1107 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->statics[] = array('name' => $this->yyVals[-2+$yyTop], 'default' => trim($this->yyVals[0+$yyTop]));
     }
 
-    function _131($yyTop)  					// line 1005 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _131($yyTop)  					// line 1111 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->statics[] = array('name' => $this->yyVals[0+$yyTop], 'default' => null);
     }
 
-    function _132($yyTop)  					// line 1009 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _132($yyTop)  					// line 1115 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->statics[] = array('name' => $this->yyVals[-2+$yyTop], 'default' => trim($this->yyVals[0+$yyTop]));
     }
 
-    function _135($yyTop)  					// line 1023 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _135($yyTop)  					// line 1129 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         foreach($this->yyVals[0+$yyTop] as $var) {
             $is_static = false;
@@ -984,7 +1110,7 @@ class PHP_Parser_Extendable {
         }
     }
 
-    function _138($yyTop)  					// line 1065 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _138($yyTop)  					// line 1171 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->methodLine = $this->yyLex->line; 
         $this->methodPos = $this->yyLex->pos;
@@ -993,7 +1119,7 @@ class PHP_Parser_Extendable {
         $this->methodCommentToken = $this->yyLex->lastCommentToken;
     }
 
-    function _139($yyTop)  					// line 1073 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _139($yyTop)  					// line 1179 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->throws = array();
         $this->catches = array();
@@ -1008,7 +1134,7 @@ class PHP_Parser_Extendable {
         $this->superglobals = array();
     }
 
-    function _140($yyTop)  					// line 1087 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _140($yyTop)  					// line 1193 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $is_static = false;
         $is_abstract = false;
@@ -1112,68 +1238,68 @@ class PHP_Parser_Extendable {
         unset($this->superglobals);
     }
 
-    function _143($yyTop)  					// line 1197 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _143($yyTop)  					// line 1303 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[0+$yyTop];
     }
 
-    function _144($yyTop)  					// line 1201 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _144($yyTop)  					// line 1307 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = array('public');
     }
 
-    function _145($yyTop)  					// line 1208 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _145($yyTop)  					// line 1314 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = array('public');
     }
 
-    function _146($yyTop)  					// line 1212 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _146($yyTop)  					// line 1318 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[0+$yyTop];
     }
 
-    function _147($yyTop)  					// line 1219 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _147($yyTop)  					// line 1325 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = array($this->yyVals[0+$yyTop]);
     }
 
-    function _148($yyTop)  					// line 1223 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _148($yyTop)  					// line 1329 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop];
         $this->yyVal[] = $this->yyVals[0+$yyTop];
     }
 
-    function _149($yyTop)  					// line 1231 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _149($yyTop)  					// line 1337 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = 'public';
     }
 
-    function _150($yyTop)  					// line 1235 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _150($yyTop)  					// line 1341 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = 'protected';
     }
 
-    function _151($yyTop)  					// line 1239 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _151($yyTop)  					// line 1345 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = 'private';
     }
 
-    function _152($yyTop)  					// line 1243 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _152($yyTop)  					// line 1349 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = 'static';
     }
 
-    function _153($yyTop)  					// line 1247 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _153($yyTop)  					// line 1353 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = 'abstract';
     }
 
-    function _154($yyTop)  					// line 1251 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _154($yyTop)  					// line 1357 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = 'final';
     }
 
-    function _155($yyTop)  					// line 1258 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _155($yyTop)  					// line 1364 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop];
         if ($this->_options['varContainer']) {
@@ -1195,13 +1321,13 @@ class PHP_Parser_Extendable {
         }
     }
 
-    function _156($yyTop)  					// line 1280 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _156($yyTop)  					// line 1386 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->_varLine = $this->yyLex->line;
         
     }
 
-    function _157($yyTop)  					// line 1284 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _157($yyTop)  					// line 1390 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-5+$yyTop];
         if ($this->_options['varContainer']) {
@@ -1224,7 +1350,7 @@ class PHP_Parser_Extendable {
         }
     }
 
-    function _158($yyTop)  					// line 1307 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _158($yyTop)  					// line 1413 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if ($this->_options['varContainer']) {
             $container = $this->_options['varContainer'];
@@ -1245,12 +1371,12 @@ class PHP_Parser_Extendable {
         }
     }
 
-    function _159($yyTop)  					// line 1327 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _159($yyTop)  					// line 1433 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->_varLine = $this->yyLex->line;
     }
 
-    function _160($yyTop)  					// line 1330 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _160($yyTop)  					// line 1436 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if ($this->_options['varContainer']) {
             $container = $this->_options['varContainer'];
@@ -1272,14 +1398,14 @@ class PHP_Parser_Extendable {
         }
     }
 
-    function _161($yyTop)  					// line 1354 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _161($yyTop)  					// line 1460 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $lc = $this->yyLex->getLastComment();
         $this->constLine = $this->yyLex->line;
         $this->constComment = $lc[0];
     }
 
-    function _162($yyTop)  					// line 1359 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _162($yyTop)  					// line 1465 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if ($this->_options['classConstContainer']) {
             $container = $this->_options['classConstContainer'];
@@ -1317,14 +1443,14 @@ class PHP_Parser_Extendable {
         }
     }
 
-    function _163($yyTop)  					// line 1395 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _163($yyTop)  					// line 1501 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->constLine = $this->yyLex->line;
         $lc = $this->yyLex->getLastComment();
         $this->constComment = $lc[0];
     }
 
-    function _164($yyTop)  					// line 1400 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _164($yyTop)  					// line 1506 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if ($this->_options['classConstContainer']) {
             $container = $this->_options['classConstContainer'];
@@ -1362,18 +1488,18 @@ class PHP_Parser_Extendable {
         }
     }
 
-    function _171($yyTop)  					// line 1455 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _171($yyTop)  					// line 1561 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 5] . $this->yW[$yyTop - 4] . $this->yyVals[-3+$yyTop] . 
             $this->yW[$yyTop - 2] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _172($yyTop)  					// line 1460 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _172($yyTop)  					// line 1566 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->_initGlobal(trim($this->yyVals[-1+$yyTop]));
     }
 
-    function _173($yyTop)  					// line 1463 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _173($yyTop)  					// line 1569 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if ($this->_inGlobal) {
             $this->_processGlobal($this->yyVals[-3+$yyTop], $this->yyVals[0+$yyTop]);
@@ -1381,12 +1507,12 @@ class PHP_Parser_Extendable {
         $this->yyVal = $this->yyVals[-3+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _174($yyTop)  					// line 1470 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _174($yyTop)  					// line 1576 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->_initGlobal($this->yyVals[-2+$yyTop]);
     }
 
-    function _175($yyTop)  					// line 1473 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _175($yyTop)  					// line 1579 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if ($this->_inGlobal) {
             $this->_processGlobal($this->yyVals[-4+$yyTop], '&' .$this->yyVals[0+$yyTop]);
@@ -1394,12 +1520,12 @@ class PHP_Parser_Extendable {
         $this->yyVal = $this->yyVals[-4+$yyTop] . $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $this->yyVals[0+$yyTop];
     }
 
-    function _176($yyTop)  					// line 1480 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _176($yyTop)  					// line 1586 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->_initGlobal($this->yyVals[-3+$yyTop]);
     }
 
-    function _177($yyTop)  					// line 1483 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _177($yyTop)  					// line 1589 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if ($this->_inGlobal) {
             $this->_processGlobal($this->yyVals[-6+$yyTop], '&' . $this->yW[$yyTop - 4] . $this->yyVals[-1+$yyTop] . $this->yyVals[0+$yyTop]);
@@ -1411,7 +1537,7 @@ class PHP_Parser_Extendable {
         }
     }
 
-    function _178($yyTop)  					// line 1494 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _178($yyTop)  					// line 1600 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if ($this->_get_class) {
             $this->yyVal = $this->yyVals[-1+$yyTop];
@@ -1420,232 +1546,232 @@ class PHP_Parser_Extendable {
         }
     }
 
-    function _179($yyTop)  					// line 1502 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _179($yyTop)  					// line 1608 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _180($yyTop)  					// line 1506 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _180($yyTop)  					// line 1612 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _181($yyTop)  					// line 1510 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _181($yyTop)  					// line 1616 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _182($yyTop)  					// line 1514 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _182($yyTop)  					// line 1620 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _183($yyTop)  					// line 1518 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _183($yyTop)  					// line 1624 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _184($yyTop)  					// line 1522 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _184($yyTop)  					// line 1628 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _185($yyTop)  					// line 1526 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _185($yyTop)  					// line 1632 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _186($yyTop)  					// line 1530 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _186($yyTop)  					// line 1636 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _187($yyTop)  					// line 1534 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _187($yyTop)  					// line 1640 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _188($yyTop)  					// line 1538 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _188($yyTop)  					// line 1644 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _189($yyTop)  					// line 1542 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _189($yyTop)  					// line 1648 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _190($yyTop)  					// line 1546 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _190($yyTop)  					// line 1652 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _191($yyTop)  					// line 1550 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _191($yyTop)  					// line 1656 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _192($yyTop)  					// line 1554 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _192($yyTop)  					// line 1660 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _193($yyTop)  					// line 1558 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _193($yyTop)  					// line 1664 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _194($yyTop)  					// line 1562 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _194($yyTop)  					// line 1668 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _195($yyTop)  					// line 1566 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _195($yyTop)  					// line 1672 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _196($yyTop)  					// line 1570 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _196($yyTop)  					// line 1676 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _197($yyTop)  					// line 1574 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _197($yyTop)  					// line 1680 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _198($yyTop)  					// line 1578 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _198($yyTop)  					// line 1684 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _199($yyTop)  					// line 1582 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _199($yyTop)  					// line 1688 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _200($yyTop)  					// line 1586 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _200($yyTop)  					// line 1692 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _201($yyTop)  					// line 1590 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _201($yyTop)  					// line 1696 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _202($yyTop)  					// line 1594 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _202($yyTop)  					// line 1700 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _203($yyTop)  					// line 1598 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _203($yyTop)  					// line 1704 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _204($yyTop)  					// line 1602 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _204($yyTop)  					// line 1708 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _205($yyTop)  					// line 1606 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _205($yyTop)  					// line 1712 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _206($yyTop)  					// line 1610 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _206($yyTop)  					// line 1716 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _207($yyTop)  					// line 1614 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _207($yyTop)  					// line 1720 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _208($yyTop)  					// line 1618 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _208($yyTop)  					// line 1724 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _209($yyTop)  					// line 1622 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _209($yyTop)  					// line 1728 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _210($yyTop)  					// line 1626 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _210($yyTop)  					// line 1732 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _211($yyTop)  					// line 1630 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _211($yyTop)  					// line 1736 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _212($yyTop)  					// line 1634 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _212($yyTop)  					// line 1740 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _213($yyTop)  					// line 1638 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _213($yyTop)  					// line 1744 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _214($yyTop)  					// line 1642 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _214($yyTop)  					// line 1748 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _215($yyTop)  					// line 1646 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _215($yyTop)  					// line 1752 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _216($yyTop)  					// line 1650 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _216($yyTop)  					// line 1756 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _217($yyTop)  					// line 1654 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _217($yyTop)  					// line 1760 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _218($yyTop)  					// line 1658 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _218($yyTop)  					// line 1764 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _219($yyTop)  					// line 1662 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _219($yyTop)  					// line 1768 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _220($yyTop)  					// line 1666 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _220($yyTop)  					// line 1772 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _221($yyTop)  					// line 1670 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _221($yyTop)  					// line 1776 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _222($yyTop)  					// line 1674 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _222($yyTop)  					// line 1780 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _223($yyTop)  					// line 1678 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _223($yyTop)  					// line 1784 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _224($yyTop)  					// line 1682 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _224($yyTop)  					// line 1788 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if ($this->_get_class) {
             $this->yyVal = $this->yyVals[-1+$yyTop];
@@ -1654,73 +1780,73 @@ class PHP_Parser_Extendable {
         }
     }
 
-    function _225($yyTop)  					// line 1692 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _225($yyTop)  					// line 1798 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-4+$yyTop] . $this->yW[$yyTop - 3] . $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _227($yyTop)  					// line 1697 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _227($yyTop)  					// line 1803 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _228($yyTop)  					// line 1701 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _228($yyTop)  					// line 1807 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _229($yyTop)  					// line 1705 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _229($yyTop)  					// line 1811 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _230($yyTop)  					// line 1709 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _230($yyTop)  					// line 1815 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _231($yyTop)  					// line 1713 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _231($yyTop)  					// line 1819 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _232($yyTop)  					// line 1717 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _232($yyTop)  					// line 1823 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _233($yyTop)  					// line 1721 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _233($yyTop)  					// line 1827 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _234($yyTop)  					// line 1725 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _234($yyTop)  					// line 1831 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _235($yyTop)  					// line 1729 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _235($yyTop)  					// line 1835 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _237($yyTop)  					// line 1734 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _237($yyTop)  					// line 1840 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop]
             . $this->yW[$yyTop];
     }
 
-    function _238($yyTop)  					// line 1739 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _238($yyTop)  					// line 1845 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _239($yyTop)  					// line 1743 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _239($yyTop)  					// line 1849 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _240($yyTop)  					// line 1750 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _240($yyTop)  					// line 1856 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if (strtolower($this->yyVals[0+$yyTop]) == 'define') {
             $this->defineLine = $this->yyLex->line;
@@ -1732,7 +1858,7 @@ class PHP_Parser_Extendable {
         }
     }
 
-    function _241($yyTop)  					// line 1760 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _241($yyTop)  					// line 1866 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if (isset($this->referencedFunctions)) {
             $this->referencedFunctions[] = $this->yyVals[-4+$yyTop];
@@ -1788,17 +1914,17 @@ class PHP_Parser_Extendable {
         $this->yyVal = $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _242($yyTop)  					// line 1812 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _242($yyTop)  					// line 1918 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->referencedMethods[$this->_lastClassname][] = $this->_lastConst;
         $this->yyVal = $this->yyVals[-3+$yyTop] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _243($yyTop)  					// line 1817 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _243($yyTop)  					// line 1923 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
     }
 
-    function _244($yyTop)  					// line 1819 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _244($yyTop)  					// line 1925 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if (isset($this->referencedVars)) {
             foreach ($this->referencedVars[$this->_lastClassname] as $i => $var) {
@@ -1815,12 +1941,12 @@ class PHP_Parser_Extendable {
         $this->yyVal = $this->yyVals[-4+$yyTop] . $this->yW[$yyTop - 3] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _245($yyTop)  					// line 1836 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _245($yyTop)  					// line 1942 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-3+$yyTop] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _246($yyTop)  					// line 1844 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _246($yyTop)  					// line 1950 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if (isset($this->referencedClasses) && strtolower($this->yyVals[0+$yyTop]) != 'self' && strtolower($this->yyVals[0+$yyTop]) != 'parent') {
             $this->referencedClasses[] = $this->yyVals[0+$yyTop];
@@ -1828,7 +1954,7 @@ class PHP_Parser_Extendable {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _247($yyTop)  					// line 1854 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _247($yyTop)  					// line 1960 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
             $this->yyVal = $this->yW[$yyTop];
             if (isset($this->referencedClasses)) {
@@ -1836,108 +1962,108 @@ class PHP_Parser_Extendable {
             }
         }
 
-    function _248($yyTop)  					// line 1861 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _248($yyTop)  					// line 1967 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[0+$yyTop];
     }
 
-    function _249($yyTop)  					// line 1870 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _249($yyTop)  					// line 1976 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
                 $this->yyVal = $this->yyVals[-3+$yyTop] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yyVals[0+$yyTop];
     }
 
-    function _251($yyTop)  					// line 1879 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _251($yyTop)  					// line 1985 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
             $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yyVals[0+$yyTop];
         }
 
-    function _253($yyTop)  					// line 1888 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _253($yyTop)  					// line 1994 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _254($yyTop)  					// line 1895 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _254($yyTop)  					// line 2001 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = '';
     }
 
-    function _255($yyTop)  					// line 1899 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _255($yyTop)  					// line 2005 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yW[$yyTop];
     }
 
-    function _256($yyTop)  					// line 1903 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _256($yyTop)  					// line 2009 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _257($yyTop)  					// line 1911 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _257($yyTop)  					// line 2017 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = '';
     }
 
-    function _258($yyTop)  					// line 1915 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _258($yyTop)  					// line 2021 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _259($yyTop)  					// line 1923 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _259($yyTop)  					// line 2029 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _260($yyTop)  					// line 1927 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _260($yyTop)  					// line 2033 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _261($yyTop)  					// line 1931 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _261($yyTop)  					// line 2037 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _262($yyTop)  					// line 1935 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _262($yyTop)  					// line 2041 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _263($yyTop)  					// line 1939 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _263($yyTop)  					// line 2045 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _265($yyTop)  					// line 1944 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _265($yyTop)  					// line 2050 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _266($yyTop)  					// line 1948 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _266($yyTop)  					// line 2054 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _268($yyTop)  					// line 1956 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _268($yyTop)  					// line 2062 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _269($yyTop)  					// line 1960 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _269($yyTop)  					// line 2066 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _270($yyTop)  					// line 1964 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _270($yyTop)  					// line 2070 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _271($yyTop)  					// line 1968 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _271($yyTop)  					// line 2074 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop]
             . $this->yW[$yyTop];
     }
 
-    function _273($yyTop)  					// line 1977 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _273($yyTop)  					// line 2083 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if (isset($this->referencedClasses)) {
             $this->referencedClasses[] = $this->yyVals[-2+$yyTop];
@@ -1945,67 +2071,67 @@ class PHP_Parser_Extendable {
         $this->yyVal = $this->yW[$yyTop - 2] . $this->yW[$yyTop - 1] . $this->yW[$yyTop];
     }
 
-    function _274($yyTop)  					// line 1987 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _274($yyTop)  					// line 2093 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _275($yyTop)  					// line 1991 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _275($yyTop)  					// line 2097 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _278($yyTop)  					// line 1997 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _278($yyTop)  					// line 2103 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _279($yyTop)  					// line 2001 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _279($yyTop)  					// line 2107 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _280($yyTop)  					// line 2005 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _280($yyTop)  					// line 2111 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _281($yyTop)  					// line 2013 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _281($yyTop)  					// line 2119 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = '';
     }
 
-    function _282($yyTop)  					// line 2017 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _282($yyTop)  					// line 2123 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yyVals[0+$yyTop];
     }
 
-    function _283($yyTop)  					// line 2024 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _283($yyTop)  					// line 2130 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = '';
     }
 
-    function _284($yyTop)  					// line 2028 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _284($yyTop)  					// line 2134 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _285($yyTop)  					// line 2035 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _285($yyTop)  					// line 2141 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-4+$yyTop] . $this->yW[$yyTop - 3] . $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _286($yyTop)  					// line 2039 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _286($yyTop)  					// line 2145 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _287($yyTop)  					// line 2043 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _287($yyTop)  					// line 2149 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _294($yyTop)  					// line 2070 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _294($yyTop)  					// line 2176 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if (isset($this->referencedVars)) {
             if (trim($this->yyVals[-4+$yyTop]) == '$this') {
@@ -2019,47 +2145,47 @@ class PHP_Parser_Extendable {
         $this->yyVal = $this->yyVals[-4+$yyTop] . $this->yW[$yyTop - 3] . $this->yyVals[-2+$yyTop] . $this->yyVals[-1+$yyTop] . $this->yyVals[0+$yyTop];
     }
 
-    function _295($yyTop)  					// line 2083 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _295($yyTop)  					// line 2189 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[0+$yyTop];
     }
 
-    function _296($yyTop)  					// line 2090 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _296($yyTop)  					// line 2196 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yyVals[0+$yyTop];
     }
 
-    function _297($yyTop)  					// line 2094 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _297($yyTop)  					// line 2200 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = '';
     }
 
-    function _298($yyTop)  					// line 2102 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _298($yyTop)  					// line 2208 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yyVals[0+$yyTop];
     }
 
-    function _299($yyTop)  					// line 2109 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _299($yyTop)  					// line 2215 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _300($yyTop)  					// line 2113 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _300($yyTop)  					// line 2219 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = '';
     }
 
-    function _301($yyTop)  					// line 2120 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _301($yyTop)  					// line 2226 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[0+$yyTop];
     }
 
-    function _302($yyTop)  					// line 2124 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _302($yyTop)  					// line 2230 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yyVals[0+$yyTop];
     }
 
-    function _303($yyTop)  					// line 2131 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _303($yyTop)  					// line 2237 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->_lastClassname = trim($this->yyVals[-2+$yyTop]);
         $this->_lastVar = trim($this->yyVals[0+$yyTop]);
@@ -2067,32 +2193,32 @@ class PHP_Parser_Extendable {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _304($yyTop)  					// line 2142 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _304($yyTop)  					// line 2248 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[0+$yyTop];
     }
 
-    function _305($yyTop)  					// line 2146 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _305($yyTop)  					// line 2252 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[0+$yyTop];
     }
 
-    function _306($yyTop)  					// line 2154 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _306($yyTop)  					// line 2260 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[0+$yyTop];
     }
 
-    function _307($yyTop)  					// line 2158 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _307($yyTop)  					// line 2264 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yyVals[0+$yyTop];
     }
 
-    function _308($yyTop)  					// line 2162 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _308($yyTop)  					// line 2268 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[0+$yyTop];
     }
 
-    function _309($yyTop)  					// line 2169 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _309($yyTop)  					// line 2275 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if (isset($this->superglobals)) {
             $test = trim($this->yyVals[-3+$yyTop]);
@@ -2128,251 +2254,251 @@ class PHP_Parser_Extendable {
         $this->yyVal = $this->yyVals[-3+$yyTop] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _310($yyTop)  					// line 2204 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _310($yyTop)  					// line 2310 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-3+$yyTop] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _311($yyTop)  					// line 2208 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _311($yyTop)  					// line 2314 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[0+$yyTop];
     }
 
-    function _312($yyTop)  					// line 2216 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _312($yyTop)  					// line 2322 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _313($yyTop)  					// line 2220 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _313($yyTop)  					// line 2326 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _314($yyTop)  					// line 2227 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _314($yyTop)  					// line 2333 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = '';
     }
 
-    function _318($yyTop)  					// line 2241 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _318($yyTop)  					// line 2347 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-3+$yyTop] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _319($yyTop)  					// line 2245 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _319($yyTop)  					// line 2351 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-3+$yyTop] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _321($yyTop)  					// line 2253 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _321($yyTop)  					// line 2359 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _322($yyTop)  					// line 2257 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _322($yyTop)  					// line 2363 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _323($yyTop)  					// line 2264 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _323($yyTop)  					// line 2370 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _324($yyTop)  					// line 2268 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _324($yyTop)  					// line 2374 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _325($yyTop)  					// line 2275 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _325($yyTop)  					// line 2381 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _328($yyTop)  					// line 2285 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _328($yyTop)  					// line 2391 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _329($yyTop)  					// line 2289 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _329($yyTop)  					// line 2395 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = '';
     }
 
-    function _330($yyTop)  					// line 2297 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _330($yyTop)  					// line 2403 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = '';
     }
 
-    function _331($yyTop)  					// line 2301 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _331($yyTop)  					// line 2407 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yyVals[0+$yyTop];
     }
 
-    function _332($yyTop)  					// line 2308 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _332($yyTop)  					// line 2414 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-4+$yyTop] . $this->yW[$yyTop - 3] . $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _333($yyTop)  					// line 2312 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _333($yyTop)  					// line 2418 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _334($yyTop)  					// line 2316 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _334($yyTop)  					// line 2422 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _335($yyTop)  					// line 2320 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _335($yyTop)  					// line 2426 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[0+$yyTop];
     }
 
-    function _336($yyTop)  					// line 2324 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _336($yyTop)  					// line 2430 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-5+$yyTop] . $this->yW[$yyTop - 4] . $this->yyVals[-3+$yyTop] 
         . $this->yW[$yyTop - 2] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _337($yyTop)  					// line 2329 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _337($yyTop)  					// line 2435 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-3+$yyTop] . $this->yW[$yyTop - 2] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _338($yyTop)  					// line 2333 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _338($yyTop)  					// line 2439 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-3+$yyTop] . $this->yW[$yyTop - 2] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _339($yyTop)  					// line 2337 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _339($yyTop)  					// line 2443 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _340($yyTop)  					// line 2344 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _340($yyTop)  					// line 2450 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yyVals[0+$yyTop];
     }
 
-    function _341($yyTop)  					// line 2348 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _341($yyTop)  					// line 2454 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _342($yyTop)  					// line 2352 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _342($yyTop)  					// line 2458 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _343($yyTop)  					// line 2356 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _343($yyTop)  					// line 2462 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _344($yyTop)  					// line 2360 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _344($yyTop)  					// line 2466 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _345($yyTop)  					// line 2364 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _345($yyTop)  					// line 2470 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _346($yyTop)  					// line 2368 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _346($yyTop)  					// line 2474 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _347($yyTop)  					// line 2372 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _347($yyTop)  					// line 2478 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _348($yyTop)  					// line 2376 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _348($yyTop)  					// line 2482 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _349($yyTop)  					// line 2380 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _349($yyTop)  					// line 2486 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _350($yyTop)  					// line 2384 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _350($yyTop)  					// line 2490 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _351($yyTop)  					// line 2388 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _351($yyTop)  					// line 2494 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = '';
     }
 
-    function _352($yyTop)  					// line 2397 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _352($yyTop)  					// line 2503 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _353($yyTop)  					// line 2401 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _353($yyTop)  					// line 2507 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _354($yyTop)  					// line 2405 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _354($yyTop)  					// line 2511 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 2] . $this->yW[$yyTop - 1] . $this->yW[$yyTop];
     }
 
-    function _355($yyTop)  					// line 2409 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _355($yyTop)  					// line 2515 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _356($yyTop)  					// line 2413 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _356($yyTop)  					// line 2519 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 5] . $this->yW[$yyTop - 4] . $this->yW[$yyTop - 3] .
              $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yW[$yyTop];
     }
 
-    function _357($yyTop)  					// line 2418 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _357($yyTop)  					// line 2524 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _358($yyTop)  					// line 2426 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _358($yyTop)  					// line 2532 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _359($yyTop)  					// line 2430 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _359($yyTop)  					// line 2536 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _360($yyTop)  					// line 2434 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _360($yyTop)  					// line 2540 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _361($yyTop)  					// line 2442 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _361($yyTop)  					// line 2548 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _362($yyTop)  					// line 2446 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _362($yyTop)  					// line 2552 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _363($yyTop)  					// line 2450 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _363($yyTop)  					// line 2556 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->includeLine = $this->yyLex->line;
         $lc = $this->yyLex->getLastComment();
         $this->includeComment = $lc[0];
     }
 
-    function _364($yyTop)  					// line 2455 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _364($yyTop)  					// line 2561 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if ($this->_options['includeContainer']) {
             $container = $this->_options['includeContainer'];
@@ -2411,14 +2537,14 @@ class PHP_Parser_Extendable {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _365($yyTop)  					// line 2492 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _365($yyTop)  					// line 2598 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->includeLine = $this->yyLex->line;
         $lc = $this->yyLex->getLastComment();
         $this->includeComment = $lc[0];
     }
 
-    function _366($yyTop)  					// line 2497 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _366($yyTop)  					// line 2603 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if ($this->_options['includeContainer']) {
             $container = $this->_options['includeContainer'];
@@ -2457,19 +2583,19 @@ class PHP_Parser_Extendable {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _367($yyTop)  					// line 2534 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _367($yyTop)  					// line 2640 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _368($yyTop)  					// line 2538 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _368($yyTop)  					// line 2644 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->includeLine = $this->yyLex->line;
         $lc = $this->yyLex->getLastComment();
         $this->includeComment = $lc[0];
     }
 
-    function _369($yyTop)  					// line 2543 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _369($yyTop)  					// line 2649 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if ($this->_options['includeContainer']) {
             $container = $this->_options['includeContainer'];
@@ -2508,14 +2634,14 @@ class PHP_Parser_Extendable {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _370($yyTop)  					// line 2580 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _370($yyTop)  					// line 2686 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->includeLine = $this->yyLex->line;
         $lc = $this->yyLex->getLastComment();
         $this->includeComment = $lc[0];
     }
 
-    function _371($yyTop)  					// line 2585 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _371($yyTop)  					// line 2691 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         if ($this->_options['includeContainer']) {
             $container = $this->_options['includeContainer'];
@@ -2554,23 +2680,23 @@ class PHP_Parser_Extendable {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _373($yyTop)  					// line 2626 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _373($yyTop)  					// line 2732 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _374($yyTop)  					// line 2633 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+    function _374($yyTop)  					// line 2739 "C:/devel/PHP_Parser/Parser/Extendable.jay"
     {
             $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yW[$yyTop];
             $this->_lastConst = $this->yyVals[0+$yyTop];
             $this->_lastClassname = trim($this->yyVals[-2+$yyTop]);
         }
-					// line 2552 "-"
+					// line 2678 "-"
 
-					// line 2640 "C:/devel/PHP_Parser/Parser/Extendable.jay"
+					// line 2746 "C:/devel/PHP_Parser/Parser/Extendable.jay"
 
 }
-					// line 2557 "-"
+					// line 2683 "-"
 
   $GLOBALS['_PHP_PARSER_EXTENDABLE']['yyLhs']  = array(              -1,
     0,    0,    1,    1,    1,    5,    5,    6,    6,    6,

@@ -1,6 +1,6 @@
 <?php
 
-define('PHP_PARSER_DOCBLOCK_DEFAULTLEXER_ERROR', 1);
+define('PHP_Parser_DocBlock_DefaultLexer_ERROR', 1);
 
 /* the tokenizer states */
 define('YYINITIAL',0);
@@ -20,6 +20,7 @@ define('LIST_NUMBERED',0);
 define('LIST_NUMBERED_DOT',1);
 define('LIST_UNORDERED',2);
 
+define('PHP_PARSER_DOCLEX_ERROR_LEX', 1);
 define('PHP_PARSER_DOCLEX_ERROR_NUMWRONG', -1);
 define('PHP_PARSER_DOCLEX_ERROR_NODOT', -2);
 
@@ -249,8 +250,8 @@ define ('YY_EOF' , 258);
     {
         $m = $message;
         $params = array('fatal' => $params);
-        $ret = PEAR_ErrorStack::staticPush('PHP_Parser_Docblock_DefaultLexer',
-            PHP_PARSER_DOCBLOCK_DEFAULTLEXER_ERROR,
+        $ret = PEAR_ErrorStack::staticPush('PHP_Parser_DocBlock_DefaultLexer',
+            $code,
             'error', $params,
             $m);
         return $ret;
@@ -297,10 +298,12 @@ define ('YY_EOF' , 258);
                     $this->_lastBulletLen = $this->yylength();
                     return array(PHP_PARSER_DOCLEX_NBULLET, $this->yytext());
                 } else {
-                    $this->raiseError("simple list number should be ".($this->_lastNum + 1)." and is [".$this->yytext()."]\n",
-                    PHP_PARSER_DOCLEX_ERROR_NUMWRONG, true);
-                    $this->_fatal = true;
-                    return false;
+                    if ($this->debug) echo "shunting list to original state, returning dummy\n";
+                    $this->raiseError("simple list number should be ".($this->_lastNum + 1)." and is [".$this->yytext()."]",
+                    PHP_PARSER_DOCLEX_ERROR_NUMWRONG, false);
+                    $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
+                    $this->yybegin($this->_listOriginal);
+                    return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
                 }
             } elseif ($this->_listType == LIST_NUMBERED_DOT) {
                 $text = $this->yytext();
