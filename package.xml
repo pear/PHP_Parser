@@ -19,8 +19,8 @@ in PHP 5 as of beta 4:
     and declared
   - any class names used in any context
   - any functions called
-  - any $this->var or class::$var
-  - any $this->method or class::method() or class::$method()
+  - any $this-&gt;var or class::$var
+  - any $this-&gt;method or class::method() or class::$method()
  - variables
  - constants
 - functions (same information as methods minus $this-&gt;/self::/parent:: information)
@@ -49,18 +49,26 @@ hooks into parsing to catch information.</description>
   </maintainers>
   <release>
     <version>0.2</version>
-    <date>2004-01-30</date>
+    <date>2004-03-13</date>
     <license>PHP License</license>
     <state>devel</state>
     <notes>Second development release.  Not even alpha yet.
 
 Re-organized into two parsers, Structure and Extendable.  Structure is the old parser, Extendable
-is designed to be overridden and provides access to every token.</notes>
+is designed to be overridden and provides access to every token.
+Moved DocBlock parsing in from phpDocumentor 2.0 development</notes>
     <deps>
       <dep type="php" rel="ge" version="4.3" optional="no"/>
     </deps>
     <filelist>
       <dir baseinstalldir="PHP" name="/">
+       <dir name="docs">
+        <dir name="tutorials">
+         <dir name="PHP_Parser">
+          <file role="doc" name="PHP_Parser_MsgServer.cls"/>
+         </dir> <!-- docs/tutorials/PHP_Parser -->
+        </dir> <!-- docs/tutorials -->
+       </dir> <!-- docs -->
        <dir name="examples">
         <file role="doc" name="test.php"/>
        </dir> <!-- examples -->
@@ -75,7 +83,26 @@ is designed to be overridden and provides access to every token.</notes>
         <file role="php" name="Structure.php"/>
         <file role="php" name="Tokenizer.php"/>
         <dir name="DocBlock">
+         <file role="data" name="default.bat"/>
+         <file role="data" name="Default.jay"/>
+         <file role="php" name="Default.php"/>
+         <file role="data" name="default.sh"/>
+         <file role="php" name="DefaultExtendable.php"/>
          <file role="php" name="DefaultInlineTagLexer.php"/>
+         <file role="php" name="DefaultInlineTagParser.php"/>
+         <file role="data" name="DefaultLexer.lex"/>
+         <file role="php" name="DefaultLexer.php"/>
+         <file role="php" name="DefaultTagLexer.php"/>
+         <file role="php" name="DefaultTagParser.php"/>
+         <file role="data" name="Extendable.jay"/>
+         <dir name="InlineTags">
+          <file role="php" name="Base.php"/>
+          <file role="php" name="Example.php"/>
+          <file role="php" name="Inheritdoc.php"/>
+          <file role="php" name="Link.php"/>
+          <file role="php" name="Source.php"/>
+          <file role="php" name="Tutorial.php"/>
+         </dir> <!-- Parser/DocBlock/InlineTags -->
         </dir> <!-- Parser/DocBlock -->
         <dir name="Tokenizer">
          <file role="php" name="Structure.php"/>
@@ -99,6 +126,7 @@ is designed to be overridden and provides access to every token.</notes>
         <file role="test" name="testsuite.php"/>
         <file role="test" name="TestUnit.php"/>
        </dir> <!-- tests -->
+       <file role="test" name="generatePackage.xml.php"/>
        <file role="php" name="Parser.php"/>
        <file role="php" name="skeleton.php"/>
        <file role="data" name="test_jay.sh"/>
@@ -118,13 +146,14 @@ things will change internally.</notes>
     </release>
     <release>
       <version>0.2</version>
-      <date>2004-01-30</date>
+      <date>2004-03-13</date>
       <license>PHP License</license>
       <state>devel</state>
       <notes>Second development release.  Not even alpha yet.
 
 Re-organized into two parsers, Structure and Extendable.  Structure is the old parser, Extendable
-is designed to be overridden and provides access to every token.</notes>
+is designed to be overridden and provides access to every token.
+Moved DocBlock parsing in from phpDocumentor 2.0 development</notes>
     </release>
   </changelog>
 </package>
