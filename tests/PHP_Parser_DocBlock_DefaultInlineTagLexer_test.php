@@ -558,6 +558,45 @@ class PHP_Parser_DocBlock_DefaultInlineTagLexer_test extends PHPUnit_TestCase
         $this->assertFalse($this->lexer->getLink(), 2);
     }
 
+    function test_getLink_url()
+    {
+        if (!$this->_methodExists('newTag')) {
+            return;
+        }
+        if (!$this->_methodExists('getLink')) {
+            return;
+        }
+        $this->lexer->newTag('mailto:test@example.com');
+        $this->assertEquals(
+            array(
+                'text' => 'mailto:test@example.com',
+                'link' => 'mailto:test@example.com',
+                'valid' => true,
+                'type' => 'url',
+            ),
+            $this->lexer->getLink(), 1);
+        $this->lexer->newTag('http://www.example.com');
+        $this->assertEquals(
+            array(
+                'text' => 'http://www.example.com',
+                'link' => 'http://www.example.com',
+                'valid' => true,
+                'type' => 'url',
+            ),
+            $this->lexer->getLink(), 2);
+        // very treeky :)
+        $this->lexer->newTag('mailto::sender()');
+        $this->assertEquals(
+            array(
+                'text' => 'mailto::sender()',
+                'link' => 'sender',
+                'valid' => true,
+                'type' => 'method',
+                'class' => 'mailto',
+            ),
+            $this->lexer->getLink(), 3);
+    }
+
     function test_invalid_getLink()
     {
         if (!$this->_methodExists('newTag')) {

@@ -98,6 +98,13 @@ class PHP_Parser_DocBlock_DefaultInlineTagLexer
         $details['link'] = $details['text'] = $word;
         $details['valid'] = true;
         $details['type'] = 'unknown';
+        if (strpos($word, 'mailto:') === 0 || strpos($word, '://')) {
+            if (strpos($word, 'mailto::') === false) {
+                // just in case someone names a class "mailto"
+                $details['type'] = 'url';
+                return $details;
+            }
+        }
         $save = $word;
         if (strpos($word, '#')) {
             $details['link'] = $word = substr($word, strpos($word, '#') + 1); // chop off package selector
