@@ -106,7 +106,6 @@ class PHP_Parser_Structure {
         $this->_options['methodContainer'] =
         $this->_options['publisher'] =
         $this->_options['publishMethod'] =
-        $this->_options['publishMessageClass'] =
         $this->_options['publishClasses'] =
         $this->_options['publishClassMessage'] =
         $this->_options['publishInterfaces'] =
@@ -155,18 +154,14 @@ class PHP_Parser_Structure {
             $this->_options['methodContainer'] = false;
         }
         if (!is_object($this->_options['publisher'])) {
-            $this->_options['publisher'] = false;
+            $this->_options['publisher'] = &PHP_Parser_MsgServer::singleton();
         } else {
             if (!method_exists($this->_options['publisher'], $this->_options['publishMethod'])) {
                 $this->_options['publishMethod'] = false;
-                if (!method_exists($this->_options['publisher'], 'publish')) {
+                if (!method_exists($this->_options['publisher'], 'sendMessage')) {
                     $this->_options['publisher'] = false;
                 } else {
-                    $this->_options['publishMethod'] = 'publish';
-                }
-            } else {
-                if (!class_exists($this->_options['publishMessageClass'])) {
-                    $this->_options['publishMessageClass'] = false;
+                    $this->_options['publishMethod'] = 'sendMessage';
                 }
             }
         }
@@ -296,18 +291,10 @@ class PHP_Parser_Structure {
     {
         if ($this->yyLex->globalSearch($name)) {
             $lc = $this->yyLex->getLastComment();
-            if ($this->_options['globalContainer']) {
-                $container = $this->_options['globalContainer'];
-                $global = new $container;
-                $global->setStartLine($this->yyLex->line);
-                $global->setName($name);
-                $global->setDocumentation($lc[0]);
-            } else {
-                $global = array('name' => $name,
-                                'documentation' => $lc[0],
-                                'line' => $this->yyLex->line);
-            }
-            $this->globals[$name] = $global;
+            $global = array('name' => $name,
+                            'documentation' => $lc[0],
+                            'line' => $this->yyLex->line);
+            $this->globals[$name][] = $global;
             $this->_inGlobal = true;
         }
     }
@@ -322,11 +309,17 @@ class PHP_Parser_Structure {
     {
         if (isset($this->globals[$name])) {
             // found a global variable we are documenting
+            $index = count($this->globals[$name]) - 1;
+            $global = $this->globals[$name][$index];
+            $global['value'] = $value;
             if ($this->_options['globalContainer']) {
-                $this->globals[$name]->setValue($value);
+                $container = $this->_options['globalContainer'];
+                $globalv = new $container;
+                $globalv->setParsedData($global);
             } else {
-                $this->globals[$name]['value'] = $value;
+                $globalv = $global;
             }
+            $this->globals[$name][$index] = $globalv;
             // publish the newly parsed global variable, if global variables should be published
             if ($this->_options['publisher'] && $this->_options['publishGlobals']) {
                 $publish = $this->_options['publishMethod'];
@@ -334,15 +327,8 @@ class PHP_Parser_Structure {
                 if ($this->_options['publishGlobalMessage']) {
                     $message = $this->_options['publishGlobalMessage'];
                 }
-                if ($this->_options['publishMessageClass']) {
-                    $pc = $this->_options['publishMessageClass'];
-                    $publisher = $this->_options['publisher'];
-                    $message = new $pc($message, $const);
-                    $publisher->$publish($pc);
-                } else {
-                    $publisher = $this->_options['publisher'];
-                    $publisher->$publish($message, $const);
-                }
+                $publisher = $this->_options['publisher'];
+                $publisher->$publish($message, $globalv);
             }
         }
     }
@@ -704,24 +690,7 @@ unticked_function_declaration_statement:
     {
         $this->referencedClasses = array_values(array_unique($this->referencedClasses));
         $this->referencedFunctions = array_values(array_unique($this->referencedFunctions));
-        if ($this->_options['functionContainer']) {
-            $container = $this->_options['functionContainer'];
-            $this->functions[$3] = new $container;
-            $this->functions[$3]->setName($3);
-            $this->functions[$3]->setReference($2);
-            $this->functions[$3]->setReferencedClasses($this->referencedClasses);
-            $this->functions[$3]->setReferencedClasses($this->referencedFunctions);
-            $this->functions[$3]->setParams($this->params);
-            $this->functions[$3]->setGlobals($this->funcglobals);
-            $this->functions[$3]->setSuperGlobals($this->superglobals);
-            $this->functions[$3]->setStatics($this->statics);
-            $this->functions[$3]->setThrows($this->throws);
-            $this->functions[$3]->setCatches($this->throws);
-            $this->functions[$3]->setDocumentation($this->functionComment);
-            $this->functions[$3]->setStartLine($this->functionLine);
-            $this->functions[$3]->setEndLine($this->yyLex->line);
-        } else {
-            $this->functions[$3] = array(
+        $func = array(
                 'name' => $3,
                 'returnsReference' => $2,
                 'params' => $this->params,
@@ -737,7 +706,14 @@ unticked_function_declaration_statement:
                 'endline' => $this->yyLex->line,
                 'documentation' => $this->functionComment,
                 );
+        if ($this->_options['functionContainer']) {
+            $container = $this->_options['functionContainer'];
+            $funct = new $container;
+            $funct->setParsedData($func);
+        } else {
+            $funct = $func;
         }
+        $this->functions[$3][] = $funct;
         // publish the newly parsed function, if functions should be published
         if ($this->_options['publisher'] && $this->_options['publishFunctions']) {
             $publish = $this->_options['publishMethod'];
@@ -745,15 +721,8 @@ unticked_function_declaration_statement:
             if ($this->_options['publishFunctionMessage']) {
                 $message = $this->_options['publishFunctionMessage'];
             }
-            if ($this->_options['publishMessageClass']) {
-                $pc = $this->_options['publishMessageClass'];
-                $publisher = $this->_options['publisher'];
-                $message = new $pc($message, $this->functions[$3]);
-                $publisher->$publish($pc);
-            } else {
-                $publisher = $this->_options['publisher'];
-                $publisher->$publish($message, $this->functions[$3]);
-            }
+            $publisher = $this->_options['publisher'];
+            $publisher->$publish($message, $funct);
         }
         unset($this->params);
         unset($this->returns);
@@ -786,22 +755,7 @@ unticked_class_declaration_statement:
             '}'
     {
         $name = trim($3);
-        if ($this->_options['classContainer']) {
-            $container = $this->_options['classContainer'];
-            $this->classes[$name] = new $container;
-            $this->classes[$name]->setName(trim($name));
-            $this->classes[$name]->setExtends(trim($4));
-            $this->classes[$name]->setType($2);
-            $this->classes[$name]->setMethods($this->methods);
-            $this->classes[$name]->setVars($this->vars);
-            $this->classes[$name]->setConsts($this->consts);
-            $this->classes[$name]->setImplements($this->implementsInterfaces);
-            $this->classes[$name]->setDocumentation($this->classComment);
-            $this->classes[$name]->setStartLine($this->classLine);
-            $this->classes[$name]->setEndLine($this->yyLex->line);
-        } else {
-            // use arrays if no class container is defined
-            $this->classes[trim($name)] = array(
+        $cls = array(
                  'extends' => trim($4),
                  'type' => $2,
                  'methods' => $this->methods,
@@ -812,7 +766,15 @@ unticked_class_declaration_statement:
                  'endline' => $this->yyLex->line,
                  'documentation' => $this->classComment,
                  );
+        if ($this->_options['classContainer']) {
+            $container = $this->_options['classContainer'];
+            $classc = new $container;
+            $classc->setParsedData($cls);
+        } else {
+            // use arrays if no class container is defined
+            $classc = $cls;
         }
+        $this->classes[trim($name)][] = $classc;
         // publish the newly parsed class, if classes should be published
         if ($this->_options['publisher'] && $this->_options['publishClasses']) {
             $publish = $this->_options['publishMethod'];
@@ -820,15 +782,8 @@ unticked_class_declaration_statement:
             if ($this->_options['publishClassMessage']) {
                 $message = $this->_options['publishClassMessage'];
             }
-            if ($this->_options['publishMessageClass']) {
-                $pc = $this->_options['publishMessageClass'];
-                $publisher = $this->_options['publisher'];
-                $message = new $pc($message, $this->classes[$3]);
-                $publisher->$publish($pc);
-            } else {
-                $publisher = $this->_options['publisher'];
-                $publisher->$publish($message, $this->classes[$3]);
-            }
+            $publisher = $this->_options['publisher'];
+            $publisher->$publish($message, $classc);
         }
         unset($this->methods);
         unset($this->vars);
@@ -851,26 +806,22 @@ unticked_class_declaration_statement:
     '{' class_statement_list '}'
     {
         $name = trim($3);
-        if ($this->_options['interfaceContainer']) {
-            $container = $this->_options['interfaceContainer'];
-            $this->interfaces[$name] = new $container;
-            $this->interfaces[$name]->setName($name);
-            $this->interfaces[$name]->setExtends('');
-            $this->interfaces[$name]->setMethods($this->methods);
-            $this->interfaces[$name]->setExtends($this->implementsInterfaces);
-            $this->interfaces[$name]->setDocumentation($this->classComment);
-            $this->interfaces[$name]->setStartLine($this->classLine);
-            $this->interfaces[$name]->setEndLine($this->yyLex->line);
-        } else {
-            // use arrays if no class container is defined
-            $this->interfaces[$name] = array(
+        $interf = array(
                  'methods' => $this->methods,
                  'extends' => $this->implementsInterfaces,
                  'startline' => $this->classLine,
                  'endline' => $this->yyLex->line,
                  'documentation' => $this->classComment,
                  );
+        if ($this->_options['interfaceContainer']) {
+            $container = $this->_options['interfaceContainer'];
+            $int = new $container;
+            $int->setParsedData($interf);
+        } else {
+            // use arrays if no class container is defined
+            $int = $interf;
         }
+        $this->interfaces[$name][] = $int;
         // publish the newly parsed class, if classes should be published
         if ($this->_options['publisher'] && $this->_options['publishInterfaces']) {
             $publish = $this->_options['publishMethod'];
@@ -878,15 +829,8 @@ unticked_class_declaration_statement:
             if ($this->_options['publishInterfaceMessage']) {
                 $message = $this->_options['publishInterfaceMessage'];
             }
-            if ($this->_options['publishMessageClass']) {
-                $pc = $this->_options['publishMessageClass'];
-                $publisher = $this->_options['publisher'];
-                $message = new $pc($message, $this->classes[$3]);
-                $publisher->$publish($pc);
-            } else {
-                $publisher = $this->_options['publisher'];
-                $publisher->$publish($message, $this->classes[$3]);
-            }
+            $publisher = $this->_options['publisher'];
+            $publisher->$publish($message, $int);
         }
         unset($this->methods);
         unset($this->implementsInterfaces);
@@ -1207,15 +1151,8 @@ class_statement:
                 if ($this->_options['publishVarMessage']) {
                     $message = $this->_options['publishVarMessage'];
                 }
-                if ($this->_options['publishMessageClass']) {
-                    $pc = $this->_options['publishMessageClass'];
-                    $publisher = $this->_options['publisher'];
-                    $message = new $pc($message, $var);
-                    $publisher->$publish($pc);
-                } else {
-                    $publisher = $this->_options['publisher'];
-                    $publisher->$publish($message, $var);
-                }
+                $publisher = $this->_options['publisher'];
+                $publisher->$publish($message, $var);
             }
         }
     } ';'
@@ -1267,33 +1204,7 @@ class_statement:
         foreach ($ar as $key => $val) {
             $this->referencedVars[$key] = array_values(array_unique($val));
         }
-        if ($this->_options['methodContainer']) {
-            $container = $this->_options['methodContainer'];
-            $this->methods[$5] = new $container;
-            $this->methods[$5]->setName($5);
-            $this->methods[$5]->setReference($4);
-            $this->methods[$5]->setParams($this->params);
-            $this->methods[$5]->setReferencedVars($this->referencedVars);
-            $this->methods[$5]->setReferencedMethods($this->referencedMethods);
-            $this->methods[$5]->setReferencedFunctions($this->referencedFunctions);
-            $this->methods[$5]->setReferencedClasses($this->referencedClasses);
-            $this->methods[$5]->setGlobals($this->funcglobals);
-            $this->methods[$5]->setSuperGlobals($this->superglobals);
-            $this->methods[$5]->setStatics($this->statics);
-            $this->methods[$5]->setThrows($this->throws);
-            $this->methods[$5]->setCatches($this->catches);
-            $this->methods[$5]->setStartLine($this->methodLine);
-            $this->methods[$5]->setEndLine($this->yyLex->line);
-            $this->methods[$5]->setDocumentation($this->methodComment);
-            if ($is_static) {
-                $this->methods[$5]->setStaticMethod();
-            }
-            if ($is_abstract) {
-                $this->methods[$5]->setAbstractMethod();
-            }
-            $this->methods[$5]->setModifiers(array_values($1));
-        } else {
-            $this->methods[$5] = array(
+        $method = array(
                 'name' => $5,
                 'access' => array_values($1),
                 'static' => $is_static,
@@ -1314,6 +1225,12 @@ class_statement:
                 'endline' => $this->yyLex->line,
                 'documentation' => $this->methodComment,
                 );
+        if ($this->_options['methodContainer']) {
+            $container = $this->_options['methodContainer'];
+            $this->methods[$5] = new $container;
+            $this->methods[$5]->setParsedData($method);
+        } else {
+            $this->methods[$5] = $method;
         }
         // publish the newly parsed method, if methods should be published
         if ($this->_options['publisher'] && $this->_options['publishMethods']) {
@@ -1322,15 +1239,8 @@ class_statement:
             if ($this->_options['publishMethodMessage']) {
                 $message = $this->_options['publishMethodMessage'];
             }
-            if ($this->_options['publishMessageClass']) {
-                $pc = $this->_options['publishMessageClass'];
-                $publisher = $this->_options['publisher'];
-                $message = new $pc($message, $this->methods[$5]);
-                $publisher->$publish($pc);
-            } else {
-                $publisher = $this->_options['publisher'];
-                $publisher->$publish($message, $this->methods[$5]);
-            }
+            $publisher = $this->_options['publisher'];
+            $publisher->$publish($message, $this->methods[$5]);
         }
         unset($this->returns);
         unset($this->referencedFunctions);
@@ -1516,79 +1426,59 @@ class_constant_declaration:
         $this->constComment = $lc[0];
     } '=' static_scalar
     {
+        $constinfo = array('name' => $3,
+                       'value' => trim($6),
+                       'startline' => $this->constLine,
+                       'endline' => $this->yyLex->line,
+                       'documentation' => $this->constComment);
         if ($this->_options['classConstContainer']) {
             $container = $this->_options['classConstContainer'];
             $const = new $container;
-            $const->setStartLine($this->constLine);
-            $const->setEndLine($this->yyLex->line);
-            $const->setDocumentation($this->constComment);
-            $const->setValue(trim($6));
-            $const->setName($3);
+            $const->setParsedData($constinfo);
         } else {
-            $const = array('name' => $3,
-                           'value' => trim($6),
-                           'startline' => $this->constLine,
-                           'endline' => $this->yyLex->line,
-                           'documentation' => $this->constComment);
-        }
-        $this->consts[$4] = $const;
-        // publish the newly parsed class constant, if class constants should be published
-        if ($this->_options['publisher'] && $this->_options['publishClassConstants']) {
-            $publish = $this->_options['publishMethod'];
-            $message = 'method';
-            if ($this->_options['publishClassConstantMessage']) {
-                $message = $this->_options['publishClassConstantMessage'];
-            }
-            if ($this->_options['publishMessageClass']) {
-                $pc = $this->_options['publishMessageClass'];
-                $publisher = $this->_options['publisher'];
-                $message = new $pc($message, $const);
-                $publisher->$publish($pc);
-            } else {
-                $publisher = $this->_options['publisher'];
-                $publisher->$publish($message, $const);
-            }
-        }
-    }
-    |
-    {
-        $this->constLine = $this->yyLex->line;
-        $lc = $this->yyLex->getLastComment();
-        $this->constComment = $lc[0];
-    } T_CONST T_STRING '=' static_scalar
-    {
-        if ($this->_options['classConstContainer']) {
-            $container = $this->_options['classConstContainer'];
-            $const = new $container;
-            $const->setStartLine($this->constLine);
-            $const->setEndLine($this->yyLex->line);
-            $const->setDocumentation($this->constComment);
-            $const->setValue(trim($5));
-            $const->setName($3);
-        } else {
-            $const = array('name' => $3,
-                           'value' => trim($5),
-                           'startline' => $this->constLine,
-                           'endline' => $this->yyLex->line,
-                           'documentation' => $this->constComment);
+            $const = $constinfo;
         }
         $this->consts[$3] = $const;
         // publish the newly parsed class constant, if class constants should be published
-        if ($this->_options['publisher'] && $this->_options['publishClassConstants']) {
+        if ($this->_options['publisher'] && $this->_options['publishClassConsts']) {
             $publish = $this->_options['publishMethod'];
             $message = 'method';
             if ($this->_options['publishClassConstantMessage']) {
                 $message = $this->_options['publishClassConstantMessage'];
             }
-            if ($this->_options['publishMessageClass']) {
-                $pc = $this->_options['publishMessageClass'];
-                $publisher = $this->_options['publisher'];
-                $message = new $pc($message, $const);
-                $publisher->$publish($pc);
-            } else {
-                $publisher = $this->_options['publisher'];
-                $publisher->$publish($message, $const);
+            $publisher = $this->_options['publisher'];
+            $publisher->$publish($message, $const);
+        }
+    }
+    |
+    T_CONST {
+        $this->constLine = $this->yyLex->line;
+        $lc = $this->yyLex->getLastComment();
+        $this->constComment = $lc[0];
+    } T_STRING '=' static_scalar
+    {
+        $constinfo = array('name' => $3,
+                       'value' => trim($5),
+                       'startline' => $this->constLine,
+                       'endline' => $this->yyLex->line,
+                       'documentation' => $this->constComment);
+        if ($this->_options['classConstContainer']) {
+            $container = $this->_options['classConstContainer'];
+            $const = new $container;
+            $const->setParsedData($constinfo);
+        } else {
+            $const = $constinfo;
+        }
+        $this->consts[$3] = $const;
+        // publish the newly parsed class constant, if class constants should be published
+        if ($this->_options['publisher'] && $this->_options['publishClassConsts']) {
+            $publish = $this->_options['publishMethod'];
+            $message = 'method';
+            if ($this->_options['publishClassConstantMessage']) {
+                $message = $this->_options['publishClassConstantMessage'];
             }
+            $publisher = $this->_options['publisher'];
+            $publisher->$publish($message, $const);
         }
     }
 ;
@@ -1905,7 +1795,7 @@ expr_without_variable:
 ;
 
 function_call:
-        T_STRING
+        T_STRING '('
     {
         if (strtolower($1) == 'define') {
             $this->defineLine = $this->yyLex->line;
@@ -1915,7 +1805,7 @@ function_call:
             $this->defineName = '';
             $this->defineValue = '';
         }
-    } '(' function_call_parameter_list ')'
+    } function_call_parameter_list ')'
     {
         if (isset($this->referencedFunctions)) {
             $this->referencedFunctions[] = $1;
@@ -1929,43 +1819,33 @@ function_call:
                 $this->defineName = substr($this->defineName, 1, strlen($this->defineName) - 2);
                 $simple = true;
             }
+            $const = array('name' => $this->defineName,
+                           'value' => $this->defineValue,
+                           'simple' => $simple,
+                           'startline' => $this->defineLine,
+                           'endline' => $this->yyLex->line,
+                           'documentation' => $this->defineComment);
             if ($this->_options['constContainer']) {
                 $container = $this->_options['constContainer'];
-                $const = new $container;
-                $const->setStartLine($this->defineLine);
-                $const->setEndLine($this->yyLex->line);
-                $const->setDocumentation($this->defineComment);
-                $const->setValue($this->defineValue);
-                $const->setName($this->defineName, $simple);
+                $constant = new $container;
+                $constant->setParsedData($const);
             } else {
-                $const = array('name' => $this->defineName,
-                               'value' => $this->defineValue,
-                               'simple' => $simple,
-                               'startline' => $this->defineLine,
-                               'endline' => $this->yyLex->line,
-                               'documentation' => $this->defineComment);
+                $constant = $const;
             }
-            $this->constants[$this->defineName] = $const;
+            $this->constants[$this->defineName][] = $constant;
             // publish the newly parsed class constant, if class constants should be published
-            if ($this->_options['publisher'] && $this->_options['publishConstants']) {
+            if ($this->_options['publisher'] && $this->_options['publishConsts']) {
                 $publish = $this->_options['publishMethod'];
                 $message = 'method';
                 if ($this->_options['publishConstantMessage']) {
                     $message = $this->_options['publishConstantMessage'];
                 }
-                if ($this->_options['publishMessageClass']) {
-                    $pc = $this->_options['publishMessageClass'];
-                    $publisher = $this->_options['publisher'];
-                    $message = new $pc($message, $const);
-                    $publisher->$publish($pc);
-                } else {
-                    $publisher = $this->_options['publisher'];
-                    $publisher->$publish($message, $const);
-                }
+                $publisher = $this->_options['publisher'];
+                $publisher->$publish($message, $constant);
             }
         }
         $this->_grabDefine = false;
-        $$ = $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $4 . $this->yW[$yyTop];
+        $$ = $this->yW[$yyTop - 4] . $this->yW[$yyTop - 3] . $4 . $this->yW[$yyTop];
     }
     |    class_constant '(' function_call_parameter_list ')'
     {
@@ -2615,38 +2495,28 @@ internal_functions_in_yacc:
         $this->includeComment = $lc[0];
     } T_INCLUDE expr
     {
+        $inc = array('file' => trim($3),
+                         'type' => 'include',
+                         'startline' => $this->includeLine,
+                         'endline' => $this->yyLex->line,
+                         'documentation' => $this->includeComment);
         if ($this->_options['includeContainer']) {
             $container = $this->_options['includeContainer'];
             $include = new $container;
-            $include->setFile(trim($3));
-            $include->setType('include');
-            $include->setStartLine($this->includeLine);
-            $include->setEndLine($this->yyLex->line);
-            $include->setDocumentation($this->includeComment);
+            $include->setParsedData($inc);
         } else {
-            $include = array('file' => trim($3),
-                             'type' => 'include',
-                             'startline' => $this->includeLine,
-                             'endline' => $this->yyLex->line,
-                             'documentation' => $this->includeComment);
+            $include = $inc;
         }
         $this->includes[] = $include;
         // publish the newly parsed include, if includes should be published
-        if ($this->_options['publisher'] && $this->_options['publishMethods']) {
+        if ($this->_options['publisher'] && $this->_options['publishIncludes']) {
             $publish = $this->_options['publishMethod'];
             $message = 'include';
             if ($this->_options['publishIncludeMessage']) {
                 $message = $this->_options['publishIncludeMessage'];
             }
-            if ($this->_options['publishIncludeClass']) {
-                $pc = $this->_options['publishIncludeClass'];
-                $publisher = $this->_options['publisher'];
-                $message = new $pc($message, $include);
-                $publisher->$publish($pc);
-            } else {
-                $publisher = $this->_options['publisher'];
-                $publisher->$publish($message, $include);
-            }
+            $publisher = $this->_options['publisher'];
+            $publisher->$publish($message, $include);
         }
         $$ = $this->yW[$yyTop - 1] . $3;
     }
@@ -2657,38 +2527,28 @@ internal_functions_in_yacc:
         $this->includeComment = $lc[0];
     } T_INCLUDE_ONCE expr     
     {
+        $inc  = array('file' => trim($3),
+                         'type' => 'include_once',
+                         'startline' => $this->includeLine,
+                         'endline' => $this->yyLex->line,
+                         'documentation' => $this->includeComment);
         if ($this->_options['includeContainer']) {
             $container = $this->_options['includeContainer'];
             $include = new $container;
-            $include->setFile(trim($3));
-            $include->setType('include_once');
-            $include->setStartLine($this->includeLine);
-            $include->setEndLine($this->yyLex->line);
-            $include->setDocumentation($this->includeComment);
+            $include->setParsedData($inc);
         } else {
-            $include = array('file' => trim($3),
-                             'type' => 'include_once',
-                             'startline' => $this->includeLine,
-                             'endline' => $this->yyLex->line,
-                             'documentation' => $this->includeComment);
+            $include = $inc;
         }
         $this->includes[] = $include;
         // publish the newly parsed include, if includes should be published
-        if ($this->_options['publisher'] && $this->_options['publishMethods']) {
+        if ($this->_options['publisher'] && $this->_options['publishIncludes']) {
             $publish = $this->_options['publishMethod'];
             $message = 'include';
             if ($this->_options['publishIncludeMessage']) {
                 $message = $this->_options['publishIncludeMessage'];
             }
-            if ($this->_options['publishIncludeClass']) {
-                $pc = $this->_options['publishIncludeClass'];
-                $publisher = $this->_options['publisher'];
-                $message = new $pc($message, $include);
-                $publisher->$publish($pc);
-            } else {
-                $publisher = $this->_options['publisher'];
-                $publisher->$publish($message, $include);
-            }
+            $publisher = $this->_options['publisher'];
+            $publisher->$publish($message, $include);
         }
         $$ = $this->yW[$yyTop - 1] . $3;
     }
@@ -2703,38 +2563,28 @@ internal_functions_in_yacc:
         $this->includeComment = $lc[0];
     } T_REQUIRE expr            
     {
+        $inc = array('file' => trim($3),
+                         'type' => 'require',
+                         'startline' => $this->includeLine,
+                         'endline' => $this->yyLex->line,
+                         'documentation' => $this->includeComment);
         if ($this->_options['includeContainer']) {
             $container = $this->_options['includeContainer'];
             $include = new $container;
-            $include->setFile(trim($3));
-            $include->setType('require');
-            $include->setStartLine($this->includeLine);
-            $include->setEndLine($this->yyLex->line);
-            $include->setDocumentation($this->includeComment);
+            $include->setParsedData($inc);
         } else {
-            $include = array('file' => trim($3),
-                             'type' => 'require',
-                             'startline' => $this->includeLine,
-                             'endline' => $this->yyLex->line,
-                             'documentation' => $this->includeComment);
+            $include = $inc;
         }
         $this->includes[] = $include;
         // publish the newly parsed include, if includes should be published
-        if ($this->_options['publisher'] && $this->_options['publishMethods']) {
+        if ($this->_options['publisher'] && $this->_options['publishIncludes']) {
             $publish = $this->_options['publishMethod'];
             $message = 'include';
             if ($this->_options['publishIncludeMessage']) {
                 $message = $this->_options['publishIncludeMessage'];
             }
-            if ($this->_options['publishIncludeClass']) {
-                $pc = $this->_options['publishIncludeClass'];
-                $publisher = $this->_options['publisher'];
-                $message = new $pc($message, $include);
-                $publisher->$publish($pc);
-            } else {
-                $publisher = $this->_options['publisher'];
-                $publisher->$publish($message, $include);
-            }
+            $publisher = $this->_options['publisher'];
+            $publisher->$publish($message, $include);
         }
         $$ = $this->yW[$yyTop - 1] . $3;
     }
@@ -2745,38 +2595,28 @@ internal_functions_in_yacc:
         $this->includeComment = $lc[0];
     } T_REQUIRE_ONCE expr        
     {
+        $inc = array('file' => trim($3),
+                         'type' => 'require_once',
+                         'startline' => $this->includeLine,
+                         'endline' => $this->yyLex->line,
+                         'documentation' => $this->includeComment);
         if ($this->_options['includeContainer']) {
             $container = $this->_options['includeContainer'];
             $include = new $container;
-            $include->setFile(trim($3));
-            $include->setType('require_once');
-            $include->setStartLine($this->includeLine);
-            $include->setEndLine($this->yyLex->line);
-            $include->setDocumentation($this->includeComment);
+            $include->setParsedData($inc);
         } else {
-            $include = array('file' => trim($3),
-                             'type' => 'require_once',
-                             'startline' => $this->includeLine,
-                             'endline' => $this->yyLex->line,
-                             'documentation' => $this->includeComment);
+            $include = $inc;
         }
         $this->includes[] = $include;
         // publish the newly parsed include, if includes should be published
-        if ($this->_options['publisher'] && $this->_options['publishMethods']) {
+        if ($this->_options['publisher'] && $this->_options['publishIncludes']) {
             $publish = $this->_options['publishMethod'];
             $message = 'include';
             if ($this->_options['publishIncludeMessage']) {
                 $message = $this->_options['publishIncludeMessage'];
             }
-            if ($this->_options['publishIncludeClass']) {
-                $pc = $this->_options['publishIncludeClass'];
-                $publisher = $this->_options['publisher'];
-                $message = new $pc($message, $include);
-                $publisher->$publish($pc);
-            } else {
-                $publisher = $this->_options['publisher'];
-                $publisher->$publish($message, $include);
-            }
+            $publisher = $this->_options['publisher'];
+            $publisher->$publish($message, $include);
         }
         $$ = $this->yW[$yyTop - 1] . $3;
     }

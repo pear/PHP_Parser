@@ -185,7 +185,7 @@ EOF;
             array(
                 'classes' => array(
                     'foochunk' =>
-                        array(
+                        array(array(
                             'extends' => '',
                             'type' => '',
                             'methods' =>
@@ -224,7 +224,7 @@ EOF;
                             'startline' => 2,
                             'endline' => 4,
                             'documentation' => null,
-                        )
+                        ))
                 ),
                 'interfaces' => array(),
                 'includes' => array(),
@@ -264,7 +264,7 @@ EOF;
             array(
                 'classes' => array(
                     'foochunk' =>
-                        array(
+                        array(array(
                             'extends' => '',
                             'type' => '',
                             'methods' =>
@@ -310,7 +310,7 @@ EOF;
                             'startline' => 2,
                             'endline' => 4,
                             'documentation' => null,
-                        )
+                        ))
                 ),
                 'interfaces' => array(),
                 'includes' => array(),
@@ -350,7 +350,7 @@ EOF;
             array(
                 'classes' => array(
                     'foochunk' =>
-                        array(
+                        array(array(
                             'extends' => '',
                             'type' => '',
                             'methods' =>
@@ -396,7 +396,7 @@ EOF;
                             'startline' => 2,
                             'endline' => 4,
                             'documentation' => null,
-                        )
+                        ))
                 ),
                 'interfaces' => array(),
                 'includes' => array(),
@@ -436,7 +436,7 @@ EOF;
             array(
                 'classes' => array(
                     'foochunk' =>
-                        array(
+                        array(array(
                             'extends' => '',
                             'type' => '',
                             'methods' =>
@@ -488,7 +488,7 @@ EOF;
                             'startline' => 2,
                             'endline' => 4,
                             'documentation' => null,
-                        )
+                        ))
                 ),
                 'interfaces' => array(),
                 'includes' => array(),
@@ -528,7 +528,7 @@ EOF;
             array(
                 'classes' => array(
                     'foochunk' =>
-                        array(
+                        array(array(
                             'extends' => '',
                             'type' => '',
                             'methods' =>
@@ -586,7 +586,7 @@ EOF;
                             'startline' => 2,
                             'endline' => 4,
                             'documentation' => null,
-                        )
+                        ))
                 ),
                 'interfaces' => array(),
                 'includes' => array(),
@@ -626,7 +626,7 @@ EOF;
             array(
                 'classes' => array(
                     'foochunk' =>
-                        array(
+                        array(array(
                             'extends' => '',
                             'type' => '',
                             'methods' =>
@@ -666,7 +666,7 @@ EOF;
                             'startline' => 2,
                             'endline' => 4,
                             'documentation' => null,
-                        )
+                        ))
                 ),
                 'interfaces' => array(),
                 'includes' => array(),
@@ -710,7 +710,7 @@ EOF;
             array(
                 'classes' => array(
                     'foochunk' =>
-                        array(
+                        array(array(
                             'extends' => '',
                             'type' => '',
                             'methods' =>
@@ -753,7 +753,7 @@ EOF;
                             'startline' => 2,
                             'endline' => 8,
                             'documentation' => null,
-                        )
+                        ))
                 ),
                 'interfaces' => array(),
                 'includes' => array(),
@@ -797,7 +797,7 @@ EOF;
             array(
                 'classes' => array(
                     'foochunk' =>
-                        array(
+                        array(array(
                             'extends' => '',
                             'type' => '',
                             'methods' =>
@@ -850,7 +850,7 @@ EOF;
                             'startline' => 2,
                             'endline' => 8,
                             'documentation' => null,
-                        )
+                        ))
                 ),
                 'interfaces' => array(),
                 'includes' => array(),
@@ -896,7 +896,7 @@ EOF;
             array(
                 'classes' => array(
                     'foochunk' =>
-                        array(
+                        array(array(
                             'extends' => '',
                             'type' => '',
                             'methods' =>
@@ -936,7 +936,7 @@ EOF;
                             'startline' => 2,
                             'endline' => 10,
                             'documentation' => null,
-                        )
+                        ))
                 ),
                 'interfaces' => array(),
                 'includes' => array(),
@@ -982,7 +982,7 @@ EOF;
             array(
                 'classes' => array(
                     'foochunk' =>
-                        array(
+                        array(array(
                             'extends' => '',
                             'type' => '',
                             'methods' =>
@@ -1027,7 +1027,7 @@ EOF;
                             'startline' => 2,
                             'endline' => 10,
                             'documentation' => null,
-                        )
+                        ))
                 ),
                 'interfaces' => array(),
                 'includes' => array(),
@@ -1078,7 +1078,7 @@ EOF;
             array(
                 'classes' => array(
                     'foochunk' =>
-                        array(
+                        array(array(
                             'extends' => '',
                             'type' => '',
                             'methods' =>
@@ -1134,7 +1134,7 @@ EOF;
                             'startline' => 2,
                             'endline' => 15,
                             'documentation' => null,
-                        )
+                        ))
                 ),
                 'interfaces' => array(),
                 'includes' => array(),
@@ -1180,7 +1180,7 @@ EOF;
             array(
                 'classes' => array(
                     'foochunk' =>
-                        array(
+                        array(array(
                             'extends' => '',
                             'type' => '',
                             'methods' =>
@@ -1227,7 +1227,7 @@ EOF;
                             'startline' => 2,
                             'endline' => 10,
                             'documentation' => null,
-                        )
+                        ))
                 ),
                 'interfaces' => array(),
                 'includes' => array(),
@@ -1286,7 +1286,7 @@ EOF;
             array(
                 'classes' => array(
                     'foochunk' =>
-                        array(
+                        array(array(
                             'extends' => '',
                             'type' => '',
                             'methods' =>
@@ -1343,7 +1343,7 @@ EOF;
                             'startline' => 2,
                             'endline' => $count,
                             'documentation' => null,
-                        )
+                        ))
                 ),
                 'interfaces' => array(),
                 'includes' => array(
@@ -1408,7 +1408,7 @@ EOF;
             array(
                 'classes' => array(
                     'foochunk' =>
-                        array(
+                        array(array(
                             'extends' => '',
                             'type' => '',
                             'methods' =>
@@ -1470,7 +1470,7 @@ EOF;
                             'startline' => 2,
                             'endline' => $count,
                             'documentation' => null,
-                        )
+                        ))
                 ),
                 'interfaces' => array(),
                 'includes' => array(
@@ -1531,7 +1531,7 @@ EOF;
             array(
                 'classes' => array(
                     'foochunk' =>
-                        array(
+                        array(array(
                             'extends' => '',
                             'type' => '',
                             'methods' =>
@@ -1589,7 +1589,7 @@ EOF;
                             'startline' => 2,
                             'endline' => $count,
                             'documentation' => null,
-                        )
+                        ))
                 ),
                 'interfaces' => array(),
                 'includes' => array(
@@ -1658,7 +1658,7 @@ EOF;
             array(
                 'classes' => array(
                     'foochunk' =>
-                        array(
+                        array(array(
                             'extends' => '',
                             'type' => '',
                             'methods' =>
@@ -1724,7 +1724,7 @@ EOF1',
                             'startline' => 2,
                             'endline' => $count,
                             'documentation' => null,
-                        )
+                        ))
                 ),
                 'interfaces' => array(),
                 'includes' => array(
@@ -1782,7 +1782,7 @@ EOF;
             array(
                 'classes' => array(
                     'foochunk' =>
-                        array(
+                        array(array(
                             'extends' => '',
                             'type' => '',
                             'methods' =>
@@ -1833,7 +1833,7 @@ EOF;
                             'startline' => 2,
                             'endline' => $count,
                             'documentation' => null,
-                        )
+                        ))
                 ),
                 'interfaces' => array(),
                 'includes' => array(
@@ -1886,7 +1886,7 @@ EOF;
             array(
                 'classes' => array(
                     'foochunk' =>
-                        array(
+                        array(array(
                             'extends' => '',
                             'type' => '',
                             'methods' =>
@@ -1936,7 +1936,7 @@ EOF;
                             'startline' => 2,
                             'endline' => $count,
                             'documentation' => null,
-                        )
+                        ))
                 ),
                 'interfaces' => array(),
                 'includes' => array(

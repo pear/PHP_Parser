@@ -189,7 +189,7 @@ EOF;
                 'includes' => array(
                     ),
                 'functions' => array(
-                    'test' => array(
+                    'test' => array(array(
                         'name' => 'test',
                         'returnsReference' => false,
                         'params' => array(
@@ -215,7 +215,7 @@ EOF;
                         'startline' => 2,
                         'endline' => $count,
                         'documentation' => null,
-                    )
+                    ))
                 ),
                 'constants' => array(),
                 'globals' => array(),
@@ -256,7 +256,7 @@ EOF;
                 'includes' => array(
                     ),
                 'functions' => array(
-                    'test' => array(
+                    'test' => array(array(
                         'name' => 'test',
                         'returnsReference' => false,
                         'params' => array(
@@ -282,7 +282,7 @@ EOF;
                         'startline' => 2,
                         'endline' => $count,
                         'documentation' => null,
-                    )
+                    ))
                 ),
                 'constants' => array(),
                 'globals' => array(),
@@ -327,7 +327,7 @@ EOF;
                 'includes' => array(
                     ),
                 'functions' => array(
-                    'test' => array(
+                    'test' => array(array(
                         'name' => 'test',
                         'returnsReference' => false,
                         'params' => array(
@@ -350,7 +350,7 @@ EOF;
                         'startline' => 2,
                         'endline' => $count,
                         'documentation' => null,
-                    )
+                    ))
                 ),
                 'constants' => array(),
                 'globals' => array(),
@@ -396,7 +396,7 @@ EOF;
                 'includes' => array(
                     ),
                 'functions' => array(
-                    'test' => array(
+                    'test' => array(array(
                         'name' => 'test',
                         'returnsReference' => false,
                         'params' => array(
@@ -417,7 +417,7 @@ EOF;
                         'startline' => 2,
                         'endline' => $count,
                         'documentation' => null,
-                    )
+                    ))
                 ),
                 'constants' => array(),
                 'globals' => array(),
@@ -465,7 +465,7 @@ EOF;
                 'includes' => array(
                     ),
                 'functions' => array(
-                    'test' => array(
+                    'test' =>  array(array(
                         'name' => 'test',
                         'returnsReference' => false,
                         'params' => array(
@@ -486,7 +486,7 @@ EOF;
                         'startline' => 2,
                         'endline' => $count,
                         'documentation' => null,
-                    )
+                    ))
                 ),
                 'constants' => array(),
                 'globals' => array(),
@@ -538,7 +538,7 @@ EOF;
                 'includes' => array(
                     ),
                 'functions' => array(
-                    'test' => array(
+                    'test' => array(array(
                         'name' => 'test',
                         'returnsReference' => false,
                         'params' => array(
@@ -566,7 +566,7 @@ EOF;
                         'startline' => 2,
                         'endline' => $count,
                         'documentation' => null,
-                    )
+                    ))
                 ),
                 'constants' => array(),
                 'globals' => array(),

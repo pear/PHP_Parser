@@ -192,12 +192,12 @@ EOF;
                 ),
                 'constants' => array(
                     "hilarious" =>
-                    array('name' => 'hilarious',
+                    array(array('name' => 'hilarious',
                                'value' => '1',
                                'simple' => true,
                                'startline' => 2,
                                'endline' => $count,
-                               'documentation' => null)),
+                               'documentation' => null))),
                 'globals' => array(),
             ), $e, 'wrong return');
     }
@@ -239,12 +239,12 @@ EOF;
                 ),
                 'constants' => array(
                     "'hilarious' . 'mofo'" =>
-                    array('name' => "'hilarious' . 'mofo'",
+                    array(array('name' => "'hilarious' . 'mofo'",
                                'value' => '1',
                                'simple' => false,
                                'startline' => 2,
                                'endline' => $count,
-                               'documentation' => null)),
+                               'documentation' => null))),
                 'globals' => array(),
             ), $e, 'wrong return');
     }

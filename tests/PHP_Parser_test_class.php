@@ -265,7 +265,7 @@ EOF;
             array(
                 'classes' => array(
                     'foochunk' =>
-                        array(
+                        array(array(
                             'extends' => '',
                             'type' => '',
                             'methods' =>
@@ -283,7 +283,7 @@ EOF;
                             'startline' => 2,
                             'endline' => 2,
                             'documentation' => null,
-                        )
+                        ))
                 ),
                 'includes' => array(),
                 'interfaces' => array(),
@@ -321,7 +321,7 @@ EOF;
             array(
                 'classes' => array(
                     'foochunk' =>
-                        array(
+                        array(array(
                             'extends' => 'clregy',
                             'type' => '',
                             'methods' =>
@@ -339,7 +339,7 @@ EOF;
                             'startline' => 2,
                             'endline' => 2,
                             'documentation' => null,
-                        )
+                        ))
                 ),
                 'includes' => array(),
                 'interfaces' => array(),

@@ -186,7 +186,7 @@ EOF;
                 'interfaces' => array(),
                 'includes' => array(),
                 'functions' => array(
-                    'test' => array(
+                    'test' => array(array(
                         'name' => 'test',
                         'returnsReference' => false,
                         'params' => array(),
@@ -201,7 +201,7 @@ EOF;
                         'startline' => 2,
                         'endline' => 2,
                         'documentation' => null,
-                    )
+                    ))
                 ),
                 'constants' => array(),
                 'globals' => array(),
@@ -239,7 +239,7 @@ EOF;
                 'interfaces' => array(),
                 'includes' => array(),
                 'functions' => array(
-                    'test' => array(
+                    'test' => array(array(
                         'name' => 'test',
                         'returnsReference' => false,
                         'params' => array(
@@ -261,7 +261,7 @@ EOF;
                         'startline' => 2,
                         'endline' => 2,
                         'documentation' => null,
-                    )
+                    ))
                 ),
                 'constants' => array(),
                 'globals' => array(),
@@ -299,7 +299,7 @@ EOF;
                 'interfaces' => array(),
                 'includes' => array(),
                 'functions' => array(
-                    'test' => array(
+                    'test' => array(array(
                         'name' => 'test',
                         'returnsReference' => false,
                         'params' => array(
@@ -321,7 +321,7 @@ EOF;
                         'startline' => 2,
                         'endline' => 2,
                         'documentation' => null,
-                    )
+                    ))
                 ),
                 'constants' => array(),
                 'globals' => array(),
@@ -359,7 +359,7 @@ EOF;
                 'interfaces' => array(),
                 'includes' => array(),
                 'functions' => array(
-                    'test' => array(
+                    'test' => array(array(
                         'name' => 'test',
                         'returnsReference' => false,
                         'params' => array(
@@ -387,7 +387,7 @@ EOF;
                         'startline' => 2,
                         'endline' => 2,
                         'documentation' => null,
-                    )
+                    ))
                 ),
                 'constants' => array(),
                 'globals' => array(),
@@ -425,7 +425,7 @@ EOF;
                 'interfaces' => array(),
                 'includes' => array(),
                 'functions' => array(
-                    'test' => array(
+                    'test' => array(array(
                         'name' => 'test',
                         'returnsReference' => false,
                         'params' => array(
@@ -459,7 +459,7 @@ EOF;
                         'startline' => 2,
                         'endline' => 2,
                         'documentation' => null,
-                    )
+                    ))
                 ),
                 'constants' => array(),
                 'globals' => array(),
@@ -497,7 +497,7 @@ EOF;
                 'interfaces' => array(),
                 'includes' => array(),
                 'functions' => array(
-                    'test' => array(
+                    'test' => array(array(
                         'name' => 'test',
                         'returnsReference' => true,
                         'params' => array(
@@ -513,7 +513,7 @@ EOF;
                         'startline' => 2,
                         'endline' => 2,
                         'documentation' => null,
-                    )
+                    ))
                 ),
                 'constants' => array(),
                 'globals' => array(),
@@ -555,7 +555,7 @@ EOF;
                 'interfaces' => array(),
                 'includes' => array(),
                 'functions' => array(
-                    'test' => array(
+                    'test' => array(array(
                         'name' => 'test',
                         'returnsReference' => false,
                         'params' => array(
@@ -575,7 +575,7 @@ EOF;
                         'startline' => 2,
                         'endline' => 6,
                         'documentation' => null,
-                    )
+                    ))
                 ),
                 'constants' => array(),
                 'globals' => array(),
@@ -617,7 +617,7 @@ EOF;
                 'interfaces' => array(),
                 'includes' => array(),
                 'functions' => array(
-                    'test' => array(
+                    'test' => array(array(
                         'name' => 'test',
                         'returnsReference' => false,
                         'params' => array(
@@ -647,7 +647,7 @@ EOF;
                         'startline' => 2,
                         'endline' => 6,
                         'documentation' => null,
-                    )
+                    ))
                 ),
                 'constants' => array(),
                 'globals' => array(),
@@ -691,7 +691,7 @@ EOF;
                 'interfaces' => array(),
                 'includes' => array(),
                 'functions' => array(
-                    'test' => array(
+                    'test' => array(array(
                         'name' => 'test',
                         'returnsReference' => false,
                         'params' => array(
@@ -709,7 +709,7 @@ EOF;
                         'startline' => 2,
                         'endline' => 8,
                         'documentation' => null,
-                    )
+                    ))
                 ),
                 'constants' => array(),
                 'globals' => array(),
@@ -752,7 +752,7 @@ EOF;
                 'interfaces' => array(),
                 'includes' => array(),
                 'functions' => array(
-                    'test' => array(
+                    'test' => array(array(
                         'name' => 'test',
                         'returnsReference' => false,
                         'params' => array(
@@ -774,7 +774,7 @@ EOF;
                         'startline' => 2,
                         'endline' => 7,
                         'documentation' => null,
-                    )
+                    ))
                 ),
                 'constants' => array(),
                 'globals' => array(),
@@ -823,7 +823,7 @@ EOF;
                 'interfaces' => array(),
                 'includes' => array(),
                 'functions' => array(
-                    'test' => array(
+                    'test' => array(array(
                         'name' => 'test',
                         'returnsReference' => false,
                         'params' => array(
@@ -856,7 +856,7 @@ EOF;
                         'startline' => 2,
                         'endline' => 13,
                         'documentation' => null,
-                    )
+                    ))
                 ),
                 'constants' => array(),
                 'globals' => array(),
@@ -913,7 +913,7 @@ EOF;
                 'interfaces' => array(),
                 'includes' => array(),
                 'functions' => array(
-                    'test' => array(
+                    'test' => array(array(
                         'name' => 'test',
                         'returnsReference' => false,
                         'params' => array(
@@ -948,7 +948,7 @@ EOF;
                         'startline' => 2,
                         'endline' => $count,
                         'documentation' => null,
-                    )
+                    ))
                 ),
                 'constants' => array(),
                 'globals' => array(),
@@ -1010,7 +1010,7 @@ EOF;
                 'interfaces' => array(),
                 'includes' => array(),
                 'functions' => array(
-                    'test' => array(
+                    'test' => array(array(
                         'name' => 'test',
                         'returnsReference' => false,
                         'params' => array(
@@ -1050,7 +1050,7 @@ EOF;
                         'startline' => 2,
                         'endline' => $count,
                         'documentation' => null,
-                    )
+                    ))
                 ),
                 'constants' => array(),
                 'globals' => array(),
@@ -1108,7 +1108,7 @@ EOF;
                 'interfaces' => array(),
                 'includes' => array(),
                 'functions' => array(
-                    'test' => array(
+                    'test' => array(array(
                         'name' => 'test',
                         'returnsReference' => false,
                         'params' => array(
@@ -1144,7 +1144,7 @@ EOF;
                         'startline' => 2,
                         'endline' => $count,
                         'documentation' => null,
-                    )
+                    ))
                 ),
                 'constants' => array(),
                 'globals' => array(),
@@ -1215,7 +1215,7 @@ EOF;
                     array('file' => '"hi"', 'type' => 'require_once', 'startline' => 7, 'endline' => 7, 'documentation' => ''),
                     ),
                 'functions' => array(
-                    'test' => array(
+                    'test' => array(array(
                         'name' => 'test',
                         'returnsReference' => false,
                         'params' => array(
@@ -1259,7 +1259,7 @@ EOF1',
                         'startline' => 2,
                         'endline' => $count,
                         'documentation' => null,
-                    )
+                    ))
                 ),
                 'constants' => array(),
                 'globals' => array(),
@@ -1311,7 +1311,7 @@ EOF;
                 'includes' => array(
                     ),
                 'functions' => array(
-                    'test' => array(
+                    'test' => array(array(
                         'name' => 'test',
                         'returnsReference' => false,
                         'params' => array(
@@ -1340,7 +1340,7 @@ EOF;
                         'startline' => 2,
                         'endline' => $count,
                         'documentation' => null,
-                    )
+                    ))
                 ),
                 'constants' => array(),
                 'globals' => array(),
@@ -1391,7 +1391,7 @@ EOF;
                 'includes' => array(
                     ),
                 'functions' => array(
-                    'test' => array(
+                    'test' => array(array(
                         'name' => 'test',
                         'returnsReference' => false,
                         'params' => array(
@@ -1419,7 +1419,7 @@ EOF;
                         'startline' => 2,
                         'endline' => $count,
                         'documentation' => null,
-                    )
+                    ))
                 ),
                 'constants' => array(),
                 'globals' => array(),
