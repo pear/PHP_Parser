@@ -2,25 +2,8 @@
 /**
  * @package PHP_Parser
  */
-class PHP_Parser_DocBlock_DefaultTagLexer
+class PHP_Parser_DocBlock_DefaultTagLexer extends PHP_Parser_DocBlock_CommonLexer
 {
-    /**
-     * @var string
-     */
-    var $_buf;
-    /**
-     * @var integer
-     */
-    var $_index;
-    /**
-     * Indicates whether the current Tag contains separate sections
-     *
-     * This parameter is a flag used to determine whether the input buffer
-     * has been split into sections such as what happens in a @see tag.
-     * Sections are delimited by commas.
-     * @var boolean
-     */
-    var $_multipleBuffers = false;
     /**
      * Mapping of tag field types to lexer function name
      *
@@ -41,19 +24,6 @@ class PHP_Parser_DocBlock_DefaultTagLexer
               'allwords' => 'getAllWords',
               'authoremails' => 'getAuthorEmails',
             );
-
-    /**
-     * return something useful, when a parse error occurs.
-     *
-     * used to build error messages if the parser fails, and needs to know the line number..
-     *
-     * @return   string 
-     * @access   public 
-     */
-    function parseError() 
-    {
-        return "Error at line {$this->yyline}";
-    }
 
     /**
      * Set Lexer options
@@ -77,49 +47,6 @@ class PHP_Parser_DocBlock_DefaultTagLexer
         if (!is_object($this->_options['descParserClass']) ||
                 !is_object($this->_options['descLexerClass'])) {
             return false;
-        }
-    }
-    
-    /**
-     * Retrieve the next word from the tag contents
-     * @return string|false
-     */
-    function getWord()
-    {
-        return $this->_readBuf();
-    }
-
-    /**
-     * Retrieve multiple words from the tag contents
-     * @param integer the number of words to return
-     * @return false|string
-     */
-    function getWords($param)
-    {
-        $count = $param['count'];
-        $ret = '';
-        for ($i = 0; $i < $count; $i++) {
-            if ($word = $this->_readBuf(true, true)) {
-                $ret .= $word;
-            }
-        }
-        return rtrim($ret);
-    }
-
-    /**
-     * Retrieve all remaining words from the tag contents
-     * @return string|false
-     */
-    function getAllWords()
-    {
-        $ret = '';
-        while ($word = $this->_readBuf(true, true)) {
-            $ret .= $word;
-        }
-        if ($ret == '') {
-            return false;
-        } else {
-            return $ret;
         }
     }
     
@@ -296,154 +223,5 @@ class PHP_Parser_DocBlock_DefaultTagLexer
             }
         }
         return $word;
-    }
-    
-    /**
-     * Return a link expected by phpDocumentor
-     *
-     * This will be either 1 or two words.  This is to
-     * allow links like "function mine()" and so on
-     * @return false|string
-     */
-    function getLink()
-    {
-        // must have at least 1 word to be a valid link
-        $ret = $this->getWord();
-        if (!$ret) {
-            return false;
-        }
-        $save = $ret;
-        if (strpos($ret, '#')) {
-            $ret = substr($ret, strpos($ret, '#') + 1); // chop off package selector
-        }
-        // if the word is function or global
-        if (in_array($ret, array('function', 'global'))) {
-            if ($this->_readBuf(false)) {
-                $ret = $save;
-                $ret .= ' ' . $this->_readBuf();
-                return $ret;
-            } else {
-                return false;
-            }
-        } else {
-            return $save;
-        }
-    }
-    
-    /**
-     * Read a word from the buffer
-     * @param boolean whether to increment the index into the buffer
-     * @param boolean whether to include whitespace
-     * @access private
-     */
-    function _readBuf($inc = true, $whitespace = false)
-    {
-        $index = $this->_index;
-        $buf = $this->_getBuf();
-        if ($inc) {
-            $this->_index++;
-        }
-        if (!isset($buf[1][$index])) {
-            return null;
-        }
-        if ($whitespace) {
-            return $buf[0][$index];
-        }
-        return $buf[1][$index];
-    }
-    
-    /**
-     * Returns true if there is another segment of the multi-segment
-     * inline tag to parse.
-     * @return boolean
-     */
-    function hasNextBuf()
-    {
-        if (!$this->_multipleBuffers) {
-            return false;
-        }
-        if (!isset($this->_buf[$this->_bufIndex][0][$this->_index]) &&
-                !isset($this->_buf[$this->_bufIndex + 1])) {
-            return false;
-        }
-        return $this->_bufIndex < count($this->_buf);
-    }
-    
-    /**
-     * Move to next buffer in the multi-section tag
-     * @return boolean Success is returned
-     */
-    function moveNextBuf()
-    {
-        if (isset($this->_buf[++$this->_bufIndex][0])) {
-            $this->_index = 0;
-            return $this->_buf[$this->_bufIndex];
-        } else {
-            return false;
-        }
-    }
-    
-    /**
-     * Return the input buffer
-     *
-     * For single-segment tags, this returns the whole buffer.  For
-     * multi-segment tags, this returns the current buffer, or if it
-     * is empty, returns the next one
-     * @return array
-     */
-    function _getBuf()
-    {
-        if ($this->_multipleBuffers) {
-            if (isset($this->_buf[$this->_bufIndex][0][$this->_index])) {
-                return $this->_buf[$this->_bufIndex];
-            } else {
-                return false;
-            }
-        } else {
-            return $this->_buf;
-        }
-    }
-    
-    /**
-     * Prepare tag contents for lexing.
-     *
-     * This function replaces the current buffer with the data after
-     * splitting it along whitespace, and along any separators
-     * passed to {@link setOptions()}
-     * @param string
-     */
-    function newTag($data)
-    {
-        $data = ltrim($data);
-        if ($this->_options['separator']) {
-            $data2 = explode($this->_options['separator'], $data);
-            $this->_bufIndex = 0;
-            foreach($data2 as $data) {
-                // strip out all whitespace
-                preg_match_all('/([^\s]+)(\s+)?/', ltrim($data), $this->_buf[$this->_bufIndex++]);
-//                $this->_buf[$this->_bufIndex++] = preg_split("/\s+/", ltrim($data));
-            }
-            $this->_bufIndex = 0;
-            $this->_multipleBuffers = true;
-        } else {
-            $this->_multipleBuffers = false;
-            // strip out all whitespace
-            preg_match_all('/([^\s]+)(\s+)?/', ltrim($data), $this->_buf);
-//            $this->_buf = preg_split("/\s+/", $data);
-        }
-        $this->_index = 0;
-    }
-
-    /**
-     * Passes data to {@link newTag()}
-     * @var string
-     */
-    function PHP_Parser_DocBlock_DefaultTagLexer($data = '')
-    {
-        $this->debug = false;
-        if (!empty($data)) {
-            $this->setOptions();
-            $this->newTag($data);
-        }
     }
 }
