@@ -577,7 +577,7 @@ again some more');
                 array(PHP_PARSER_DOCLEX_WHITESPACE, " "),
                 array(PHP_PARSER_DOCLEX_BULLET, "-"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' third item'),
-                array(YY_EOF, ''),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
             ), $data, 'simple list 1');
         $this->lexer->setup('@since o first item
  o second item
@@ -600,7 +600,7 @@ again some more');
                 array(PHP_PARSER_DOCLEX_WHITESPACE, " "),
                 array(PHP_PARSER_DOCLEX_BULLET, "o"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' third item'),
-                array(YY_EOF, ''),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
             ), $data, 'simple list 1.1');
         $this->lexer->setup('@since 1 first item
  2 second item
@@ -623,7 +623,7 @@ again some more');
                 array(PHP_PARSER_DOCLEX_WHITESPACE, " "),
                 array(PHP_PARSER_DOCLEX_NBULLET, "3"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' third item'),
-                array(YY_EOF, ''),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
             ), $data, 'simple list 2');
         $this->lexer->setup('@since 1. first item
  2. second item
@@ -646,7 +646,7 @@ again some more');
                 array(PHP_PARSER_DOCLEX_WHITESPACE, " "),
                 array(PHP_PARSER_DOCLEX_NDBULLET, "3."),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' third item'),
-                array(YY_EOF, ''),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
             ), $data, 'simple list 3');
     }
 
@@ -685,6 +685,7 @@ again some more');
                 array(PHP_PARSER_DOCLEX_BULLET, "-"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' third item'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
                 array(PHP_PARSER_DOCLEX_CLOSE_B, '</b>'),
             ), $data, 'simple list 1');
         $this->lexer->setup('@since <i>
@@ -714,6 +715,7 @@ again some more');
                 array(PHP_PARSER_DOCLEX_BULLET, "o"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' third item'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
                 array(PHP_PARSER_DOCLEX_CLOSE_I, '</i>'),
             ), $data, 'simple list 1.1');
         $this->lexer->setup('@since <kbd>
@@ -743,6 +745,7 @@ again some more');
                 array(PHP_PARSER_DOCLEX_NBULLET, "3"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' third item'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
                 array(PHP_PARSER_DOCLEX_CLOSE_KBD, '</kbd>'),
             ), $data, 'simple list 2');
         $this->lexer->setup('@since <samp>
@@ -772,6 +775,7 @@ again some more');
                 array(PHP_PARSER_DOCLEX_NDBULLET, "3."),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' third item'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
                 array(PHP_PARSER_DOCLEX_TEXT, ' '),
                 array(PHP_PARSER_DOCLEX_CLOSE_SAMP, '</samp>'),
             ), $data, 'simple list 3');
@@ -807,6 +811,7 @@ again some more');
                 array(PHP_PARSER_DOCLEX_BULLET, "-"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' first item'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_START, ''),
                 array(PHP_PARSER_DOCLEX_WHITESPACE, "   "),
                 array(PHP_PARSER_DOCLEX_NBULLET, "1"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' nested first'),
@@ -815,6 +820,7 @@ again some more');
                 array(PHP_PARSER_DOCLEX_NBULLET, "2"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' nested second'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
                 array(PHP_PARSER_DOCLEX_WHITESPACE, " "),
                 array(PHP_PARSER_DOCLEX_BULLET, "-"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' second item'),
@@ -823,10 +829,12 @@ again some more');
                 array(PHP_PARSER_DOCLEX_BULLET, "-"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' third item'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_START, ''),
                 array(PHP_PARSER_DOCLEX_WHITESPACE, "       "),
                 array(PHP_PARSER_DOCLEX_NBULLET, "1"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' nested first'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_START, ''),
                 array(PHP_PARSER_DOCLEX_WHITESPACE, "         "),
                 array(PHP_PARSER_DOCLEX_BULLET, "+"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' another item'),
@@ -839,11 +847,13 @@ again some more');
                 array(PHP_PARSER_DOCLEX_BULLET, "+"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' a third'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
                 array(PHP_PARSER_DOCLEX_WHITESPACE, "       "),
                 array(PHP_PARSER_DOCLEX_NBULLET, "2"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' nested second'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
-                array(YY_EOF, ''),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
             ), $data, 'simple list 1');
     }
 
@@ -881,6 +891,7 @@ again some more');
                 array(PHP_PARSER_DOCLEX_BULLET, "-"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' first item'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_START, ''),
                 array(PHP_PARSER_DOCLEX_WHITESPACE, "   "),
                 array(PHP_PARSER_DOCLEX_NBULLET, "1"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' nested first'),
@@ -889,6 +900,7 @@ again some more');
                 array(PHP_PARSER_DOCLEX_NBULLET, "2"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' nested second'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
                 array(PHP_PARSER_DOCLEX_WHITESPACE, " "),
                 array(PHP_PARSER_DOCLEX_BULLET, "-"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' second item'),
@@ -897,10 +909,12 @@ again some more');
                 array(PHP_PARSER_DOCLEX_BULLET, "-"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' third item'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_START, ''),
                 array(PHP_PARSER_DOCLEX_WHITESPACE, "       "),
                 array(PHP_PARSER_DOCLEX_NBULLET, "1"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' nested first'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_START, ''),
                 array(PHP_PARSER_DOCLEX_WHITESPACE, "         "),
                 array(PHP_PARSER_DOCLEX_BULLET, "+"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' another item'),
@@ -913,10 +927,13 @@ again some more');
                 array(PHP_PARSER_DOCLEX_BULLET, "+"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' a third'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
                 array(PHP_PARSER_DOCLEX_WHITESPACE, "       "),
                 array(PHP_PARSER_DOCLEX_NBULLET, "2"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' nested second'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
                 array(PHP_PARSER_DOCLEX_CLOSE_VAR, '</var>'),
             ), $data, 'simple list 1');
     }
@@ -1436,6 +1453,7 @@ again some more}}');
                 array(PHP_PARSER_DOCLEX_BULLET, "-"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' third item'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
                 array(PHP_PARSER_DOCLEX_CLOSE_B, '</b>'),
                 array(PHP_PARSER_DOCLEX_ENDINTERNAL, '}}'),
             ), $data, 'simple list 1');
@@ -1467,6 +1485,7 @@ again some more}}');
                 array(PHP_PARSER_DOCLEX_BULLET, "o"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' third item'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
                 array(PHP_PARSER_DOCLEX_CLOSE_I, '</i>'),
                 array(PHP_PARSER_DOCLEX_ENDINTERNAL, '}}'),
             ), $data, 'simple list 1.1');
@@ -1498,6 +1517,7 @@ again some more}}');
                 array(PHP_PARSER_DOCLEX_NBULLET, "3"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' third item'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
                 array(PHP_PARSER_DOCLEX_CLOSE_KBD, '</kbd>'),
                 array(PHP_PARSER_DOCLEX_ENDINTERNAL, '}}'),
             ), $data, 'simple list 2');
@@ -1529,6 +1549,7 @@ again some more}}');
                 array(PHP_PARSER_DOCLEX_NDBULLET, "3."),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' third item'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
                 array(PHP_PARSER_DOCLEX_TEXT, ' '),
                 array(PHP_PARSER_DOCLEX_CLOSE_SAMP, '</samp>'),
                 array(PHP_PARSER_DOCLEX_ENDINTERNAL, '}}'),
@@ -1567,6 +1588,7 @@ again some more}}');
                 array(PHP_PARSER_DOCLEX_BULLET, "-"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' first item'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_START, ''),
                 array(PHP_PARSER_DOCLEX_WHITESPACE, "   "),
                 array(PHP_PARSER_DOCLEX_NBULLET, "1"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' nested first'),
@@ -1575,6 +1597,7 @@ again some more}}');
                 array(PHP_PARSER_DOCLEX_NBULLET, "2"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' nested second'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
                 array(PHP_PARSER_DOCLEX_WHITESPACE, " "),
                 array(PHP_PARSER_DOCLEX_BULLET, "-"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' second item'),
@@ -1583,10 +1606,12 @@ again some more}}');
                 array(PHP_PARSER_DOCLEX_BULLET, "-"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' third item'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_START, ''),
                 array(PHP_PARSER_DOCLEX_WHITESPACE, "       "),
                 array(PHP_PARSER_DOCLEX_NBULLET, "1"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' nested first'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_START, ''),
                 array(PHP_PARSER_DOCLEX_WHITESPACE, "         "),
                 array(PHP_PARSER_DOCLEX_BULLET, "+"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' another item'),
@@ -1599,11 +1624,13 @@ again some more}}');
                 array(PHP_PARSER_DOCLEX_BULLET, "+"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' a third'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
                 array(PHP_PARSER_DOCLEX_WHITESPACE, "       "),
                 array(PHP_PARSER_DOCLEX_NBULLET, "2"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' nested second'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
-                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ""),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
                 array(PHP_PARSER_DOCLEX_ENDINTERNAL, '}}'),
             ), $data, 'simple list 1');
     }
@@ -1643,6 +1670,7 @@ again some more}}');
                 array(PHP_PARSER_DOCLEX_BULLET, "-"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' first item'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_START, ''),
                 array(PHP_PARSER_DOCLEX_WHITESPACE, "   "),
                 array(PHP_PARSER_DOCLEX_NBULLET, "1"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' nested first'),
@@ -1651,6 +1679,7 @@ again some more}}');
                 array(PHP_PARSER_DOCLEX_NBULLET, "2"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' nested second'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
                 array(PHP_PARSER_DOCLEX_WHITESPACE, " "),
                 array(PHP_PARSER_DOCLEX_BULLET, "-"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' second item'),
@@ -1659,10 +1688,12 @@ again some more}}');
                 array(PHP_PARSER_DOCLEX_BULLET, "-"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' third item'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_START, ''),
                 array(PHP_PARSER_DOCLEX_WHITESPACE, "       "),
                 array(PHP_PARSER_DOCLEX_NBULLET, "1"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' nested first'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_START, ''),
                 array(PHP_PARSER_DOCLEX_WHITESPACE, "         "),
                 array(PHP_PARSER_DOCLEX_BULLET, "+"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' another item'),
@@ -1675,10 +1706,13 @@ again some more}}');
                 array(PHP_PARSER_DOCLEX_BULLET, "+"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' a third'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
                 array(PHP_PARSER_DOCLEX_WHITESPACE, "       "),
                 array(PHP_PARSER_DOCLEX_NBULLET, "2"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' nested second'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
                 array(PHP_PARSER_DOCLEX_CLOSE_VAR, '</var>'),
                 array(PHP_PARSER_DOCLEX_ENDINTERNAL, '}}'),
             ), $data, 'simple list 1');
@@ -1706,6 +1740,7 @@ again some more}}');
                 array(PHP_PARSER_DOCLEX_BULLET, "-"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' first item'),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_START, ''),
                 array(PHP_PARSER_DOCLEX_WHITESPACE, "   "),
                 array(PHP_PARSER_DOCLEX_NBULLET, "1"),
                 array(PHP_PARSER_DOCLEX_SIMPLELIST, ' nested first'),

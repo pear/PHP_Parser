@@ -51,7 +51,6 @@ class PHP_Parser_DocBlock_Default_basic_test extends PHPUnit_TestCase
             'commentline' => 1,
             'lexer' => new PHP_Parser_DocBlock_DefaultLexer('')
         );
-        $this->parser->debug = false;
     }
 
     function tearDown()
@@ -333,7 +332,6 @@ class PHP_Parser_DocBlock_Default_basic_test extends PHPUnit_TestCase
         $comment = ' - first item
  - second item
  - third item';
-        $this->parser->debug = true;
         $this->assertEquals(array(
                     'summary' => array(),
                     'documentation' => array(
@@ -344,13 +342,171 @@ class PHP_Parser_DocBlock_Default_basic_test extends PHPUnit_TestCase
                                     array(' second item'),
                                     array(' third item'),
                                 ),
-                                  'type' => 'unordered',
+                                  'type' => '-',
                             ),
                         )
                     ),
                     'tags' => array(),
                     'startline' => 1,
                     'endline' => 4,
+                     ), $this->parser->parse($this->getOptions($comment, true)), 'parse');
+        $this->assertNoErrors('test_parse_simplelist', 'oops 1');
+
+        $comment = ' o first item
+ o second item
+ o third item';
+        $this->assertEquals(array(
+                    'summary' => array(),
+                    'documentation' => array(
+                        array(
+                            array('list' => 
+                                array(
+                                    array(' first item'),
+                                    array(' second item'),
+                                    array(' third item'),
+                                ),
+                                  'type' => 'o',
+                            ),
+                        )
+                    ),
+                    'tags' => array(),
+                    'startline' => 1,
+                    'endline' => 4,
+                     ), $this->parser->parse($this->getOptions($comment, true)), 'parse');
+        $this->assertNoErrors('test_parse_simplelist', 'oops 1');
+
+        $comment = ' + first item
+ + second item
+ + third item';
+        $this->assertEquals(array(
+                    'summary' => array(),
+                    'documentation' => array(
+                        array(
+                            array('list' => 
+                                array(
+                                    array(' first item'),
+                                    array(' second item'),
+                                    array(' third item'),
+                                ),
+                                  'type' => '+',
+                            ),
+                        )
+                    ),
+                    'tags' => array(),
+                    'startline' => 1,
+                    'endline' => 4,
+                     ), $this->parser->parse($this->getOptions($comment, true)), 'parse');
+        $this->assertNoErrors('test_parse_simplelist', 'oops 1');
+
+        $comment = ' 1 first item
+ 2 second item
+ 3 third item';
+        $this->assertEquals(array(
+                    'summary' => array(),
+                    'documentation' => array(
+                        array(
+                            array('list' => 
+                                array(
+                                    array(' first item'),
+                                    array(' second item'),
+                                    array(' third item'),
+                                ),
+                                  'type' => '#',
+                            ),
+                        )
+                    ),
+                    'tags' => array(),
+                    'startline' => 1,
+                    'endline' => 4,
+                     ), $this->parser->parse($this->getOptions($comment, true)), 'parse');
+        $this->assertNoErrors('test_parse_simplelist', 'oops 1');
+
+        $comment = ' 1. first item
+ 2. second item
+ 3. third item';
+        $this->assertEquals(array(
+                    'summary' => array(),
+                    'documentation' => array(
+                        array(
+                            array('list' => 
+                                array(
+                                    array(' first item'),
+                                    array(' second item'),
+                                    array(' third item'),
+                                ),
+                                  'type' => '#',
+                            ),
+                        )
+                    ),
+                    'tags' => array(),
+                    'startline' => 1,
+                    'endline' => 4,
+                     ), $this->parser->parse($this->getOptions($comment, true)), 'parse');
+        $this->assertNoErrors('test_parse_simplelist', 'oops 1');
+    }
+
+    function test_parse_nested_simplelist1()
+    {
+        if (!$this->_methodExists('parse')) {
+            return;
+        }
+        $comment = ' - first item
+   1 nested first
+   2 nested second
+ - second item
+ - third item
+       1 nested first
+         + another item
+         + yet another
+         + a third
+       2 nested second
+';
+        $this->parser->debug = true;
+        $this->assertEquals(array(
+                    'summary' => array(),
+                    'documentation' => array(
+                        array(
+                            array('list' => 
+                                array(
+                                    array(' first item',
+                                        array(
+                                            'list' =>
+                                            array(
+                                                array(' nested first'),
+                                                array(' nested second'),
+                                            ),
+                                            'type' => '#'
+                                        )
+                                    ),
+                                    array(' second item'),
+                                    array(' third item',
+                                        array(
+                                            'list' =>
+                                            array(
+                                                array(' nested first',
+                                                    array(
+                                                        'list' =>
+                                                        array(
+                                                            array(' another item'),
+                                                            array(' yet another'),
+                                                            array(' a third'),
+                                                        ),
+                                                        'type' => '+'
+                                                    )
+                                                ),
+                                                array(' nested second')
+                                            ),
+                                            'type' => '#'
+                                        )
+                                    ),
+                                ),
+                                  'type' => '-',
+                            ),
+                        )
+                    ),
+                    'tags' => array(),
+                    'startline' => 1,
+                    'endline' => 11,
                      ), $this->parser->parse($this->getOptions($comment, true)), 'parse');
         $this->assertNoErrors('test_parse_simplelist', 'oops');
     }

@@ -48,11 +48,11 @@ $title = 'PhpUnit test run, PHP_Parser package';
 <h2>Tests</h2>
 	<?php
 	$testcases = array(
-    	    'PHP_Parser_test_class',
-    	    'PHP_Parser_test_vars',
-    	    'PHP_Parser_test_methods',
-    	    'PHP_Parser_test_functions',
-    	    'PHP_Parser_test_define',
+            'PHP_Parser_test_class',
+            'PHP_Parser_test_vars',
+            'PHP_Parser_test_methods',
+            'PHP_Parser_test_functions',
+            'PHP_Parser_test_define',
 	);
     
     if (version_compare(phpversion(), '4.3.5', '>')) {

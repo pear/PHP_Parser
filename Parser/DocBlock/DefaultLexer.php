@@ -46,8 +46,9 @@ define('PHP_PARSER_DOCLEX_NDBULLET', ++$a); // numbered '1.' list number bullet
 define('PHP_PARSER_DOCLEX_SIMPLELIST', ++$a); // simple list item text
 define('PHP_PARSER_DOCLEX_SIMPLELIST_NL', ++$a); // newline character
 define('PHP_PARSER_DOCLEX_SIMPLELIST_END', ++$a); // end of a simplelist (empty string)
+define('PHP_PARSER_DOCLEX_SIMPLELIST_START', ++$a); // start of a nested simplelist (empty string)
 define('PHP_PARSER_DOCLEX_WHITESPACE', ++$a); // whitespace before a bullet in a simple list
-define('PHP_PARSER_DOCLEX_NESTEDWHITESPACE', ++$a); // whitespace before a bullet in a nested simple list
+define('PHP_PARSER_DOCLEX_NESTEDLIST', ++$a); // start of a nested list
 define('PHP_PARSER_DOCLEX_OPEN_P', ++$a); // open <p>
 define('PHP_PARSER_DOCLEX_OPEN_LIST', ++$a); // open <ol>/<ul>
 define('PHP_PARSER_DOCLEX_OPEN_LI', ++$a); // open <li>
@@ -80,6 +81,7 @@ define('PHP_PARSER_DOCLEX_INLINE_TAG_OPEN', ++$a); // inline tag open {@
 define('PHP_PARSER_DOCLEX_INLINE_TAG_CLOSE', ++$a); // inline tag close }
 define('PHP_PARSER_DOCLEX_INLINE_TAG_NAME', ++$a); // inline tag name
 define('PHP_PARSER_DOCLEX_INLINE_TAG_CONTENTS', ++$a); // inline tag contents
+define('PHP_PARSER_DOCLEX_ENDNESTEDLIST', ++$a); // end of a nested list
 define ('YY_E_INTERNAL', 0);
 define ('YY_E_MATCH',  1);
 define ('YY_BUFFER_SIZE', 4096);
@@ -161,48 +163,55 @@ class PHP_Parser_DocBlock_DefaultLexer
         $this->_options = array_merge($this->_options, $options);
     }
     var $_nextToken = false;
+    var $_getNestedList = false;
+    function saveState()
+    {
+        $save = array(
+            'yy_reader' => $this->yy_reader,
+            'yy_buffer_index' => $this->yy_buffer_index,
+            'yy_buffer_read' => $this->yy_buffer_read,
+            'yy_buffer_start' => $this->yy_buffer_start,
+            'yy_buffer_end' => $this->yy_buffer_end,
+            'yychar' => $this->yychar,
+            'yyline' => $this->yyline,
+            'yyEndOfLine' => $this->yyEndOfLine,
+            'yy_at_bol' => $this->yy_at_bol,
+            'yy_lexical_state' => $this->yy_lexical_state,
+            'token' => $this->token,
+            'value' => $this->value,
+        );
+        return $save;
+    }
+    function restoreState($save)
+    {
+        foreach ($save as $name => $value) {
+            $this->$name = $value;
+        }
+    }
     function advance()
     {
+        if ($this->_getNestedList) {
+            if ($this->debug) echo "found nested list whitespace[{$this->_getNestedList[1]}]\n";
+            $lex = $this->_getNestedList;
+            $this->_getNestedList = false;
+            $this->tokenWithWhitespace = $lex[0];
+            $this->token = $lex[0];
+            $this->value = $lex[1];
+            $this->valueWithWhitespace = $lex[1];
+            return true;
+        }
         $lex = $this->yylex();
         if ($lex) {
             if ($lex[0] == PHP_PARSER_DOCLEX_TEXT) {
-                $save = array(
-                    'yy_reader' => $this->yy_reader,
-                    'yy_buffer_index' => $this->yy_buffer_index,
-                    'yy_buffer_read' => $this->yy_buffer_read,
-                    'yy_buffer_start' => $this->yy_buffer_start,
-                    'yy_buffer_end' => $this->yy_buffer_end,
-                    'yychar' => $this->yychar,
-                    'yyline' => $this->yyline,
-                    'yyEndOfLine' => $this->yyEndOfLine,
-                    'yy_at_bol' => $this->yy_at_bol,
-                    'yy_lexical_state' => $this->yy_lexical_state,
-                    'token' => $this->token,
-                    'value' => $this->value,
-                );
+                $save = $this->saveState();
                 do {
                     $next = $this->yylex();
                     if ($next[0] == PHP_PARSER_DOCLEX_TEXT) {
-                        $save = array(
-                            'yy_reader' => $this->yy_reader,
-                            'yy_buffer_index' => $this->yy_buffer_index,
-                            'yy_buffer_read' => $this->yy_buffer_read,
-                            'yy_buffer_start' => $this->yy_buffer_start,
-                            'yy_buffer_end' => $this->yy_buffer_end,
-                            'yychar' => $this->yychar,
-                            'yyline' => $this->yyline,
-                            'yyEndOfLine' => $this->yyEndOfLine,
-                            'yy_at_bol' => $this->yy_at_bol,
-                            'yy_lexical_state' => $this->yy_lexical_state,
-                            'token' => $this->token,
-                            'value' => $this->value,
-                        );
+                        $save = $this->saveState();
                         $lex[1] .= $next[1];
                     }
                 } while ($next && $next[0] == PHP_PARSER_DOCLEX_TEXT);
-                foreach ($save as $name => $value) {
-                    $this->$name = $value;
-                }
+                $this->restoreState($save);
             }
             $this->tokenWithWhitespace = $lex[0];
             $this->token = $lex[0];
@@ -210,9 +219,12 @@ class PHP_Parser_DocBlock_DefaultLexer
             $this->valueWithWhitespace = $lex[1];
         } elseif ($this->yy_lexical_state == SIMPLELIST ||
             $this->yy_lexical_state == INTERNALSIMPLELIST) {
-            $this->token = YY_EOF;
+            array_pop($this->_listLevel);
+            if (!count($this->_listLevel)) {
+                $this->yy_lexical_state = $this->_listOriginal;
+            }
+            $this->token = PHP_PARSER_DOCLEX_SIMPLELIST_END;
             $this->value = '';
-            $this->yy_lexical_state = $this->_listOriginal;
             return true;
         }
         return (boolean) $lex;
@@ -371,10 +383,11 @@ class PHP_Parser_DocBlock_DefaultLexer
                                 $index = $this->yy_buffer_end - $this->yylength() + strlen($whitespace);
                                 $this->yy_buffer_index = $index;
                                 $this->yy_mark_end();
-                                if ($this->debug) echo "found nested list whitespace[$whitespace]\n";
                                 $this->_atBullet = true;
                                 array_push($this->_listLevel, strlen($whitespace));
-                                return array(PHP_PARSER_DOCLEX_WHITESPACE, $whitespace);
+                                $this->_getNestedList = array(PHP_PARSER_DOCLEX_WHITESPACE, $whitespace);
+                                if ($this->debug) echo "found nested simplelist\n";
+                                return array(PHP_PARSER_DOCLEX_SIMPLELIST_START, '');
                             } else {
                                 array_push($this->_listLevel, 0);
                             }
@@ -399,6 +412,7 @@ class PHP_Parser_DocBlock_DefaultLexer
                         return;
                     } else {
                         $this->_atNewLine = true;
+                        $this->_atBullet = false;
                         $this->_listType = array_pop($this->_listTypeStack);
                         switch($this->_listType) {
                             case LIST_NUMBERED_DOT :
@@ -412,13 +426,55 @@ class PHP_Parser_DocBlock_DefaultLexer
                             break;
                         }
                         $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
-                        $this->_break = true;
-                        return;
+//                        $this->_break = true;
+                        return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
                     }
                 }
             }
             if ($this->debug) echo "1 simple list stuff [".$this->yytext()."]\n";
             return array (PHP_PARSER_DOCLEX_SIMPLELIST, $this->yytext());
+        }
+    }
+    function _checkList($whitespace, $test, $newstate, $startingstate)
+    {
+        // check for simple lists
+        if (strlen($test) > 2 &&
+            ($test{0} != '1' && ($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
+            ($test{0} == '1' && (($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
+                                 ($test{1} == '.') &&
+                                 ($test{2} == ' ' && preg_match("/[^\s]/", $test{3})))))) {
+            // found one
+            if ($test{1} == '.') {
+                $this->_lastNum = 0;
+                $this->_listType = LIST_NUMBERED_DOT;
+            } else {
+                $this->_lastNum = 0;
+                if ($test{0} == '1') {
+                    $this->_listType = LIST_NUMBERED;
+                } else {
+                    $this->_listType = LIST_UNORDERED;
+                    $this->_listBullet = $test{0};
+                }
+            }
+            if ($whitespace && strlen($whitespace)) {
+                $index = $this->yy_buffer_end - $this->yylength() + strlen($whitespace);
+                $this->yy_buffer_index = $index;
+                $this->yy_mark_end();
+                if ($this->debug) echo "found whitespace[$whitespace]\n";
+                $this->_listOriginal = $this->yy_lexical_state;
+                $this->_oldOriginal = $this->_original;
+                $this->_original = $startingstate; // INLINEINTERNALTAG;
+                $this->yybegin($newstate); //INTERNALSIMPLELIST);
+                $this->_atBullet = true;
+                array_push($this->_listLevel, strlen($whitespace));
+                return array(PHP_PARSER_DOCLEX_WHITESPACE, $whitespace);
+            } else {
+                array_push($this->_listLevel, 0);
+                return false;
+            }
+        } else {
+            if ($this->debug) echo "normal text [".$this->yytext()."]\n";
+            return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
         }
     }
 
@@ -1164,42 +1220,10 @@ case 3:
     }
     if (strlen($test) && in_array($test{0}, array('-', '+', 'o', '1'))) {
         // check for simple lists
-        if (strlen($test) > 2 &&
-            ($test{0} != '1' && ($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-            ($test{0} == '1' && (($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-                                 ($test{1} == '.') &&
-                                 ($test{2} == ' ' && preg_match("/[^\s]/", $test{3})))))) {
-            // found one
-            if ($test{1} == '.') {
-                $this->_lastNum = 0;
-                $this->_listType = LIST_NUMBERED_DOT;
-            } else {
-                $this->_lastNum = 0;
-                if ($test{0} == '1') {
-                    $this->_listType = LIST_NUMBERED;
-                } else {
-                    $this->_listType = LIST_UNORDERED;
-                    $this->_listBullet = $test{0};
-                }
-            }
-            if ($whitespace && strlen($whitespace)) {
-                $index = $this->yy_buffer_end - $this->yylength() + strlen($whitespace);
-                $this->yy_buffer_index = $index;
-                $this->yy_mark_end();
-                if ($this->debug) echo "found whitespace[$whitespace]\n";
-                $this->_listOriginal = $this->yy_lexical_state;
-                $this->_original = SIMPLELIST;
-                $this->yybegin(SIMPLELIST);
-                $this->_atBullet = true;
-                array_push($this->_listLevel, strlen($whitespace));
-                return array(PHP_PARSER_DOCLEX_WHITESPACE, $whitespace);
-            } else {
-                array_push($this->_listLevel, 0);
-            }
-            break;
+        if ($res = $this->_checkList($whitespace, $test, SIMPLELIST, YYINITIAL)) {
+            return $res;
         } else {
-            if ($this->debug) echo "normal text [".$this->yytext()."]\n";
-            return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
+            break;
         }
     } elseif (strlen($test) && $test{0} == '@') {
         if (preg_match("/[a-zA-Z]/", $test{1})) {
@@ -1240,7 +1264,13 @@ case 5:
 case 6:
 {
     if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
-        $this->yybegin($this->_listOriginal);
+        array_pop($this->_listLevel);
+        if (!count($this->_listLevel)) {
+            $this->yybegin($this->_listOriginal);
+        } else {
+            $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
+            return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
+        }
     }
     if ($this->debug) echo "checking for inline tag\n";
     $this->_original = $this->yy_lexical_state;
@@ -1258,7 +1288,13 @@ case 7:
 case 8:
 {
     if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
-        $this->yybegin($this->_listOriginal);
+        array_pop($this->_listLevel);
+        if (!count($this->_listLevel)) {
+            $this->yybegin($this->_listOriginal);
+        } else {
+            $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
+            return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
+        }
     }
     $tagname = strtolower(str_replace(array('<','>'),array('',''), $this->yytext()));
     if (isset($this->_tagMap['open'][$tagname])) {
@@ -1284,7 +1320,13 @@ case 8:
 case 9:
 {
     if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
-        $this->yybegin($this->_listOriginal);
+        array_pop($this->_listLevel);
+        if (!count($this->_listLevel)) {
+            $this->yybegin($this->_listOriginal);
+        } else {
+            $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
+            return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
+        }
     }
     $tagname = str_replace(array('</','>'), array('',''), $this->yytext());
     if ($this->yy_lexical_state == INCODE) {
@@ -1325,7 +1367,13 @@ case 9:
 case 10:
 {
     if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
-        $this->yybegin($this->_listOriginal);
+        array_pop($this->_listLevel);
+        if (!count($this->_listLevel)) {
+            $this->yybegin($this->_listOriginal);
+        } else {
+            $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
+            return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
+        }
     }
     if ($this->debug) echo "complete tag [".$this->yytext()."]\n";
     return array(PHP_PARSER_DOCLEX_XML_TAG, $this->yytext());
@@ -1333,7 +1381,13 @@ case 10:
 case 11:
 {
     if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
-        $this->yybegin($this->_listOriginal);
+        array_pop($this->_listLevel);
+        if (!count($this->_listLevel)) {
+            $this->yybegin($this->_listOriginal);
+        } else {
+            $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
+            return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
+        }
     }
     if ($this->debug) echo "escaped tag [".$this->yytext()."]\n";
     return array(PHP_PARSER_DOCLEX_ESCAPED_TAG, $this->yytext());
@@ -1390,43 +1444,10 @@ case 17:
     }
     if (strlen($test) && in_array($test{0}, array('-', '+', 'o', '1'))) {
         // check for simple lists
-        if (strlen($test) > 2 &&
-            ($test{0} != '1' && ($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-            ($test{0} == '1' && (($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-                                 ($test{1} == '.') &&
-                                 ($test{2} == ' ' && preg_match("/[^\s]/", $test{3})))))) {
-            // found one
-            if ($test{1} == '.') {
-                $this->_lastNum = 0;
-                $this->_listType = LIST_NUMBERED_DOT;
-            } else {
-                $this->_lastNum = 0;
-                if ($test{0} == '1') {
-                    $this->_listType = LIST_NUMBERED;
-                } else {
-                    $this->_listType = LIST_UNORDERED;
-                    $this->_listBullet = $test{0};
-                }
-            }
-            if ($whitespace && strlen($whitespace)) {
-                $index = $this->yy_buffer_end - $this->yylength() + strlen($whitespace);
-                $this->yy_buffer_index = $index;
-                $this->yy_mark_end();
-                if ($this->debug) echo "found whitespace[$whitespace]\n";
-                $this->_listOriginal = $this->yy_lexical_state;
-                $this->_oldOriginal = $this->_original;
-                $this->_original = INLINEINTERNALTAG;
-                $this->yybegin(INTERNALSIMPLELIST);
-                $this->_atBullet = true;
-                array_push($this->_listLevel, strlen($whitespace));
-                return array(PHP_PARSER_DOCLEX_WHITESPACE, $whitespace);
-            } else {
-                array_push($this->_listLevel, 0);
-            }
-            break;
+        if ($res = $this->_checkList($whitespace, $test, INTERNALSIMPLELIST, INLINEINTERNALTAG)) {
+            return $res;
         } else {
-            if ($this->debug) echo "normal text [".$this->yytext()."]\n";
-            return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
+            break;
         }
     } elseif (strlen($test) && $test{0} == '@') {
         if (preg_match("/[a-zA-Z]/", $test{1})) {
@@ -1444,17 +1465,29 @@ case 17:
 case 18:
 {
     if ($this->yy_lexical_state == INTERNALSIMPLELIST) {
-        $this->_original = $this->_oldOriginal;
-        $this->_listOriginal = $this->_oldOriginal;
-        $this->yybegin(INLINEINTERNALTAG);
-        $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
-        if ($this->debug) echo "simplelist end\n";
-        return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
-    } else {
+        if (!count($this->_listLevel)) {
+            $this->yybegin($this->_listOriginal);
+        } else {
+            array_pop($this->_listLevel);
+            $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
+            if ($this->debug) {
+                echo "end of simple list\n";
+            }
+            return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
+        }
+    }
+//    if ($this->yy_lexical_state == INTERNALSIMPLELIST) {
+//        $this->_original = $this->_oldOriginal;
+//        $this->_listOriginal = $this->_oldOriginal;
+//        $this->yybegin(INLINEINTERNALTAG);
+//        $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
+//        if ($this->debug) echo "simplelist end\n";
+//        return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
+//    } else {
         if ($this->debug) echo "found end internal [".$this->yytext()."]\n";
         $this->_original = $this->_oldOriginal;
         $this->yybegin($this->_oldOriginal);
-    }
+//    }
     if ($this->_options['return_internal']) {
         return array(PHP_PARSER_DOCLEX_ENDINTERNAL, $this->yytext());
     } else {
@@ -1510,42 +1543,10 @@ case 23:
     }
     if (strlen($test) && in_array($test{0}, array('-', '+', 'o', '1'))) {
         // check for simple lists
-        if (strlen($test) > 2 &&
-            ($test{0} != '1' && ($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-            ($test{0} == '1' && (($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-                                 ($test{1} == '.') &&
-                                 ($test{2} == ' ' && preg_match("/[^\s]/", $test{3})))))) {
-            // found one
-            if ($test{1} == '.') {
-                $this->_lastNum = 0;
-                $this->_listType = LIST_NUMBERED_DOT;
-            } else {
-                $this->_lastNum = 0;
-                if ($test{0} == '1') {
-                    $this->_listType = LIST_NUMBERED;
-                } else {
-                    $this->_listType = LIST_UNORDERED;
-                    $this->_listBullet = $test{0};
-                }
-            }
-            if ($whitespace && strlen($whitespace)) {
-                $index = $this->yy_buffer_end - $this->yylength() + strlen($whitespace);
-                $this->yy_buffer_index = $index;
-                $this->yy_mark_end();
-                if ($this->debug) echo "found whitespace[$whitespace]\n";
-                $this->_listOriginal = $this->yy_lexical_state;
-                $this->_original = SIMPLELIST;
-                $this->yybegin(SIMPLELIST);
-                $this->_atBullet = true;
-                array_push($this->_listLevel, strlen($whitespace));
-                return array(PHP_PARSER_DOCLEX_WHITESPACE, $whitespace);
-            } else {
-                array_push($this->_listLevel, 0);
-            }
-            break;
+        if ($res = $this->_checkList($whitespace, $test, SIMPLELIST, YYINITIAL)) {
+            return $res;
         } else {
-            if ($this->debug) echo "normal text [".$this->yytext()."]\n";
-            return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
+            break;
         }
     } else {
         if ($this->debug) echo "normal text [".$this->yytext()."]\n";
@@ -1607,7 +1608,13 @@ case 33:
 case 34:
 {
     if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
-        $this->yybegin($this->_listOriginal);
+        array_pop($this->_listLevel);
+        if (!count($this->_listLevel)) {
+            $this->yybegin($this->_listOriginal);
+        } else {
+            $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
+            return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
+        }
     }
     $tagname = strtolower(str_replace(array('<','>'),array('',''), $this->yytext()));
     if (isset($this->_tagMap['open'][$tagname])) {
@@ -1633,7 +1640,13 @@ case 34:
 case 35:
 {
     if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
-        $this->yybegin($this->_listOriginal);
+        array_pop($this->_listLevel);
+        if (!count($this->_listLevel)) {
+            $this->yybegin($this->_listOriginal);
+        } else {
+            $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
+            return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
+        }
     }
     $tagname = str_replace(array('</','>'), array('',''), $this->yytext());
     if ($this->yy_lexical_state == INCODE) {
@@ -1674,7 +1687,13 @@ case 35:
 case 36:
 {
     if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
-        $this->yybegin($this->_listOriginal);
+        array_pop($this->_listLevel);
+        if (!count($this->_listLevel)) {
+            $this->yybegin($this->_listOriginal);
+        } else {
+            $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
+            return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
+        }
     }
     if ($this->debug) echo "complete tag [".$this->yytext()."]\n";
     return array(PHP_PARSER_DOCLEX_XML_TAG, $this->yytext());
@@ -1682,7 +1701,13 @@ case 36:
 case 37:
 {
     if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
-        $this->yybegin($this->_listOriginal);
+        array_pop($this->_listLevel);
+        if (!count($this->_listLevel)) {
+            $this->yybegin($this->_listOriginal);
+        } else {
+            $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
+            return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
+        }
     }
     if ($this->debug) echo "escaped tag [".$this->yytext()."]\n";
     return array(PHP_PARSER_DOCLEX_ESCAPED_TAG, $this->yytext());
@@ -1709,43 +1734,10 @@ case 40:
     }
     if (strlen($test) && in_array($test{0}, array('-', '+', 'o', '1'))) {
         // check for simple lists
-        if (strlen($test) > 2 &&
-            ($test{0} != '1' && ($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-            ($test{0} == '1' && (($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-                                 ($test{1} == '.') &&
-                                 ($test{2} == ' ' && preg_match("/[^\s]/", $test{3})))))) {
-            // found one
-            if ($test{1} == '.') {
-                $this->_lastNum = 0;
-                $this->_listType = LIST_NUMBERED_DOT;
-            } else {
-                $this->_lastNum = 0;
-                if ($test{0} == '1') {
-                    $this->_listType = LIST_NUMBERED;
-                } else {
-                    $this->_listType = LIST_UNORDERED;
-                    $this->_listBullet = $test{0};
-                }
-            }
-            if ($whitespace && strlen($whitespace)) {
-                $index = $this->yy_buffer_end - $this->yylength() + strlen($whitespace);
-                $this->yy_buffer_index = $index;
-                $this->yy_mark_end();
-                if ($this->debug) echo "found whitespace[$whitespace]\n";
-                $this->_listOriginal = $this->yy_lexical_state;
-                $this->_oldOriginal = $this->_original;
-                $this->_original = INLINEINTERNALTAG;
-                $this->yybegin(INTERNALSIMPLELIST);
-                $this->_atBullet = true;
-                array_push($this->_listLevel, strlen($whitespace));
-                return array(PHP_PARSER_DOCLEX_WHITESPACE, $whitespace);
-            } else {
-                array_push($this->_listLevel, 0);
-            }
-            break;
+        if ($res = $this->_checkList($whitespace, $test, INTERNALSIMPLELIST, INLINEINTERNALTAG)) {
+            return $res;
         } else {
-            if ($this->debug) echo "normal text [".$this->yytext()."]\n";
-            return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
+            break;
         }
     } elseif (strlen($test) && $test{0} == '@') {
         if (preg_match("/[a-zA-Z]/", $test{1})) {
@@ -1763,17 +1755,29 @@ case 40:
 case 41:
 {
     if ($this->yy_lexical_state == INTERNALSIMPLELIST) {
-        $this->_original = $this->_oldOriginal;
-        $this->_listOriginal = $this->_oldOriginal;
-        $this->yybegin(INLINEINTERNALTAG);
-        $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
-        if ($this->debug) echo "simplelist end\n";
-        return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
-    } else {
+        if (!count($this->_listLevel)) {
+            $this->yybegin($this->_listOriginal);
+        } else {
+            array_pop($this->_listLevel);
+            $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
+            if ($this->debug) {
+                echo "end of simple list\n";
+            }
+            return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
+        }
+    }
+//    if ($this->yy_lexical_state == INTERNALSIMPLELIST) {
+//        $this->_original = $this->_oldOriginal;
+//        $this->_listOriginal = $this->_oldOriginal;
+//        $this->yybegin(INLINEINTERNALTAG);
+//        $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
+//        if ($this->debug) echo "simplelist end\n";
+//        return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
+//    } else {
         if ($this->debug) echo "found end internal [".$this->yytext()."]\n";
         $this->_original = $this->_oldOriginal;
         $this->yybegin($this->_oldOriginal);
-    }
+//    }
     if ($this->_options['return_internal']) {
         return array(PHP_PARSER_DOCLEX_ENDINTERNAL, $this->yytext());
     } else {
@@ -1802,43 +1806,10 @@ case 45:
     }
     if (strlen($test) && in_array($test{0}, array('-', '+', 'o', '1'))) {
         // check for simple lists
-        if (strlen($test) > 2 &&
-            ($test{0} != '1' && ($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-            ($test{0} == '1' && (($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-                                 ($test{1} == '.') &&
-                                 ($test{2} == ' ' && preg_match("/[^\s]/", $test{3})))))) {
-            // found one
-            if ($test{1} == '.') {
-                $this->_lastNum = 0;
-                $this->_listType = LIST_NUMBERED_DOT;
-            } else {
-                $this->_lastNum = 0;
-                if ($test{0} == '1') {
-                    $this->_listType = LIST_NUMBERED;
-                } else {
-                    $this->_listType = LIST_UNORDERED;
-                    $this->_listBullet = $test{0};
-                }
-            }
-            if ($whitespace && strlen($whitespace)) {
-                $index = $this->yy_buffer_end - $this->yylength() + strlen($whitespace);
-                $this->yy_buffer_index = $index;
-                $this->yy_mark_end();
-                if ($this->debug) echo "found whitespace[$whitespace]\n";
-                $this->_listOriginal = $this->yy_lexical_state;
-                $this->_oldOriginal = $this->_original;
-                $this->_original = INLINEINTERNALTAG;
-                $this->yybegin(INTERNALSIMPLELIST);
-                $this->_atBullet = true;
-                array_push($this->_listLevel, strlen($whitespace));
-                return array(PHP_PARSER_DOCLEX_WHITESPACE, $whitespace);
-            } else {
-                array_push($this->_listLevel, 0);
-            }
-            break;
+        if ($res = $this->_checkList($whitespace, $test, INTERNALSIMPLELIST, INLINEINTERNALTAG)) {
+            return $res;
         } else {
-            if ($this->debug) echo "normal text [".$this->yytext()."]\n";
-            return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
+            break;
         }
     } elseif (strlen($test) && $test{0} == '@') {
         if (preg_match("/[a-zA-Z]/", $test{1})) {
