@@ -65,6 +65,7 @@ $title = 'PhpUnit test run, PHP_Parser package';
     $testcases[] = 'PHP_Parser_DocBlock_DefaultInlineTagLexer_test';
     $testcases[] = 'PHP_Parser_DocBlock_DefaultTagLexer_test';
     $testcases[] = 'PHP_Parser_DocBlock_DefaultLexer_test';
+    $testcases[] = 'PHP_Parser_DocBlock_DefaultLexer_tag_test';
 
 	$suite = new PHPUnit_TestSuite();
 

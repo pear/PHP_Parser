@@ -114,6 +114,7 @@ Using PEAR_ErrorStack class for error handling, which is part of PEAR 1.3.1</not
         <file role="test" name="HTML_TestListener.php"/>
         <file role="test" name="PHP_Parser_DocBlock_DefaultInlineTagLexer_test.php"/>
         <file role="test" name="PHP_Parser_DocBlock_DefaultLexer_test.php"/>
+        <file role="test" name="PHP_Parser_DocBlock_DefaultLexer_tag_test.php"/>
         <file role="test" name="PHP_Parser_DocBlock_DefaultTagLexer_test.php"/>
         <file role="test" name="PHP_Parser_MsgServer_test.php"/>
         <file role="test" name="PHP_Parser_test_class.php"/>
