@@ -163,7 +163,6 @@ class PHP_Parser_Tokenizer {
     function PHP_Parser_Tokenizer($data, $options = array()) 
     {
         $this->_options['documentationParser'] =
-        $this->_options['documentationLexer'] =
         $this->_options['publishAllDocumentation'] =
         $this->_options['publisher'] =
         $this->_options['publishMethod'] =
@@ -175,13 +174,10 @@ class PHP_Parser_Tokenizer {
         if (!class_exists($this->_options['methodContainer'])) {
             $this->_options['documentationContainer'] = false;
         }
-        if (!is_object($this->_options['documentationParser']) ||
-                !is_object($this->_options['documentationLexer'])) {
+        if (!is_object($this->_options['documentationParser'])) {
             $this->_options['documentationParser'] = false;
-            $this->_options['documentationLexer'] = false;
         } else {
             $this->_options['documentationParser'] = &$options['documentationParser'];
-            $this->_options['documentationLexer'] = &$options['documentationLexer'];
             // make sure it's an exact match
         }
         if (!is_object($this->_options['publisher'])) {
@@ -286,11 +282,10 @@ class PHP_Parser_Tokenizer {
         $this->lastCommentLine = $this->line;
         $this->lastCommentToken = $this->pos;
         if ($this->_options['documentationParser']) {
-            $parser = $this->_options['documentationParser'];
-            $this->lastComment = $parser->parse(array('lastcomment' => $this->lastComment,
-                                                      'lastcommentline' => $this->lastCommentLine,
-                                                      'lastcommentoken' => $this->lastCommentToken,
-                                                      'lexer' => $this->_options['documentationLexer']));
+            $parser = &$this->_options['documentationParser'];
+            $this->lastComment = $parser->parse($this->lastComment,
+                                                $this->lastCommentLine,
+                                                $this->lastCommentToken);
         }
         if ($this->_options['publishAllDocumentation']) {
             $publish = $this->_options['publishMethod'];
@@ -330,7 +325,11 @@ class PHP_Parser_Tokenizer {
         while ($this->pos < $this->N) { 
             
             if ($this->debug) {
-                echo token_name($this->tokens[$this->pos][0]). " : {$this->tokens[$this->pos][1]}\n";
+                echo token_name($this->tokens[$this->pos][0]). '(' .
+                (isset($GLOBALS['_PHP_PARSER']['yyName'][$GLOBALS['_PHP_PARSER_TOKENIZER']['map'][$this->tokens[$this->pos][0]]]) ?
+                $GLOBALS['_PHP_PARSER']['yyName'][$GLOBALS['_PHP_PARSER_TOKENIZER']['map'][$this->tokens[$this->pos][0]]] :
+                $GLOBALS['_PHP_PARSER']['yyName'][$this->tokens[$this->pos][0]])
+                .')' ." : {$this->tokens[$this->pos][1]}\n";
             }
             static $T_DOC_COMMENT = false;
             
@@ -433,18 +432,22 @@ class PHP_Parser_Tokenizer {
         $start = (token_name(257) == 'UNKNOWN') ? 258 : 257;
         
         $map = array();
-        for ($i=$start;$i< count($GLOBALS['_PHP_PARSER']['yyName']);$i++) {
+        $hash = @array_flip($GLOBALS['_PHP_PARSER']['yyName']);
+        for ($i=$start;$i< count($GLOBALS['_PHP_PARSER']['yyName']) + $start - 257;$i++) {
             $lt = token_name($i);
             $lt = ($i - ($start - 257) == 350 && $lt == 'UNKNOWN') ? 'T_INTERFACE' : $lt;
             $lt = ($i - ($start - 257) == 352 && $lt == 'UNKNOWN') ? 'T_IMPLEMENTS' : $lt;
             $lt = ($lt == 'T_DOUBLE_COLON') ?  'T_PAAMAYIM_NEKUDOTAYIM' : $lt;
+//            echo "$lt has hash? ".$hash[$lt]."\n";
+//            continue;
             
             //echo "compare $lt with {$tokens[$i]}\n";
             if ($GLOBALS['_PHP_PARSER']['yyName'][$i] != $lt) {
-                $map[$i] = array_search($lt,$GLOBALS['_PHP_PARSER']['yyName']);
+                $map[$i] = $hash[$lt];
             }
             
         }
+//        exit;
         //print_r($map);
         // set the map to false if nothing in there.
         $GLOBALS['_PHP_PARSER_TOKENIZER']['map'] = (count($map) ? $map : false);

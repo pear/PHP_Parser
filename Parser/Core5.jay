@@ -213,9 +213,9 @@ class PHP_Parser_Core {
             if ($this->_options['globalContainer']) {
                 $container = $this->_options['globalContainer'];
                 $global = new $container;
-                $global->setLine($this->yyLex->line);
+                $global->setStartLine($this->yyLex->line);
                 $global->setName($name);
-                $global->setComment($lc[0]);
+                $global->setDocumentation($lc[0]);
             } else {
                 $global = array('name' => $name,
                                 'documentation' => $lc[0],
@@ -586,15 +586,17 @@ unticked_function_declaration_statement:
         if ($this->_options['functionContainer']) {
             $container = $this->_options['functionContainer'];
             $this->functions[$3] = new $container;
+            $this->functions[$3]->setName($3);
             $this->functions[$3]->setReference($2);
             $this->functions[$3]->setParams($this->params);
             $this->functions[$3]->setReferencedVars($this->referencedVars);
             $this->functions[$3]->setGlobals($this->funcglobals);
-            $this->functions[$3]->setSuperGlobals($this->funcglobals);
+            $this->functions[$3]->setSuperGlobals($this->superglobals);
             $this->functions[$3]->setStatics($this->statics);
             $this->functions[$3]->setThrows($this->throws);
-            $this->functions[$3]->setComment($this->functionComment);
-            $this->functions[$3]->setLine($this->functionLine);
+            $this->functions[$3]->setDocumentation($this->functionComment);
+            $this->functions[$3]->setStartLine($this->functionLine);
+            $this->functions[$3]->setEndLine($this->yyLex->line);
         } else {
             $this->functions[$3] = array(
                 'returnsReference' => $2,
@@ -605,7 +607,8 @@ unticked_function_declaration_statement:
                 'returns' => $this->returns,
                 'throws' => $this->throws,
                 'superglobals' => $this->superglobals,
-                'line' => $this->functionLine,
+                'startline' => $this->functionLine,
+                'endline' => $this->yyLex->line,
                 'documentation' => $this->functionComment,
                 );
         }
@@ -659,6 +662,7 @@ unticked_class_declaration_statement:
         if ($this->_options['classContainer']) {
             $container = $this->_options['classContainer'];
             $this->classes[$3] = new $container;
+            $this->classes[$3]->setName($3);
             $this->classes[$3]->setExtends($4);
             $this->classes[$3]->setType($2);
             $this->classes[$3]->setMethods($this->methods);
@@ -666,8 +670,9 @@ unticked_class_declaration_statement:
             $this->classes[$3]->setConsts($this->consts);
             $this->classes[$3]->setImplements($this->implements);
             $this->classes[$3]->setReferencedVars($this->referencedVars);
-            $this->classes[$3]->setComment($this->classComment);
-            $this->classes[$3]->setLine($this->classLine);
+            $this->classes[$3]->setDocumentation($this->classComment);
+            $this->classes[$3]->setStartLine($this->classLine);
+            $this->classes[$3]->setEndLine($this->yyLex->line);
         } else {
             // use arrays if no class container is defined
             $this->classes[$3] = array(
@@ -678,7 +683,8 @@ unticked_class_declaration_statement:
                  'consts' => $this->consts,
                  'implements' => $this->implements,
                  'referencedVars' => $this->referencedVars,
-                 'line' => $this->classLine,
+                 'startline' => $this->classLine,
+                 'endline' => $this->yyLex->line,
                  'documentation' => $this->classComment,
                  );
         }
@@ -1063,14 +1069,16 @@ class_statement:
         if ($this->_options['methodContainer']) {
             $container = $this->_options['methodContainer'];
             $this->methods[$5] = new $container;
+            $this->methods[$5]->setName($5);
             $this->methods[$5]->setReference($4);
             $this->methods[$5]->setParams($this->params);
             $this->methods[$5]->setReferencedVars($this->referencedVars);
             $this->methods[$5]->setGlobals($this->funcglobals);
             $this->methods[$5]->setSuperGlobals($this->superglobals);
             $this->methods[$5]->setStatics($this->statics);
-            $this->methods[$5]->setLine($this->methodLine);
-            $this->methods[$5]->setComment($this->methodComment);
+            $this->methods[$5]->setStartLine($this->methodLine);
+            $this->methods[$5]->setEndLine($this->yyLex->line);
+            $this->methods[$5]->setDocumentation($this->methodComment);
             if ($is_static) {
                 $this->methods[$5]->setStaticMethod();
             }
@@ -1086,7 +1094,8 @@ class_statement:
                 'referencedVars' => $this->referencedVars,
                 'returns' => $this->returns,
                 'superglobals' => $this->superglobals,
-                'line' => $this->methodLine,
+                'startline' => $this->methodLine,
+                'endline' => $this->yyLex->line,
                 'documentation' => $this->methodComment,
                 );
         }
@@ -1190,73 +1199,90 @@ class_variable_declaration:
             $container = $this->_options['varContainer'];
             $var = new $container;
             $var->setName($3);
-            $var->setLine($this->yyLex->line);
+            $var->setStartLine($this->yyLex->line);
+            $var->setEndLine($this->yyLex->line);
             $lc = $this->yyLex->getLastComment();
-            $var->setComment($lc[0]);
+            $var->setDocumentation($lc[0]);
             $$[] = $var;
         } else {
             $lc = $this->yyLex->getLastComment();
             $$[] = array('name' => $3,
-                         'line' => $this->yyLex->line,
+                         'startline' => $this->_varLine,
+                         'endline' => $this->yyLex->line,
                          'documentation' => $lc[0],
                          'default' => null);
         }
     }
-	|	class_variable_declaration ',' T_VARIABLE '=' static_scalar
+	|	class_variable_declaration ','
+     T_VARIABLE
+    {
+        $this->_varLine = $this->yyLex->line;
+        
+    } '=' static_scalar
     {
         $$ = $1;
         if ($this->_options['varContainer']) {
             $container = $this->_options['varContainer'];
             $var = new $container;
             $var->setName($3);
-            $var->setLine($this->yyLex->line);
+            $var->setStartLine($this->_varLine);
+            $var->setEndLine($this->yyLex->line);
             $lc = $this->yyLex->getLastComment();
-            $var->setComment($lc[0]);
-            $var->setDefault($5);
+            $var->setDocumentation($lc[0]);
+            $var->setDefault($6);
             $$[] = $var;
         } else {
             $lc = $this->yyLex->getLastComment();
             $$[] = array('name' => $3,
-                         'line' => $this->yyLex->line,
+                         'startline' => $this->yyLex->line,
+                         'endline' => $this->yyLex->line,
                          'documentation' => $lc[0],
-                         'default' => $5);
+                         'default' => $6);
         }
     }
-	|	T_VARIABLE
+	|
+    T_VARIABLE
     {
         if ($this->_options['varContainer']) {
             $container = $this->_options['varContainer'];
             $var = new $container;
             $var->setName($1);
-            $var->setLine($this->yyLex->line);
+            $var->setStartLine($this->yyLex->line);
+            $var->setEndLine($this->yyLex->line);
             $lc = $this->yyLex->getLastComment();
-            $var->setComment($lc[0]);
+            $var->setDocumentation($lc[0]);
             $$ = array($var);
         } else {
             $lc = $this->yyLex->getLastComment();
             $$ = array(array('name' => $1,
-                             'line' => $this->yyLex->line,
+                             'startline' => $this->yyLex->line,
+                             'endline' => $this->yyLex->line,
                              'documentation' => $lc[0],
                              'default' => null));
         }
     }
-	|	T_VARIABLE '=' static_scalar
+	|
+     T_VARIABLE {
+        $this->_varLine = $this->yyLex->line;
+    } '=' static_scalar
     {
         if ($this->_options['varContainer']) {
             $container = $this->_options['varContainer'];
             $var = new $container;
             $var->setName($1);
-            $var->setLine($this->yyLex->line);
+            $var->setStartLine($this->_varLine);
+            $var->setEndLine($this->yyLex->line);
             $lc = $this->yyLex->getLastComment();
-            $var->setComment($lc[0]);
-            $var->setDefault($3);
+            $var->setDocumentation($lc[0]);
+            $var->setDefault($4);
             $$ = array($var);
         } else {
             $lc = $this->yyLex->getLastComment();
             $$ = array(array('name' => $1,
-                             'line' => $this->yyLex->line,
+                             'startline' => $this->_varLine,
+                             'endline' => $this->yyLex->line,
                              'documentation' => $lc[0],
-                             'default' => $3));
+                             'default' => $4));
         }
     }
 ;
@@ -1272,14 +1298,16 @@ class_constant_declaration:
         if ($this->_options['classConstContainer']) {
             $container = $this->_options['classConstContainer'];
             $const = new $container;
-            $const->setLine($this->constLine);
-            $const->setComment($this->constComment);
+            $const->setStartLine($this->constLine);
+            $const->setEndLine($this->yyLex->line);
+            $const->setDocumentation($this->constComment);
             $const->setValue($6);
             $const->setName($3);
         } else {
             $const = array('name' => $3,
                            'value' => $6,
-                           'line' => $this->constLine,
+                           'startline' => $this->constLine,
+                           'endline' => $this->yyLex->line,
                            'documentation' => $this->constComment);
         }
         $this->consts[$4] = $const;
@@ -1311,14 +1339,16 @@ class_constant_declaration:
         if ($this->_options['classConstContainer']) {
             $container = $this->_options['classConstContainer'];
             $const = new $container;
-            $const->setLine($this->constLine);
-            $const->setComment($this->constComment);
+            $const->setStartLine($this->constLine);
+            $const->setEndLine($this->yyLex->line);
+            $const->setDocumentation($this->constComment);
             $const->setValue($5);
             $const->setName($3);
         } else {
             $const = array('name' => $3,
                            'value' => $5,
-                           'line' => $this->constLine,
+                           'startline' => $this->constLine,
+                           'endline' => $this->yyLex->line,
                            'documentation' => $this->constComment);
         }
         $this->consts[$3] = $const;
@@ -1363,20 +1393,20 @@ expr_without_variable:
     {
         $$ = 'list(' . $3 . ') = ' . $6;
     }
-	|	variable
+	|	variable '='
     {
         $this->_initGlobal($1);
-    } '=' expr
+    } expr
     {
         if ($this->_in_global) {
             $this->_processGlobal($1, $4);
         }
         $$ = $1 . ' = '. $4;
     }
-	|	variable
+	|	variable '=' '&'
     {
         $this->_initGlobal($1);
-    } '=' '&' variable 
+    } variable
     {
         if ($this->_in_global) {
             $this->_processGlobal($1, '&' .$5);
@@ -1384,9 +1414,10 @@ expr_without_variable:
         $$ = $1 .' =& '.$5;
     }
 	|	variable
+     '=' '&' T_NEW
     {
         $this->_initGlobal($1);
-    } '=' '&' T_NEW class_name_reference  ctor_arguments 
+    } class_name_reference  ctor_arguments 
     {
         if ($this->_in_global) {
             $this->_processGlobal($1, '&new ' . $6 . $7);
@@ -1664,14 +1695,16 @@ function_call:
             if ($this->_options['constContainer']) {
                 $container = $this->_options['constContainer'];
                 $const = new $container;
-                $const->setLine($this->defineLine);
-                $const->setComment($this->defineComment);
+                $const->setStartLine($this->defineLine);
+                $const->setEndLine($this->yyLex->line);
+                $const->setDocumentation($this->defineComment);
                 $const->setValue($this->defineValue);
                 $const->setName($this->defineName);
             } else {
                 $const = array('name' => $this->defineName,
                                'value' => $this->defineValue,
-                               'line' => $this->defineLine,
+                               'startline' => $this->defineLine,
+                               'endline' => $this->yyLex->line,
                                'documentation' => $this->defineComment);
             }
             $this->constants[$this->defineName] = $const;
@@ -2244,12 +2277,14 @@ internal_functions_in_yacc:
             $include = new $container;
             $include->setFile($3);
             $include->setType('include');
-            $include->setLine($this->includeLine);
-            $include->setComment($this->includeComment);
+            $include->setStartLine($this->includeLine);
+            $include->setEndLine($this->yyLex->line);
+            $include->setDocumentation($this->includeComment);
         } else {
             $include = array('file' => $3,
                              'type' => 'include',
-                             'line' => $this->includeLine,
+                             'startline' => $this->includeLine,
+                             'endline' => $this->yyLex->line,
                              'documentation' => $this->includeComment);
         }
         $this->includes[] = $include;
@@ -2283,12 +2318,14 @@ internal_functions_in_yacc:
             $include = new $container;
             $include->setFile($3);
             $include->setType('include_once');
-            $include->setLine($this->includeLine);
-            $include->setComment($this->includeComment);
+            $include->setStartLine($this->includeLine);
+            $include->setEndLine($this->yyLex->line);
+            $include->setDocumentation($this->includeComment);
         } else {
             $include = array('file' => $3,
                              'type' => 'include_once',
-                             'line' => $this->includeLine,
+                             'startline' => $this->includeLine,
+                             'endline' => $this->yyLex->line,
                              'documentation' => $this->includeComment);
         }
         $this->includes[] = $include;
@@ -2323,12 +2360,14 @@ internal_functions_in_yacc:
             $include = new $container;
             $include->setFile($3);
             $include->setType('require');
-            $include->setLine($this->includeLine);
-            $include->setComment($this->includeComment);
+            $include->setStartLine($this->includeLine);
+            $include->setEndLine($this->yyLex->line);
+            $include->setDocumentation($this->includeComment);
         } else {
             $include = array('file' => $3,
                              'type' => 'require',
-                             'line' => $this->includeLine,
+                             'startline' => $this->includeLine,
+                             'endline' => $this->yyLex->line,
                              'documentation' => $this->includeComment);
         }
         $this->includes[] = $include;
@@ -2362,12 +2401,14 @@ internal_functions_in_yacc:
             $include = new $container;
             $include->setFile($3);
             $include->setType('require_once');
-            $include->setLine($this->includeLine);
-            $include->setComment($this->includeComment);
+            $include->setStartLine($this->includeLine);
+            $include->setEndLine($this->yyLex->line);
+            $include->setDocumentation($this->includeComment);
         } else {
             $include = array('file' => $3,
                              'type' => 'require_once',
-                             'line' => $this->includeLine,
+                             'startline' => $this->includeLine,
+                             'endline' => $this->yyLex->line,
                              'documentation' => $this->includeComment);
         }
         $this->includes[] = $include;
@@ -2404,5 +2445,4 @@ class_constant:
 ;
 
 %%
-    /**#@-*/
 }

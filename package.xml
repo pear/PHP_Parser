@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
-<!DOCTYPE package SYSTEM "http://pear.php.net/dtd/package-1.0">
 <package version="1.0">
   <name>PHP_Parser</name>
   <summary>A PHP Grammar Parser</summary>
@@ -48,6 +47,7 @@ hooks into parsing to catch information.</description>
     <date>2003-07-22</date>
     <license>PHP License</license>
     <state>alpha</state>
+    <notes>Initial alpha release to find bugs</notes>
     <deps>
       <dep type="php" rel="ge" version="5.0.0b1"></dep>
     </deps>
