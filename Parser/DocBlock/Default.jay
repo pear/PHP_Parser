@@ -523,7 +523,7 @@ class PHP_Parser_DocBlock_Default {
 %token T_INLINE_TAG_CONTENTS 41
 %token EOF 258
 
-%left T_SIMPLELIST_NL T_CLOSE_P
+%left T_SIMPLELIST_NL T_CLOSE_P T_SIMPLELIST_END
 %nonassoc T_CLOSE_LI
 %nonassoc T_OPEN_LI
 %right T_BULLET T_WHITESPACE T_NBULLET T_NDBULLET
@@ -554,14 +554,18 @@ docblock:
             array_unshift($2, $1);
             $this->paragraphs = $2;
         }
-    |   paragraphs_with_p tags
-        {
-            $this->paragraphs = $1;
-            $this->tags = $2;
-        }
     |   tags
         {
             $this->tags = $1;
+        }
+    |   paragraphs_with_p
+        {
+            $this->paragraphs = array($1);
+        }
+    |   paragraphs_with_p tags
+        {
+            $this->paragraphs = array($1);
+            $this->tags = $2;
         }
 ;
 
@@ -612,6 +616,113 @@ paragraphs_with_p:
         {
             $$ = $1;
             $$[] = $2;
+        }
+;
+
+text_expr_with_p:
+    T_TEXT
+        {
+            $$ = array($1);
+        }
+    |   htmltag_with_p
+        {
+            $$ = array($1);
+        }
+    |   simplelist_with_p
+        {
+            $$ = array($1);
+        }
+    |   inlinetag
+        {
+            $$ = array($1);
+        }
+    |   internaltag_with_p
+        {
+            $$ = array($1);
+        }
+    |   T_ESCAPED_TAG
+        {
+            $$ = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $1);
+        }
+    |   T_INLINE_ESC
+        {
+            if ($1 == '{@}') {
+                $$ = array('{@');
+            } elseif ($1 == '{@*}') {
+                $$ = array('*/');
+            } else {
+                $$ = array('');
+            }
+        }
+    |   T_DOUBLE_NL
+        {
+            $$ = array($1);
+        }
+    |   text_expr_with_p T_TEXT
+        {
+            $$ = $1;
+            $index = count($$) - 1;
+            if (is_string($$[$index])) {
+                $$[$index] .= $2;
+            } else {
+                $$[] = $2;
+            }
+        }
+    |   text_expr_with_p htmltag_with_p
+         {
+            $$ = $1;
+            $$[] = $2;
+         }
+    |   text_expr_with_p simplelist_with_p
+        {
+            $$ = $1;
+            $$[] = $2;
+        }
+    |   text_expr_with_p inlinetag
+        {
+            $$ = $1;
+            $$[] = $2;
+        }
+    |   text_expr_with_p internaltag_with_p
+        {
+            $$ = $1;
+            $$[] = $2;
+        }
+    |   text_expr_with_p T_ESCAPED_TAG
+        {
+            $$ = $1;
+            $index = count($$) - 1;
+            if (is_string($$[$index])) {
+                $$[$index] .= str_replace(array('<<', '>>', '/'), array('<', '>', ''), $2);
+            } else {
+                $$[] = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $2);
+            }
+        }
+    |   text_expr_with_p T_INLINE_ESC
+        {
+            if ($2 == '{@}') {
+                $t = array('{@');
+            } elseif ($2 == '{@*}') {
+                $t = array('*/');
+            } else {
+                $t = array('');
+            }
+            $index = count($$) - 1;
+            if (is_string($$[$index])) {
+                $$[$index] .= $t;
+            } else {
+                $$[] = $t;
+            }
+        }
+    |   text_expr_with_p T_DOUBLE_NL
+        {
+            $$ = $1;
+            $index = count($$) - 1;
+            if (is_string($$[$index])) {
+                $$[$index] .= $2;
+            } else {
+                $$[] = $2;
+            }
         }
 ;
 
@@ -733,113 +844,6 @@ paragraph:
         }
 ;
 
-text_expr_with_p:
-    T_TEXT
-        {
-            $$ = array($1);
-        }
-    |   htmltag_with_p
-        {
-            $$ = array($1);
-        }
-    |   simplelist_with_p
-        {
-            $$ = array($1);
-        }
-    |   inlinetag
-        {
-            $$ = array($1);
-        }
-    |   internaltag_with_p
-        {
-            $$ = array($1);
-        }
-    |   T_ESCAPED_TAG
-        {
-            $$ = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $1);
-        }
-    |   T_INLINE_ESC
-        {
-            if ($1 == '{@}') {
-                $$ = array('{@');
-            } elseif ($1 == '{@*}') {
-                $$ = array('*/');
-            } else {
-                $$ = array('');
-            }
-        }
-    |   T_DOUBLE_NL
-        {
-            $$ = array($1);
-        }
-    |   text_expr_with_p T_TEXT
-        {
-            $$ = $1;
-            $index = count($$) - 1;
-            if (is_string($$[$index])) {
-                $$[$index] .= $2;
-            } else {
-                $$[] = $2;
-            }
-        }
-    |   text_expr_with_p htmltag_with_p
-         {
-            $$ = $1;
-            $$[] = $2;
-         }
-    |   text_expr_with_p simplelist_with_p
-        {
-            $$ = $1;
-            $$[] = $2;
-        }
-    |   text_expr_with_p inlinetag
-        {
-            $$ = $1;
-            $$[] = $2;
-        }
-    |   text_expr_with_p internaltag_with_p
-        {
-            $$ = $1;
-            $$[] = $2;
-        }
-    |   text_expr_with_p T_ESCAPED_TAG
-        {
-            $$ = $1;
-            $index = count($$) - 1;
-            if (is_string($$[$index])) {
-                $$[$index] .= str_replace(array('<<', '>>', '/'), array('<', '>', ''), $2);
-            } else {
-                $$[] = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $2);
-            }
-        }
-    |   text_expr_with_p T_INLINE_ESC
-        {
-            if ($2 == '{@}') {
-                $t = array('{@');
-            } elseif ($2 == '{@*}') {
-                $t = array('*/');
-            } else {
-                $t = array('');
-            }
-            $index = count($$) - 1;
-            if (is_string($$[$index])) {
-                $$[$index] .= $t;
-            } else {
-                $$[] = $t;
-            }
-        }
-    |   text_expr_with_p T_DOUBLE_NL
-        {
-            $$ = $1;
-            $index = count($$) - 1;
-            if (is_string($$[$index])) {
-                $$[$index] .= $2;
-            } else {
-                $$[] = $2;
-            }
-        }
-;
-
 paragraph_with_p:
     T_OPEN_P text_expr_with_p T_CLOSE_P
         {
@@ -938,7 +942,6 @@ codetag_with_p:
             }
         }
 ;
-
 samptag:
     T_OPEN_SAMP paragraphs T_CLOSE_SAMP
         {
@@ -1074,68 +1077,97 @@ listitem_with_p:
 ;
 
 simplelist:
-    bullet simplelist_contents simplelistend
-        {
-            $$ = array('list' => array($2), 'type' => $1);
-        }
-    |   simplelist_continue bullet simplelist_contents simplelistend
+    simplelist_entry T_SIMPLELIST_END
         {
             $$ = $1;
-            $$['list'][] = $3;
+        }
+    |   simplelist_entries T_SIMPLELIST_END
+        {
+            $$ = $1;
+        }
+    |   simplelist_entries simplelist_entry T_SIMPLELIST_END
+        {
+            $$ = $1;
+            $$['list'][] = $2['list'][0];
         }
 ;
 
 simplelist_with_p:
-    bullet simplelist_contents_with_p simplelistend
-        {
-            $$ = array('list' => array($2), 'type' => $1);
-        }
-    |   simplelist_continue_with_p bullet simplelist_contents_with_p simplelistend
+    simplelist_entry_with_p T_SIMPLELIST_END
         {
             $$ = $1;
-            $$['list'][] = $3;
+        }
+    |   simplelist_entries_with_p T_SIMPLELIST_END
+        {
+            $$ = $1;
+        }
+    |   simplelist_entries_with_p simplelist_entry_with_p T_SIMPLELIST_END
+        {
+            $$ = $1;
+            $$['list'][] = $2['list'][0];
         }
 ;
 
-simplelist_continue:
-    bullet simplelist_contents T_SIMPLELIST_NL
+simplelist_entry:
+    bullet simplelist_contents
         {
             $$ = array('list' => array($2), 'type' => $1);
         }
-    |   simplelist_continue bullet simplelist_contents T_SIMPLELIST_NL
-        {
-            $$ = $1;
-            $$['list'][] = $3;
-        }
-    |   simplelist_continue bullet simplelist_contents nested_simplelist
-        {
-            $$ = $1;
-            $3[] = $4;
-            $$['list'][] = $3;
-        }
 ;
 
-simplelist_continue_with_p:
-    bullet simplelist_contents_with_p T_SIMPLELIST_NL
+simplelist_entry_with_p:
+    bullet simplelist_contents_with_p
         {
             $$ = array('list' => array($2), 'type' => $1);
         }
-    |   simplelist_continue_with_p bullet simplelist_contents_with_p T_SIMPLELIST_NL
+;
+
+simplelist_entries:
+    simplelist_entry T_SIMPLELIST_NL
         {
             $$ = $1;
-            $$['list'][] = $3;
         }
-    |   simplelist_continue_with_p bullet simplelist_contents_with_p nested_simplelist_with_p
+    |   simplelist_entry T_SIMPLELIST_NL nested_simplelist
         {
             $$ = $1;
-            $3[] = $4;
-            $$['list'][] = $3;
+            $$['list'][0][] = $3;
+        }
+    |   simplelist_entries simplelist_entry T_SIMPLELIST_NL
+        {
+            $$ = $1;
+            $$['list'][] = $2['list'][0];
+        }
+    |   simplelist_entries simplelist_entry T_SIMPLELIST_NL nested_simplelist
+        {
+            $$ = $1;
+            $a = count($$['list']);
+            $$['list'][] = $2['list'][0];
+            $$['list'][$a][] = $4;
         }
 ;
 
-simplelistend:
-    |   T_SIMPLELIST_END
-    |   T_WHITESPACE T_SIMPLELIST_END
+simplelist_entries_with_p:
+    simplelist_entry_with_p T_SIMPLELIST_NL
+        {
+            $$ = $1;
+        }
+    |   simplelist_entry_with_p T_SIMPLELIST_NL nested_simplelist_with_p
+        {
+            $$ = $1;
+            $$['list'][0][] = $3;
+        }
+    |   simplelist_entries_with_p simplelist_entry_with_p T_SIMPLELIST_NL
+        {
+            $$ = $1;
+            $$['list'][] = $2['list'][0];
+        }
+    |   simplelist_entries_with_p simplelist_entry_with_p T_SIMPLELIST_NL nested_simplelist_with_p
+        {
+            $$ = $1;
+            $a = count($$['list']);
+            $$['list'][] = $2['list'][0];
+            $$['list'][$a][] = $4;
+        }
 ;
 
 bullet:
@@ -1165,18 +1197,19 @@ bullet_no_whitespace:
 ;
 
 nested_simplelist:
-    T_SIMPLELIST_START simplelist T_SIMPLELIST_END
+    T_SIMPLELIST_START simplelist
         {
-            $$ = array('list' => $2, 'type' => $1);
+            $$ = $2;
         }
 ;
 
 nested_simplelist_with_p:
-    T_SIMPLELIST_START simplelist_with_p T_SIMPLELIST_END
+    T_SIMPLELIST_START simplelist_with_p
         {
-            $$ = array('list' => $2, 'type' => $1);
+            $$ = $2;
         }
 ;
+
 
 simplelist_contents:
     T_SIMPLELIST
@@ -1241,11 +1274,6 @@ simplelist_contents:
             }
         }
     |   simplelist_contents htmltag
-        {
-            $$ = $1;
-            $$[] = $2;
-        }
-    |   simplelist_contents nested_simplelist
         {
             $$ = $1;
             $$[] = $2;
@@ -1328,11 +1356,6 @@ simplelist_contents_with_p:
             }
         }
     |   simplelist_contents_with_p htmltag_with_p
-        {
-            $$ = $1;
-            $$[] = $2;
-        }
-    |   simplelist_contents_with_p nested_simplelist_with_p
         {
             $$ = $1;
             $$[] = $2;
