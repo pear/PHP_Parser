@@ -23,7 +23,7 @@ class PHP_Parser_test_vars_php5 extends PHPUnit_TestCase
     /**
      * This will be Error_Stack if the package is accepted into PEAR
      */
-    var $errorStackClass = 'PHP_Parser_Stack';
+    var $errorStackClass = 'PEAR_ErrorStack';
     
     /**#@+
      * Error Stacks
@@ -44,9 +44,9 @@ class PHP_Parser_test_vars_php5 extends PHPUnit_TestCase
         set_error_handler(array(&$this, 'errorHandler'));
 
         $this->parser = new PHP_Parser;
-        $this->pstack = &PHP_Parser_Stack::singleton('PHP_Parser');
-        $this->sstack = &PHP_Parser_Stack::singleton('PHP_Parser_Structure');
-        $this->estack = &PHP_Parser_Stack::singleton('PHP_Parser_Extendable');
+        $this->pstack = &PEAR_ErrorStack::singleton('PHP_Parser');
+        $this->sstack = &PEAR_ErrorStack::singleton('PHP_Parser_Structure');
+        $this->estack = &PEAR_ErrorStack::singleton('PHP_Parser_Extendable');
         $this->_expectedErrors = array();
         $this->_testMethod = 'unknown';
     }
@@ -54,7 +54,7 @@ class PHP_Parser_test_vars_php5 extends PHPUnit_TestCase
     function tearDown()
     {
         // purge all error stacks
-        PHP_Parser_Stack::staticGetErrors(true);
+        PEAR_ErrorStack::staticGetErrors(true);
         unset($this->pstack);
         unset($this->sstack);
         unset($this->estack);
@@ -108,7 +108,7 @@ class PHP_Parser_test_vars_php5 extends PHPUnit_TestCase
     
     function assertErrors($errors, $method)
     {
-        $compare = PHP_Parser_Stack::staticGetErrors(false, true);
+        $compare = PEAR_ErrorStack::staticGetErrors(false, true);
         $save = $compare;
         foreach ($errors as $err) {
         	for ($i = 0; $i < count($compare); $i++) {
@@ -140,7 +140,7 @@ class PHP_Parser_test_vars_php5 extends PHPUnit_TestCase
     
     function assertNoErrors($method, $message)
     {
-        $errs = PHP_Parser_Stack::staticGetErrors(false, true);
+        $errs = PEAR_ErrorStack::staticGetErrors(false, true);
         $error = 'error';
         if (count($errs)) {
             if (count($errs) > 1) {
@@ -152,7 +152,7 @@ class PHP_Parser_test_vars_php5 extends PHPUnit_TestCase
             	$this->assertFalse(true, $error['message']);
             }
         }
-        PHP_Parser_Stack::staticGetErrors(true);
+        PEAR_ErrorStack::staticGetErrors(true);
     }
     
     function test_private1()

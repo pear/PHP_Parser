@@ -52,6 +52,7 @@ class PHP_Parser_DocBlock_DefaultLexer_test extends PHPUnit_TestCase
     {
         unset($this->lexer);
         restore_error_handler();
+        PEAR_ErrorStack::staticGetErrors(true);
     }
 
     function errorCodeToString($package, $code)
@@ -523,6 +524,128 @@ again some more');
             ), $data, 'simple list 3');
     }
 
+    function test_simplelist_basic_intag()
+    {
+        if (!$this->_methodExists('setup')) {
+            return;
+        }
+        if (!$this->_methodExists('advance')) {
+            return;
+        }
+        $this->lexer->setup('<b>
+ - first item
+ - second item
+ - third item
+</b>');
+        $data = array();
+        while ($a = $this->lexer->advance()) {
+            $data[] = array($this->lexer->token, $this->lexer->value);
+        }
+        $this->assertEquals(
+            array(
+                array(PHP_PARSER_DOCLEX_OPEN_B, '<b>'),
+                array(PHP_PARSER_DOCLEX_TEXT, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, " "),
+                array(PHP_PARSER_DOCLEX_BULLET, "-"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' first item'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, " "),
+                array(PHP_PARSER_DOCLEX_BULLET, "-"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' second item'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, " "),
+                array(PHP_PARSER_DOCLEX_BULLET, "-"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' third item'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_CLOSE_B, '</b>'),
+                array(YY_EOF, ''),
+            ), $data, 'simple list 1');
+        $this->lexer->setup('<i>
+ o first item
+ o second item
+ o third item
+</i>');
+        $data = array();
+        while ($a = $this->lexer->advance()) {
+            $data[] = array($this->lexer->token, $this->lexer->value);
+        }
+        $this->assertEquals(
+            array(
+                array(PHP_PARSER_DOCLEX_OPEN_I, '<i>'),
+                array(PHP_PARSER_DOCLEX_TEXT, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, " "),
+                array(PHP_PARSER_DOCLEX_BULLET, "o"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' first item'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, " "),
+                array(PHP_PARSER_DOCLEX_BULLET, "o"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' second item'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, " "),
+                array(PHP_PARSER_DOCLEX_BULLET, "o"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' third item'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_CLOSE_I, '</i>'),
+                array(YY_EOF, ''),
+            ), $data, 'simple list 1.1');
+        $this->lexer->setup('<kbd>
+ 1 first item
+ 2 second item
+ 3 third item
+</kbd>');
+        $data = array();
+        while ($a = $this->lexer->advance()) {
+            $data[] = array($this->lexer->token, $this->lexer->value);
+        }
+        $this->assertEquals(
+            array(
+                array(PHP_PARSER_DOCLEX_OPEN_KBD, '<kbd>'),
+                array(PHP_PARSER_DOCLEX_TEXT, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, " "),
+                array(PHP_PARSER_DOCLEX_NBULLET, "1"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' first item'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, " "),
+                array(PHP_PARSER_DOCLEX_NBULLET, "2"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' second item'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, " "),
+                array(PHP_PARSER_DOCLEX_NBULLET, "3"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' third item'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_CLOSE_KBD, '</kbd>'),
+                array(YY_EOF, ''),
+            ), $data, 'simple list 2');
+        $this->lexer->setup('<samp>
+ 1. first item
+ 2. second item
+ 3. third item
+ </samp>');
+        $data = array();
+        while ($a = $this->lexer->advance()) {
+            $data[] = array($this->lexer->token, $this->lexer->value);
+        }
+        $this->assertEquals(
+            array(
+                array(PHP_PARSER_DOCLEX_OPEN_SAMP, '<samp>'),
+                array(PHP_PARSER_DOCLEX_TEXT, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, " "),
+                array(PHP_PARSER_DOCLEX_NDBULLET, "1."),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' first item'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, " "),
+                array(PHP_PARSER_DOCLEX_NDBULLET, "2."),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' second item'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, " "),
+                array(PHP_PARSER_DOCLEX_NDBULLET, "3."),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' third item'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_TEXT, ' '),
+                array(PHP_PARSER_DOCLEX_CLOSE_SAMP, '</samp>'),
+            ), $data, 'simple list 3');
+    }
+
     function test_simplelist_nested()
     {
         if (!$this->_methodExists('setup')) {
@@ -592,7 +715,80 @@ again some more');
             ), $data, 'simple list 1');
     }
 
-    function test_simplelist_invalid()
+    function test_simplelist_nested_intag()
+    {
+        if (!$this->_methodExists('setup')) {
+            return;
+        }
+        if (!$this->_methodExists('advance')) {
+            return;
+        }
+        $this->lexer->setup('<var>
+ - first item
+   1 nested first
+   2 nested second
+ - second item
+ - third item
+       1 nested first
+         + another item
+         + yet another
+         + a third
+       2 nested second
+</var>');
+        $data = array();
+        while ($a = $this->lexer->advance()) {
+            $data[] = array($this->lexer->token, $this->lexer->value);
+        }
+        $this->assertEquals(
+            array(
+                array(PHP_PARSER_DOCLEX_OPEN_VAR, '<var>'),
+                array(PHP_PARSER_DOCLEX_TEXT, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, " "),
+                array(PHP_PARSER_DOCLEX_BULLET, "-"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' first item'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, "   "),
+                array(PHP_PARSER_DOCLEX_NBULLET, "1"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' nested first'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, "   "),
+                array(PHP_PARSER_DOCLEX_NBULLET, "2"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' nested second'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, " "),
+                array(PHP_PARSER_DOCLEX_BULLET, "-"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' second item'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, " "),
+                array(PHP_PARSER_DOCLEX_BULLET, "-"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' third item'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, "       "),
+                array(PHP_PARSER_DOCLEX_NBULLET, "1"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' nested first'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, "         "),
+                array(PHP_PARSER_DOCLEX_BULLET, "+"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' another item'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, "         "),
+                array(PHP_PARSER_DOCLEX_BULLET, "+"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' yet another'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, "         "),
+                array(PHP_PARSER_DOCLEX_BULLET, "+"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' a third'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, "       "),
+                array(PHP_PARSER_DOCLEX_NBULLET, "2"),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' nested second'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_CLOSE_VAR, '</var>'),
+                array(YY_EOF, ''),
+            ), $data, 'simple list 1');
+    }
+
+    function test_simplelist_invalid1()
     {
         if (!$this->_methodExists('setup')) {
             return;
@@ -628,7 +824,41 @@ again some more');
                 'code' => PHP_PARSER_DOCLEX_ERROR_NUMWRONG,
                 'message' => 'simple list number should be 2 and is [3]',
             )),
-        'test_simplelist_invalid');
+        'test_simplelist_invalid1');
+    }
+
+    function test_simplelist_invalid2()
+    {
+        if (!$this->_methodExists('setup')) {
+            return;
+        }
+        if (!$this->_methodExists('advance')) {
+            return;
+        }
+        $this->lexer->setup('   1. first
+   2 invalid second');
+        $data = array();
+        while ($a = $this->lexer->advance()) {
+            $data[] = array($this->lexer->token, $this->lexer->value);
+        }
+        $this->assertEquals(
+            array(
+                array(PHP_PARSER_DOCLEX_WHITESPACE, "   "),
+                array(PHP_PARSER_DOCLEX_NDBULLET, "1."),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' first'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, "   "),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
+                array(PHP_PARSER_DOCLEX_TEXT, '2 invalid second'),
+            ), $data, 'simple list 1');
+        $this->assertErrors(
+            array(array(
+                'package' => 'PHP_Parser_DocBlock_DefaultLexer',
+                'level' => 'error',
+                'code' => PHP_PARSER_DOCLEX_ERROR_NODOT,
+                'message' => 'error, no dot in simple list bullet [2]',
+            )),
+        'test_simplelist_invalid2');
     }
 }
 ?>

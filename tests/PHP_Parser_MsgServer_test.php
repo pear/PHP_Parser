@@ -27,7 +27,7 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
     function tearDown()
     {
         // purge all error stacks
-        PHP_Parser_Stack::staticGetErrors(true);
+        PEAR_ErrorStack::staticGetErrors(true);
         unset($this->pstack);
         unset($this->sstack);
         unset($this->estack);
@@ -77,7 +77,7 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
     
     function assertErrors($errors, $method)
     {
-        $compare = PHP_Parser_Stack::staticGetErrors(false, true);
+        $compare = PEAR_ErrorStack::staticGetErrors(false, true);
         $save = $compare;
         foreach ($errors as $err) {
             foreach ($compare as $i => $guineapig) {
@@ -112,7 +112,7 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
     
     function assertNoErrors($method, $message)
     {
-        $errs = PHP_Parser_Stack::staticGetErrors(false, true);
+        $errs = PEAR_ErrorStack::staticGetErrors(false, true);
         $error = 'error';
         if (count($errs)) {
             if (count($errs) > 1) {
@@ -127,7 +127,7 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
                 $this->assertFalse(true, $error['level']);
             }
         }
-        PHP_Parser_Stack::staticGetErrors(true);
+        PEAR_ErrorStack::staticGetErrors(true);
     }
     
     function _catch3($type, $message)
@@ -252,7 +252,7 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
                 )
             ),
         'test_unregisterAll1');
-        PHP_Parser_Stack::staticGetErrors(true);
+        PEAR_ErrorStack::staticGetErrors(true);
         $ar = new noHandleMessage;
         $aa = $this->_msgserver->registerListener($ar, 6);
         $this->assertEquals(6, $aa, 'duplicate registration failed');
@@ -282,7 +282,7 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
                 )
             ),
         'test_unregisterAll2');
-        PHP_Parser_Stack::staticGetErrors(true);
+        PEAR_ErrorStack::staticGetErrors(true);
         $ra = new noHandleMessage;
         $ah = $this->_msgserver->registerListener($ra, 6);
         $this->assertEquals(6, $ah, 'duplicate registration failed');
@@ -321,7 +321,7 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
                 )
             ),
         'test_unregisterAll3');
-        PHP_Parser_Stack::staticGetErrors(true);
+        PEAR_ErrorStack::staticGetErrors(true);
         $aq = new noHandleMessage;
         $res = $this->_msgserver->registerListener($aq, 6);
         $this->assertEquals(6, $res, 'duplicate registration failed');
@@ -362,7 +362,7 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
                 )
             ),
         'test_unregisterAll3');
-        PHP_Parser_Stack::staticGetErrors(true);
+        PEAR_ErrorStack::staticGetErrors(true);
         $ra = new noHandleMessage;
         $res = $this->_msgserver->registerListener($ra, 6);
         $this->assertEquals(6, $res, 'duplicate registration failed');

@@ -5,7 +5,7 @@
 /**
  * Error handling
  */
-require_once 'PHP/Parser/Stack.php';
+require_once 'PEAR/ErrorStack.php';
 /**
  * Used for singleton server
  * @global array $GLOBALS['_PHP_PARSER_MSGSERVER_INSTANCE']
@@ -97,7 +97,7 @@ class PHP_Parser_MsgServer
         if ($unique_id !== false) {
             // $unique_id must be an integer or string
             if (!is_int($unique_id) && !is_string($unique_id)) {
-                return PHP_Parser_Stack::staticPush(
+                return PEAR_ErrorStack::staticPush(
                             'PHP_Parser_MsgServer',
                             PHP_PARSER_MSGSERVER_ERR_BAD_UNIQUE_ID,
                             'exception',
@@ -105,7 +105,7 @@ class PHP_Parser_MsgServer
                                 'type' => gettype($unique_id)));
             }
             if (!isset($this->_ref_store[$unique_id])) {
-                PHP_Parser_Stack::staticPush(
+                PEAR_ErrorStack::staticPush(
                     'PHP_Parser_MsgServer',
                     PHP_PARSER_MSGSERVER_ERR_NOT_REGISTERED,
                      'warning',
@@ -154,7 +154,7 @@ class PHP_Parser_MsgServer
     function unRegisterIds($unique_ids)
     {
         if (!is_array($unique_ids)) {
-            return PHP_Parser_Stack::staticPush(
+            return PEAR_ErrorStack::staticPush(
                     'PHP_Parser_MsgServer',
                     PHP_PARSER_MSGSERVER_ERR_INVALID_INPUT,
                     'exception',
@@ -165,7 +165,7 @@ class PHP_Parser_MsgServer
         }
         foreach($unique_ids as $id) {
             $result = $this->_unregisterAll($id);
-            if (PHP_Parser_Stack::staticHasErrors()) {
+            if (PEAR_ErrorStack::staticHasErrors()) {
                 return $result;
             }
         }
@@ -191,7 +191,7 @@ class PHP_Parser_MsgServer
         }
         // $obj must be an object
         if (!is_object($obj)) {
-            return PHP_Parser_Stack::staticPush(
+            return PEAR_ErrorStack::staticPush(
                     'PHP_Parser_MsgServer',
                     PHP_PARSER_MSGSERVER_ERR_INVALID_INPUT,
                     'exception',
@@ -202,7 +202,7 @@ class PHP_Parser_MsgServer
         }
         // $unique_id must be an integer or string
         if (!is_int($unique_id) && !is_string($unique_id)) {
-            return PHP_Parser_Stack::staticPush(
+            return PEAR_ErrorStack::staticPush(
                     'PHP_Parser_MsgServer',
                     PHP_PARSER_MSGSERVER_ERR_BAD_UNIQUE_ID,
                     'exception',
@@ -211,7 +211,7 @@ class PHP_Parser_MsgServer
         // $unique_id must indeed be unique 
         if (count($this->_ref_store) &&
               in_array($unique_id, array_keys($this->_ref_store))) {
-            return PHP_Parser_Stack::staticPush(
+            return PEAR_ErrorStack::staticPush(
                 'PHP_Parser_MsgServer',
                 PHP_PARSER_MSGSERVER_ERR_UNIQUEID_ALREADY_REGISTERED,
                 'error',
@@ -235,7 +235,7 @@ class PHP_Parser_MsgServer
     {
         // $unique_id must be an integer or string
         if (!is_int($unique_id) && !is_string($unique_id)) {
-            return PHP_Parser_Stack::staticPush(
+            return PEAR_ErrorStack::staticPush(
                     'PHP_Parser_MsgServer',
                     PHP_PARSER_MSGSERVER_ERR_BAD_UNIQUE_ID,
                     'error',
@@ -257,7 +257,7 @@ class PHP_Parser_MsgServer
     function messageRegistered($message_type)
     {
         if (!is_string($message_type) && !is_integer($message_type)) {
-            return PHP_Parser_Stack::staticPush(
+            return PEAR_ErrorStack::staticPush(
                     'PHP_Parser_MsgServer',
                     PHP_PARSER_MSGSERVER_ERR_INVALID_INPUT,
                     'exception',
@@ -281,7 +281,7 @@ class PHP_Parser_MsgServer
     function stopCatchingMessage($message_type)
     {
         if (!is_int($message_type) && !is_string($message_type)) {
-            return PHP_Parser_Stack::staticPush(
+            return PEAR_ErrorStack::staticPush(
                     'PHP_Parser_MsgServer',
                     PHP_PARSER_MSGSERVER_ERR_INVALID_INPUT,
                     'exception',
@@ -291,7 +291,7 @@ class PHP_Parser_MsgServer
                         'type2' => gettype($message_type)));
         }
         if (!isset($this->_reg_store[$message_type])) {
-            PHP_Parser_Stack::staticPush(
+            PEAR_ErrorStack::staticPush(
                     'PHP_Parser_MsgServer',
                     PHP_PARSER_MSGSERVER_ERR_NO_LISTENERS,
                     'notice',
@@ -319,7 +319,7 @@ class PHP_Parser_MsgServer
     function stopCatchingMessages($message_type, $unique_ids)
     {
         if (!is_int($message_type) && !is_string($message_type)) {
-            return PHP_Parser_Stack::staticPush(
+            return PEAR_ErrorStack::staticPush(
                     'PHP_Parser_MsgServer',
                     PHP_PARSER_MSGSERVER_ERR_INVALID_INPUT,
                     'exception',
@@ -329,7 +329,7 @@ class PHP_Parser_MsgServer
                     'type2' => gettype($message_type)));
         }
         if (!isset($this->_reg_store[$message_type])) {
-            PHP_Parser_Stack::staticPush(
+            PEAR_ErrorStack::staticPush(
                     'PHP_Parser_MsgServer',
                     PHP_PARSER_MSGSERVER_ERR_NO_LISTENERS,
                     'notice',
@@ -337,7 +337,7 @@ class PHP_Parser_MsgServer
             return true;
         }
         if (!is_array($unique_ids)) {
-            return PHP_Parser_Stack::staticPush(
+            return PEAR_ErrorStack::staticPush(
                     'PHP_Parser_MsgServer',
                     PHP_PARSER_MSGSERVER_ERR_INVALID_INPUT,
                     'exception',
@@ -348,14 +348,14 @@ class PHP_Parser_MsgServer
         }
         foreach($unique_ids as $id) {
             if (!is_int($id) && !is_string($id)) {
-                return PHP_Parser_Stack::staticPush(
+                return PEAR_ErrorStack::staticPush(
                     'PHP_Parser_MsgServer',
                     PHP_PARSER_MSGSERVER_ERR_BAD_UNIQUE_ID,
                     'exception',
                     array('type' => gettype($id)));
             }
             if (!isset($this->_reg_store[$message_type][$id])) {
-                PHP_Parser_Stack::staticPush(
+                PEAR_ErrorStack::staticPush(
                     'PHP_Parser_MsgServer',
                     PHP_PARSER_MSGSERVER_ERR_NOT_LISTENING,
                     'notice',
@@ -388,14 +388,14 @@ class PHP_Parser_MsgServer
     {
         // no items can receive
         if (!count($this->_ref_store)) {
-            return PHP_Parser_Stack::staticPush(
+            return PEAR_ErrorStack::staticPush(
                     'PHP_Parser_MsgServer',
                     PHP_PARSER_MSGSERVER_ERR_NONE_REGISTERED,
                     'exception');
         }
         // unique id must be a pre-registered object
         if (!in_array($unique_id, array_keys($this->_ref_store))) {
-            return PHP_Parser_Stack::staticPush(
+            return PEAR_ErrorStack::staticPush(
                     'PHP_Parser_MsgServer',
                     PHP_PARSER_MSGSERVER_ERR_NOT_REGISTERED_YET,
                     'exception',
@@ -403,7 +403,7 @@ class PHP_Parser_MsgServer
         }
         // $message_type must be an integer or string
         if (!is_int($message_type) && !is_string($message_type)) {
-            return PHP_Parser_Stack::staticPush(
+            return PEAR_ErrorStack::staticPush(
                     'PHP_Parser_MsgServer',
                     PHP_PARSER_MSGSERVER_ERR_INVALID_INPUT,
                     'exception',
@@ -416,7 +416,7 @@ class PHP_Parser_MsgServer
             $handle_method = 'handleMessage';
         }
         if (!method_exists($this->_ref_store[$unique_id], $handle_method)) {
-            return PHP_Parser_Stack::staticPush(
+            return PEAR_ErrorStack::staticPush(
                     'PHP_Parser_MsgServer',
                     PHP_PARSER_MSGSERVER_ERR_HANDLER_DOESNT_EXIST,
                     'exception',
@@ -453,7 +453,7 @@ class PHP_Parser_MsgServer
     {
         // no message listeners registered
         if (!count($this->_ref_store)) {
-            PHP_Parser_Stack::staticPush(
+            PEAR_ErrorStack::staticPush(
                 'PHP_Parser_MsgServer',
                 PHP_PARSER_MSGSERVER_ERR_NONE_REGISTERED,
                 'notice');
@@ -461,7 +461,7 @@ class PHP_Parser_MsgServer
         }
         // no messages are caught
         if (!count($this->_reg_store)) {
-            PHP_Parser_Stack::staticPush(
+            PEAR_ErrorStack::staticPush(
                 'PHP_Parser_MsgServer',
                 PHP_PARSER_MSGSERVER_ERR_NO_CATCHERS,
                 'notice',
@@ -470,7 +470,7 @@ class PHP_Parser_MsgServer
         }
         // no listeners to this message
         if (!isset($this->_reg_store[$messagetype])) {
-            PHP_Parser_Stack::staticPush(
+            PEAR_ErrorStack::staticPush(
                 'PHP_Parser_MsgServer',
                 PHP_PARSER_MSGSERVER_ERR_NO_LISTENERS,
                 'exception',
@@ -499,7 +499,7 @@ class PHP_Parser_MsgServer
     {
         // no message listeners registered
         if (!count($this->_ref_store)) {
-            PHP_Parser_Stack::staticPush(
+            PEAR_ErrorStack::staticPush(
                     'PHP_Parser_MsgServer',
                     PHP_PARSER_MSGSERVER_ERR_NONE_REGISTERED,
                     'notice');
@@ -507,7 +507,7 @@ class PHP_Parser_MsgServer
         }
         // no messages are caught
         if (!count($this->_reg_store)) {
-            PHP_Parser_Stack::staticPush(
+            PEAR_ErrorStack::staticPush(
                 'PHP_Parser_MsgServer',
                 PHP_PARSER_MSGSERVER_ERR_NO_CATCHERS,
                 'notice',
@@ -516,7 +516,7 @@ class PHP_Parser_MsgServer
         }
         // no listeners to this message
         if (!isset($this->_reg_store[$messagetype])) {
-            PHP_Parser_Stack::staticPush(
+            PEAR_ErrorStack::staticPush(
                 'PHP_Parser_MsgServer',
                 PHP_PARSER_MSGSERVER_ERR_NO_LISTENERS,
                 'notice',
@@ -534,7 +534,7 @@ class PHP_Parser_MsgServer
         return $return;
     }
 }
-$_PHP_Parser_a = &PHP_Parser_Stack::singleton('PHP_Parser_MsgServer');
+$_PHP_Parser_a = &PEAR_ErrorStack::singleton('PHP_Parser_MsgServer');
 $_PHP_Parser_a->setErrorMessageTemplate(
             array(
              PHP_PARSER_MSGSERVER_ERR_BAD_UNIQUE_ID => 'Unique ID must be string or integer,' .

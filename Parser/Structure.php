@@ -4,7 +4,7 @@
  // modified by cellog@users.sourceforge.net to fit PEAR CS
  // %token constants
 
- require_once 'PHP/Parser/Stack.php';
+ require_once 'PEAR/ErrorStack.php';
 
  define('PHP_PARSER_ERROR_UNEXPECTED', 1);
  define('PHP_PARSER_ERROR_SYNTAX', 2);
@@ -16,6 +16,25 @@ if (!defined('TOKEN_yyErrorCode')) {   define('TOKEN_yyErrorCode', 256);
 					// line 1 "C:/devel/PHP_Parser/Parser/Core5.jay"
 
 ?><?php
+//
+// +----------------------------------------------------------------------+
+// | PHP_Parser                                                           |
+// +----------------------------------------------------------------------+
+// | Copyright (c) 1997-2004 The PHP Group                                |
+// +----------------------------------------------------------------------+
+// | This source file is subject to version 3.0 of the PHP license,       |
+// | that is bundled with this package in the file LICENSE, and is        |
+// | available through the world-wide-web at the following url:           |
+// | http://www.php.net/license/3_0.txt.                                  |
+// | If you did not receive a copy of the PHP license and are unable to   |
+// | obtain it through the world-wide-web, please send a note to          |
+// | license@php.net so we can mail you a copy immediately.               |
+// +----------------------------------------------------------------------+
+// | Authors: Greg Beaver <cellog@php.net>                                |
+// +----------------------------------------------------------------------+
+//
+// $Id$
+//
 /*
    +----------------------------------------------------------------------+
    | Based on the Zend Engine                                             |
@@ -32,8 +51,7 @@ if (!defined('TOKEN_yyErrorCode')) {   define('TOKEN_yyErrorCode', 256);
    +----------------------------------------------------------------------+
    | Authors: Andi Gutmans <andi@zend.com>                                |
    |          Zeev Suraski <zeev@zend.com>                                |
-   | native PHP version:  Greg Beaver <cellog@users.sourceforge.net>      |
-   | native PHP version:  Alan Knowles <alan@akbkhome.com>                |
+   | native PHP version:  Greg Beaver <cellog@php.net>                    |
    +----------------------------------------------------------------------+
    Last synchronized with zend_language_parser.y on Feb 26, 2004
 */
@@ -358,7 +376,7 @@ class PHP_Parser_Structure {
     {
         $this->documentation = $message;
     }
-					// line 362 "-"
+					// line 380 "-"
 
     /**
      * thrown for irrecoverable syntax errors and stack overflow.
@@ -625,21 +643,21 @@ class PHP_Parser_Structure {
     }
 
 
-    function _24($yyTop)  					// line 548 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _24($yyTop)  					// line 566 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         if (isset($this->returns)) {
             $this->returns[] = trim($this->yyVals[-1+$yyTop]);
         }
     }
 
-    function _25($yyTop)  					// line 554 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _25($yyTop)  					// line 572 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         if (isset($this->returns)) {
             $this->returns[] = trim($this->yyVals[-1+$yyTop]);
         }
     }
 
-    function _37($yyTop)  					// line 574 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _37($yyTop)  					// line 592 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         if (isset($this->catches)) {
             $this->catches[] = trim($this->yyVals[-6+$yyTop]);
@@ -649,12 +667,12 @@ class PHP_Parser_Structure {
         }
     }
 
-    function _38($yyTop)  					// line 583 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _38($yyTop)  					// line 601 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->_get_class = true;
     }
 
-    function _39($yyTop)  					// line 586 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _39($yyTop)  					// line 604 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->_get_class = false;
         if (isset($this->throws)) {
@@ -662,7 +680,7 @@ class PHP_Parser_Structure {
         }
     }
 
-    function _44($yyTop)  					// line 606 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _44($yyTop)  					// line 624 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         if (isset($this->catches)) {
             $this->catches[] = trim($this->yyVals[-5+$yyTop]);
@@ -672,7 +690,7 @@ class PHP_Parser_Structure {
         }
     }
 
-    function _45($yyTop)  					// line 615 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _45($yyTop)  					// line 633 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         if (isset($this->catches)) {
             $this->catches[] = trim($this->yyVals[-5+$yyTop]);
@@ -682,22 +700,22 @@ class PHP_Parser_Structure {
         }
     }
 
-    function _47($yyTop)  					// line 629 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _47($yyTop)  					// line 647 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _53($yyTop)  					// line 655 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _53($yyTop)  					// line 673 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = false;
     }
 
-    function _54($yyTop)  					// line 659 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _54($yyTop)  					// line 677 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = true;
     }
 
-    function _55($yyTop)  					// line 667 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _55($yyTop)  					// line 685 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->functionLine = $this->yyLex->line; 
         $this->functionPos = $this->yyLex->pos;
@@ -721,7 +739,7 @@ class PHP_Parser_Structure {
         }
     }
 
-    function _56($yyTop)  					// line 690 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _56($yyTop)  					// line 708 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->referencedClasses = array_values(array_unique($this->referencedClasses));
         $this->referencedFunctions = array_values(array_unique($this->referencedFunctions));
@@ -769,7 +787,7 @@ class PHP_Parser_Structure {
         unset($this->referencedClasses);
     }
 
-    function _57($yyTop)  					// line 739 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _57($yyTop)  					// line 757 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->classLine = $this->yyLex->line; 
         $this->classPos = $this->yyLex->pos;
@@ -778,7 +796,7 @@ class PHP_Parser_Structure {
         $this->classCommentToken = $this->yyLex->lastCommentToken;
     }
 
-    function _58($yyTop)  					// line 746 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _58($yyTop)  					// line 764 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->methods = array();
         $this->vars = array();
@@ -786,7 +804,7 @@ class PHP_Parser_Structure {
         $this->implementsInterfaces = array();
     }
 
-    function _59($yyTop)  					// line 756 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _59($yyTop)  					// line 774 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $name = trim($this->yyVals[-6+$yyTop]);
         $cls = array(
@@ -828,7 +846,7 @@ class PHP_Parser_Structure {
         unset($this->implementsInterfaces);
     }
 
-    function _60($yyTop)  					// line 795 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _60($yyTop)  					// line 813 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->classLine = $this->yyLex->line; 
         $this->classPos = $this->yyLex->pos;
@@ -838,12 +856,12 @@ class PHP_Parser_Structure {
         $this->implementsInterfaces = array();
     }
 
-    function _61($yyTop)  					// line 803 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _61($yyTop)  					// line 821 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->methods = array();
     }
 
-    function _62($yyTop)  					// line 807 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _62($yyTop)  					// line 825 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $name = trim($this->yyVals[-5+$yyTop]);
         $interf = array(
@@ -878,111 +896,111 @@ class PHP_Parser_Structure {
         unset($this->implementsInterfaces);
     }
 
-    function _63($yyTop)  					// line 843 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _63($yyTop)  					// line 861 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = '';
     }
 
-    function _64($yyTop)  					// line 847 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _64($yyTop)  					// line 865 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = 'abstract';
     }
 
-    function _65($yyTop)  					// line 851 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _65($yyTop)  					// line 869 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = 'final';
     }
 
-    function _66($yyTop)  					// line 858 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _66($yyTop)  					// line 876 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = '';
     }
 
-    function _67($yyTop)  					// line 862 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _67($yyTop)  					// line 880 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[0+$yyTop];
     }
 
-    function _68($yyTop)  					// line 869 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _68($yyTop)  					// line 887 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = 'interface';
     }
 
-    function _73($yyTop)  					// line 886 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _73($yyTop)  					// line 904 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         if (isset($this->implementsInterfaces)) {
             $this->implementsInterfaces[] = trim($this->yyVals[0+$yyTop]);
         }
     }
 
-    function _74($yyTop)  					// line 892 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _74($yyTop)  					// line 910 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         if (isset($this->implementsInterfaces)) {
             $this->implementsInterfaces[] = trim($this->yyVals[0+$yyTop]);
         }
     }
 
-    function _106($yyTop)  					// line 988 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _106($yyTop)  					// line 1006 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->params[$this->yyVals[0+$yyTop]] = array('default' => null, 'type' => $this->yyVals[-1+$yyTop], 'isReference' => false);
     }
 
-    function _107($yyTop)  					// line 992 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _107($yyTop)  					// line 1010 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->params[$this->yyVals[0+$yyTop]] = array('default' => null, 'type' => $this->yyVals[-2+$yyTop], 'isReference' => true);
     }
 
-    function _108($yyTop)  					// line 996 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _108($yyTop)  					// line 1014 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->params[$this->yyVals[-2+$yyTop]] = array('default' => trim($this->yyVals[0+$yyTop]), 'type' => $this->yyVals[-4+$yyTop], 'isReference' => true);
     }
 
-    function _109($yyTop)  					// line 1000 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _109($yyTop)  					// line 1018 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->params[$this->yyVals[-2+$yyTop]] = array('default' => trim($this->yyVals[0+$yyTop]), 'type' => $this->yyVals[-3+$yyTop], 'isReference' => false);
     }
 
-    function _110($yyTop)  					// line 1004 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _110($yyTop)  					// line 1022 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->params[$this->yyVals[0+$yyTop]] = array('default' => null, 'type' => $this->yyVals[-1+$yyTop], 'isReference' => false);
     }
 
-    function _111($yyTop)  					// line 1008 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _111($yyTop)  					// line 1026 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->params[$this->yyVals[0+$yyTop]] = array('default' => null, 'type' => $this->yyVals[-2+$yyTop], 'isReference' => true);
     }
 
-    function _112($yyTop)  					// line 1012 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _112($yyTop)  					// line 1030 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->params[$this->yyVals[-2+$yyTop]] = array('default' => trim($this->yyVals[0+$yyTop]), 'type' => $this->yyVals[-4+$yyTop], 'isReference' => true);
     }
 
-    function _113($yyTop)  					// line 1016 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _113($yyTop)  					// line 1034 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->params[$this->yyVals[-2+$yyTop]] = array('default' => trim($this->yyVals[0+$yyTop]), 'type' => $this->yyVals[-3+$yyTop], 'isReference' => false);
     }
 
-    function _114($yyTop)  					// line 1024 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _114($yyTop)  					// line 1042 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = '';
     }
 
-    function _115($yyTop)  					// line 1028 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _115($yyTop)  					// line 1046 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[0+$yyTop];
     }
 
-    function _117($yyTop)  					// line 1037 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _117($yyTop)  					// line 1055 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = '';
     }
 
-    function _120($yyTop)  					// line 1047 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _120($yyTop)  					// line 1065 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _121($yyTop)  					// line 1051 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _121($yyTop)  					// line 1069 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         if ($this->_grabDefine) {
             $this->defineName = trim($this->yyVals[-2+$yyTop]);
@@ -991,7 +1009,7 @@ class PHP_Parser_Structure {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _122($yyTop)  					// line 1059 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _122($yyTop)  					// line 1077 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         if ($this->_grabDefine) {
             $this->defineName = trim($this->yyVals[-2+$yyTop]);
@@ -1000,7 +1018,7 @@ class PHP_Parser_Structure {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _123($yyTop)  					// line 1067 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _123($yyTop)  					// line 1085 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         if ($this->_grabDefine) {
             $this->defineName = trim($this->yyVals[-3+$yyTop]);
@@ -1009,42 +1027,42 @@ class PHP_Parser_Structure {
         $this->yyVal = $this->yyVals[-3+$yyTop] . $this->yW[$yyTop - 2] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _126($yyTop)  					// line 1084 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _126($yyTop)  					// line 1102 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->funcglobals[] = $this->yyVals[0+$yyTop];
     }
 
-    function _127($yyTop)  					// line 1088 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _127($yyTop)  					// line 1106 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->funcglobals[] = '$' . $this->yyVals[-1+$yyTop];
     }
 
-    function _128($yyTop)  					// line 1092 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _128($yyTop)  					// line 1110 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->funcglobals[] = '${' . $this->yyVals[-1+$yyTop] . '}';
     }
 
-    function _129($yyTop)  					// line 1100 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _129($yyTop)  					// line 1118 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->statics[] = array('name' => $this->yyVals[0+$yyTop], 'default' => null);
     }
 
-    function _130($yyTop)  					// line 1104 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _130($yyTop)  					// line 1122 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->statics[] = array('name' => $this->yyVals[-2+$yyTop], 'default' => trim($this->yyVals[0+$yyTop]));
     }
 
-    function _131($yyTop)  					// line 1108 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _131($yyTop)  					// line 1126 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->statics[] = array('name' => $this->yyVals[0+$yyTop], 'default' => null);
     }
 
-    function _132($yyTop)  					// line 1112 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _132($yyTop)  					// line 1130 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->statics[] = array('name' => $this->yyVals[-2+$yyTop], 'default' => trim($this->yyVals[0+$yyTop]));
     }
 
-    function _135($yyTop)  					// line 1126 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _135($yyTop)  					// line 1144 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         foreach($this->yyVals[0+$yyTop] as $var) {
             $is_static = false;
@@ -1080,7 +1098,7 @@ class PHP_Parser_Structure {
         }
     }
 
-    function _138($yyTop)  					// line 1161 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _138($yyTop)  					// line 1179 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->methodLine = $this->yyLex->line; 
         $this->methodPos = $this->yyLex->pos;
@@ -1089,7 +1107,7 @@ class PHP_Parser_Structure {
         $this->methodCommentToken = $this->yyLex->lastCommentToken;
     }
 
-    function _139($yyTop)  					// line 1169 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _139($yyTop)  					// line 1187 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->throws = array();
         $this->catches = array();
@@ -1104,7 +1122,7 @@ class PHP_Parser_Structure {
         $this->superglobals = array();
     }
 
-    function _140($yyTop)  					// line 1183 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _140($yyTop)  					// line 1201 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $is_static = false;
         $is_abstract = false;
@@ -1181,68 +1199,68 @@ class PHP_Parser_Structure {
         unset($this->superglobals);
     }
 
-    function _143($yyTop)  					// line 1266 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _143($yyTop)  					// line 1284 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[0+$yyTop];
     }
 
-    function _144($yyTop)  					// line 1270 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _144($yyTop)  					// line 1288 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = array('public');
     }
 
-    function _145($yyTop)  					// line 1277 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _145($yyTop)  					// line 1295 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = array('public');
     }
 
-    function _146($yyTop)  					// line 1281 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _146($yyTop)  					// line 1299 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[0+$yyTop];
     }
 
-    function _147($yyTop)  					// line 1288 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _147($yyTop)  					// line 1306 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = array($this->yyVals[0+$yyTop]);
     }
 
-    function _148($yyTop)  					// line 1292 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _148($yyTop)  					// line 1310 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop];
         $this->yyVal[] = $this->yyVals[0+$yyTop];
     }
 
-    function _149($yyTop)  					// line 1300 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _149($yyTop)  					// line 1318 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = 'public';
     }
 
-    function _150($yyTop)  					// line 1304 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _150($yyTop)  					// line 1322 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = 'protected';
     }
 
-    function _151($yyTop)  					// line 1308 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _151($yyTop)  					// line 1326 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = 'private';
     }
 
-    function _152($yyTop)  					// line 1312 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _152($yyTop)  					// line 1330 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = 'static';
     }
 
-    function _153($yyTop)  					// line 1316 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _153($yyTop)  					// line 1334 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = 'abstract';
     }
 
-    function _154($yyTop)  					// line 1320 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _154($yyTop)  					// line 1338 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = 'final';
     }
 
-    function _155($yyTop)  					// line 1327 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _155($yyTop)  					// line 1345 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop];
         if ($this->_options['varContainer']) {
@@ -1264,13 +1282,13 @@ class PHP_Parser_Structure {
         }
     }
 
-    function _156($yyTop)  					// line 1349 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _156($yyTop)  					// line 1367 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->_varLine = $this->yyLex->line;
         
     }
 
-    function _157($yyTop)  					// line 1353 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _157($yyTop)  					// line 1371 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-5+$yyTop];
         if ($this->_options['varContainer']) {
@@ -1293,7 +1311,7 @@ class PHP_Parser_Structure {
         }
     }
 
-    function _158($yyTop)  					// line 1376 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _158($yyTop)  					// line 1394 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         if ($this->_options['varContainer']) {
             $container = $this->_options['varContainer'];
@@ -1314,12 +1332,12 @@ class PHP_Parser_Structure {
         }
     }
 
-    function _159($yyTop)  					// line 1396 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _159($yyTop)  					// line 1414 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->_varLine = $this->yyLex->line;
     }
 
-    function _160($yyTop)  					// line 1399 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _160($yyTop)  					// line 1417 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         if ($this->_options['varContainer']) {
             $container = $this->_options['varContainer'];
@@ -1341,14 +1359,14 @@ class PHP_Parser_Structure {
         }
     }
 
-    function _161($yyTop)  					// line 1423 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _161($yyTop)  					// line 1441 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $lc = $this->yyLex->getLastComment();
         $this->constLine = $this->yyLex->line;
         $this->constComment = $lc[0];
     }
 
-    function _162($yyTop)  					// line 1428 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _162($yyTop)  					// line 1446 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $constinfo = array('name' => $this->yyVals[-3+$yyTop],
                        'value' => trim($this->yyVals[0+$yyTop]),
@@ -1376,14 +1394,14 @@ class PHP_Parser_Structure {
         }
     }
 
-    function _163($yyTop)  					// line 1454 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _163($yyTop)  					// line 1472 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->constLine = $this->yyLex->line;
         $lc = $this->yyLex->getLastComment();
         $this->constComment = $lc[0];
     }
 
-    function _164($yyTop)  					// line 1459 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _164($yyTop)  					// line 1477 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $constinfo = array('name' => $this->yyVals[-2+$yyTop],
                        'value' => trim($this->yyVals[0+$yyTop]),
@@ -1411,18 +1429,18 @@ class PHP_Parser_Structure {
         }
     }
 
-    function _171($yyTop)  					// line 1504 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _171($yyTop)  					// line 1522 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 5] . $this->yW[$yyTop - 4] . $this->yyVals[-3+$yyTop] . 
             $this->yW[$yyTop - 2] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _172($yyTop)  					// line 1509 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _172($yyTop)  					// line 1527 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->_initGlobal(trim($this->yyVals[-1+$yyTop]));
     }
 
-    function _173($yyTop)  					// line 1512 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _173($yyTop)  					// line 1530 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         if ($this->_inGlobal) {
             $this->_processGlobal($this->yyVals[-3+$yyTop], $this->yyVals[0+$yyTop]);
@@ -1430,12 +1448,12 @@ class PHP_Parser_Structure {
         $this->yyVal = $this->yyVals[-3+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _174($yyTop)  					// line 1519 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _174($yyTop)  					// line 1537 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->_initGlobal($this->yyVals[-2+$yyTop]);
     }
 
-    function _175($yyTop)  					// line 1522 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _175($yyTop)  					// line 1540 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         if ($this->_inGlobal) {
             $this->_processGlobal($this->yyVals[-4+$yyTop], '&' . $this->yyVals[0+$yyTop]);
@@ -1443,12 +1461,12 @@ class PHP_Parser_Structure {
         $this->yyVal = $this->yyVals[-4+$yyTop] . $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $this->yyVals[0+$yyTop];
     }
 
-    function _176($yyTop)  					// line 1529 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _176($yyTop)  					// line 1547 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->_initGlobal($this->yyVals[-3+$yyTop]);
     }
 
-    function _177($yyTop)  					// line 1532 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _177($yyTop)  					// line 1550 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         if ($this->_inGlobal) {
             $this->_processGlobal($this->yyVals[-6+$yyTop], '&' . $this->yW[$yyTop - 4] . $this->yyVals[-1+$yyTop] . $this->yyVals[0+$yyTop]);
@@ -1460,7 +1478,7 @@ class PHP_Parser_Structure {
         }
     }
 
-    function _178($yyTop)  					// line 1543 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _178($yyTop)  					// line 1561 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         if ($this->_get_class) {
             $this->yyVal = $this->yyVals[-1+$yyTop];
@@ -1469,232 +1487,232 @@ class PHP_Parser_Structure {
         }
     }
 
-    function _179($yyTop)  					// line 1551 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _179($yyTop)  					// line 1569 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _180($yyTop)  					// line 1555 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _180($yyTop)  					// line 1573 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _181($yyTop)  					// line 1559 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _181($yyTop)  					// line 1577 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _182($yyTop)  					// line 1563 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _182($yyTop)  					// line 1581 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _183($yyTop)  					// line 1567 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _183($yyTop)  					// line 1585 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _184($yyTop)  					// line 1571 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _184($yyTop)  					// line 1589 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _185($yyTop)  					// line 1575 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _185($yyTop)  					// line 1593 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _186($yyTop)  					// line 1579 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _186($yyTop)  					// line 1597 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _187($yyTop)  					// line 1583 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _187($yyTop)  					// line 1601 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _188($yyTop)  					// line 1587 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _188($yyTop)  					// line 1605 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _189($yyTop)  					// line 1591 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _189($yyTop)  					// line 1609 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _190($yyTop)  					// line 1595 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _190($yyTop)  					// line 1613 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _191($yyTop)  					// line 1599 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _191($yyTop)  					// line 1617 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _192($yyTop)  					// line 1603 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _192($yyTop)  					// line 1621 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _193($yyTop)  					// line 1607 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _193($yyTop)  					// line 1625 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _194($yyTop)  					// line 1611 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _194($yyTop)  					// line 1629 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _195($yyTop)  					// line 1615 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _195($yyTop)  					// line 1633 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _196($yyTop)  					// line 1619 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _196($yyTop)  					// line 1637 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _197($yyTop)  					// line 1623 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _197($yyTop)  					// line 1641 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _198($yyTop)  					// line 1627 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _198($yyTop)  					// line 1645 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _199($yyTop)  					// line 1631 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _199($yyTop)  					// line 1649 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _200($yyTop)  					// line 1635 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _200($yyTop)  					// line 1653 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _201($yyTop)  					// line 1639 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _201($yyTop)  					// line 1657 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _202($yyTop)  					// line 1643 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _202($yyTop)  					// line 1661 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _203($yyTop)  					// line 1647 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _203($yyTop)  					// line 1665 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _204($yyTop)  					// line 1651 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _204($yyTop)  					// line 1669 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _205($yyTop)  					// line 1655 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _205($yyTop)  					// line 1673 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _206($yyTop)  					// line 1659 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _206($yyTop)  					// line 1677 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _207($yyTop)  					// line 1663 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _207($yyTop)  					// line 1681 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _208($yyTop)  					// line 1667 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _208($yyTop)  					// line 1685 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _209($yyTop)  					// line 1671 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _209($yyTop)  					// line 1689 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _210($yyTop)  					// line 1675 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _210($yyTop)  					// line 1693 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _211($yyTop)  					// line 1679 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _211($yyTop)  					// line 1697 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _212($yyTop)  					// line 1683 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _212($yyTop)  					// line 1701 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _213($yyTop)  					// line 1687 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _213($yyTop)  					// line 1705 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _214($yyTop)  					// line 1691 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _214($yyTop)  					// line 1709 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _215($yyTop)  					// line 1695 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _215($yyTop)  					// line 1713 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _216($yyTop)  					// line 1699 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _216($yyTop)  					// line 1717 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _217($yyTop)  					// line 1703 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _217($yyTop)  					// line 1721 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _218($yyTop)  					// line 1707 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _218($yyTop)  					// line 1725 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _219($yyTop)  					// line 1711 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _219($yyTop)  					// line 1729 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _220($yyTop)  					// line 1715 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _220($yyTop)  					// line 1733 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _221($yyTop)  					// line 1719 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _221($yyTop)  					// line 1737 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _222($yyTop)  					// line 1723 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _222($yyTop)  					// line 1741 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _223($yyTop)  					// line 1727 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _223($yyTop)  					// line 1745 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _224($yyTop)  					// line 1731 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _224($yyTop)  					// line 1749 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         if ($this->_get_class) {
             $this->yyVal = $this->yyVals[-1+$yyTop];
@@ -1703,73 +1721,73 @@ class PHP_Parser_Structure {
         }
     }
 
-    function _225($yyTop)  					// line 1741 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _225($yyTop)  					// line 1759 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-4+$yyTop] . $this->yW[$yyTop - 3] . $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _227($yyTop)  					// line 1746 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _227($yyTop)  					// line 1764 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _228($yyTop)  					// line 1750 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _228($yyTop)  					// line 1768 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _229($yyTop)  					// line 1754 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _229($yyTop)  					// line 1772 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _230($yyTop)  					// line 1758 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _230($yyTop)  					// line 1776 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _231($yyTop)  					// line 1762 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _231($yyTop)  					// line 1780 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _232($yyTop)  					// line 1766 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _232($yyTop)  					// line 1784 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _233($yyTop)  					// line 1770 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _233($yyTop)  					// line 1788 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _234($yyTop)  					// line 1774 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _234($yyTop)  					// line 1792 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _235($yyTop)  					// line 1778 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _235($yyTop)  					// line 1796 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _237($yyTop)  					// line 1783 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _237($yyTop)  					// line 1801 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop]
             . $this->yW[$yyTop];
     }
 
-    function _238($yyTop)  					// line 1788 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _238($yyTop)  					// line 1806 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _239($yyTop)  					// line 1792 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _239($yyTop)  					// line 1810 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _240($yyTop)  					// line 1799 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _240($yyTop)  					// line 1817 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         if (strtolower($this->yyVals[-1+$yyTop]) == 'define') {
             $this->defineLine = $this->yyLex->line;
@@ -1781,7 +1799,7 @@ class PHP_Parser_Structure {
         }
     }
 
-    function _241($yyTop)  					// line 1809 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _241($yyTop)  					// line 1827 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         if (isset($this->referencedFunctions)) {
             $this->referencedFunctions[] = $this->yyVals[-4+$yyTop];
@@ -1827,17 +1845,17 @@ class PHP_Parser_Structure {
         $this->yyVal = $this->yW[$yyTop - 4] . $this->yW[$yyTop - 3] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _242($yyTop)  					// line 1851 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _242($yyTop)  					// line 1869 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->referencedMethods[$this->_lastClassname][] = $this->_lastConst;
         $this->yyVal = $this->yyVals[-3+$yyTop] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _243($yyTop)  					// line 1856 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _243($yyTop)  					// line 1874 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
     }
 
-    function _244($yyTop)  					// line 1858 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _244($yyTop)  					// line 1876 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         if (isset($this->referencedVars)) {
             foreach ($this->referencedVars[$this->_lastClassname] as $i => $var) {
@@ -1854,12 +1872,12 @@ class PHP_Parser_Structure {
         $this->yyVal = $this->yyVals[-4+$yyTop] . $this->yW[$yyTop - 3] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _245($yyTop)  					// line 1875 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _245($yyTop)  					// line 1893 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-3+$yyTop] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _246($yyTop)  					// line 1883 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _246($yyTop)  					// line 1901 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         if (isset($this->referencedClasses) && strtolower($this->yyVals[0+$yyTop]) != 'self' && strtolower($this->yyVals[0+$yyTop]) != 'parent') {
             $this->referencedClasses[] = $this->yyVals[0+$yyTop];
@@ -1867,7 +1885,7 @@ class PHP_Parser_Structure {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _247($yyTop)  					// line 1893 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _247($yyTop)  					// line 1911 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
             $this->yyVal = $this->yW[$yyTop];
             if (isset($this->referencedClasses)) {
@@ -1875,113 +1893,113 @@ class PHP_Parser_Structure {
             }
         }
 
-    function _248($yyTop)  					// line 1900 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _248($yyTop)  					// line 1918 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[0+$yyTop];
     }
 
-    function _249($yyTop)  					// line 1909 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _249($yyTop)  					// line 1927 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
                 $this->yyVal = $this->yyVals[-3+$yyTop] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yyVals[0+$yyTop];
             }
 
-    function _251($yyTop)  					// line 1918 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _251($yyTop)  					// line 1936 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
             $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yyVals[0+$yyTop];
         }
 
-    function _253($yyTop)  					// line 1927 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _253($yyTop)  					// line 1945 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _254($yyTop)  					// line 1934 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _254($yyTop)  					// line 1952 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = '';
     }
 
-    function _255($yyTop)  					// line 1938 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _255($yyTop)  					// line 1956 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yW[$yyTop];
     }
 
-    function _256($yyTop)  					// line 1942 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _256($yyTop)  					// line 1960 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _257($yyTop)  					// line 1950 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _257($yyTop)  					// line 1968 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = '';
     }
 
-    function _258($yyTop)  					// line 1954 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _258($yyTop)  					// line 1972 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _259($yyTop)  					// line 1962 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _259($yyTop)  					// line 1980 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _260($yyTop)  					// line 1966 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _260($yyTop)  					// line 1984 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _261($yyTop)  					// line 1970 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _261($yyTop)  					// line 1988 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _262($yyTop)  					// line 1974 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _262($yyTop)  					// line 1992 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _263($yyTop)  					// line 1978 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _263($yyTop)  					// line 1996 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _264($yyTop)  					// line 1982 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _264($yyTop)  					// line 2000 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _265($yyTop)  					// line 1986 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _265($yyTop)  					// line 2004 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _266($yyTop)  					// line 1990 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _266($yyTop)  					// line 2008 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _268($yyTop)  					// line 1998 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _268($yyTop)  					// line 2016 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _269($yyTop)  					// line 2002 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _269($yyTop)  					// line 2020 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _270($yyTop)  					// line 2006 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _270($yyTop)  					// line 2024 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _271($yyTop)  					// line 2010 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _271($yyTop)  					// line 2028 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop]
             . $this->yW[$yyTop];
     }
 
-    function _273($yyTop)  					// line 2019 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _273($yyTop)  					// line 2037 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         if (isset($this->referencedClasses)) {
             $this->referencedClasses[] = $this->yyVals[-2+$yyTop];
@@ -1989,67 +2007,67 @@ class PHP_Parser_Structure {
         $this->yyVal = $this->yW[$yyTop - 2] . $this->yW[$yyTop - 1] . $this->yW[$yyTop];
     }
 
-    function _274($yyTop)  					// line 2029 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _274($yyTop)  					// line 2047 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _275($yyTop)  					// line 2033 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _275($yyTop)  					// line 2051 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _278($yyTop)  					// line 2039 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _278($yyTop)  					// line 2057 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _279($yyTop)  					// line 2043 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _279($yyTop)  					// line 2061 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _280($yyTop)  					// line 2047 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _280($yyTop)  					// line 2065 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _281($yyTop)  					// line 2055 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _281($yyTop)  					// line 2073 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = '';
     }
 
-    function _282($yyTop)  					// line 2059 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _282($yyTop)  					// line 2077 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yyVals[0+$yyTop];
     }
 
-    function _283($yyTop)  					// line 2066 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _283($yyTop)  					// line 2084 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = '';
     }
 
-    function _284($yyTop)  					// line 2070 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _284($yyTop)  					// line 2088 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _285($yyTop)  					// line 2077 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _285($yyTop)  					// line 2095 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-4+$yyTop] . $this->yW[$yyTop - 3] . $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _286($yyTop)  					// line 2081 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _286($yyTop)  					// line 2099 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _287($yyTop)  					// line 2085 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _287($yyTop)  					// line 2103 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _294($yyTop)  					// line 2112 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _294($yyTop)  					// line 2130 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         if (isset($this->referencedVars)) {
             if (trim($this->yyVals[-4+$yyTop]) == '$this') {
@@ -2063,47 +2081,47 @@ class PHP_Parser_Structure {
         $this->yyVal = $this->yyVals[-4+$yyTop] . $this->yW[$yyTop - 3] . $this->yyVals[-2+$yyTop] . $this->yyVals[-1+$yyTop] . $this->yyVals[0+$yyTop];
     }
 
-    function _295($yyTop)  					// line 2125 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _295($yyTop)  					// line 2143 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[0+$yyTop];
     }
 
-    function _296($yyTop)  					// line 2132 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _296($yyTop)  					// line 2150 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yyVals[0+$yyTop];
     }
 
-    function _297($yyTop)  					// line 2136 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _297($yyTop)  					// line 2154 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = '';
     }
 
-    function _298($yyTop)  					// line 2144 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _298($yyTop)  					// line 2162 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yyVals[0+$yyTop];
     }
 
-    function _299($yyTop)  					// line 2151 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _299($yyTop)  					// line 2169 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _300($yyTop)  					// line 2155 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _300($yyTop)  					// line 2173 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = '';
     }
 
-    function _301($yyTop)  					// line 2162 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _301($yyTop)  					// line 2180 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[0+$yyTop];
     }
 
-    function _302($yyTop)  					// line 2166 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _302($yyTop)  					// line 2184 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yyVals[0+$yyTop];
     }
 
-    function _303($yyTop)  					// line 2173 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _303($yyTop)  					// line 2191 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->_lastClassname = trim($this->yyVals[-2+$yyTop]);
         $this->_lastVar = trim($this->yyVals[0+$yyTop]);
@@ -2111,32 +2129,32 @@ class PHP_Parser_Structure {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _304($yyTop)  					// line 2184 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _304($yyTop)  					// line 2202 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[0+$yyTop];
     }
 
-    function _305($yyTop)  					// line 2188 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _305($yyTop)  					// line 2206 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[0+$yyTop];
     }
 
-    function _306($yyTop)  					// line 2196 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _306($yyTop)  					// line 2214 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[0+$yyTop];
     }
 
-    function _307($yyTop)  					// line 2200 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _307($yyTop)  					// line 2218 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yyVals[0+$yyTop];
     }
 
-    function _308($yyTop)  					// line 2204 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _308($yyTop)  					// line 2222 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[0+$yyTop];
     }
 
-    function _309($yyTop)  					// line 2211 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _309($yyTop)  					// line 2229 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         if (isset($this->superglobals)) {
             $test = trim($this->yyVals[-3+$yyTop]);
@@ -2172,251 +2190,251 @@ class PHP_Parser_Structure {
         $this->yyVal = $this->yyVals[-3+$yyTop] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _310($yyTop)  					// line 2246 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _310($yyTop)  					// line 2264 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-3+$yyTop] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _311($yyTop)  					// line 2250 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _311($yyTop)  					// line 2268 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[0+$yyTop];
     }
 
-    function _312($yyTop)  					// line 2258 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _312($yyTop)  					// line 2276 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _313($yyTop)  					// line 2262 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _313($yyTop)  					// line 2280 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _314($yyTop)  					// line 2269 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _314($yyTop)  					// line 2287 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = '';
     }
 
-    function _318($yyTop)  					// line 2283 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _318($yyTop)  					// line 2301 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-3+$yyTop] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _319($yyTop)  					// line 2287 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _319($yyTop)  					// line 2305 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-3+$yyTop] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _321($yyTop)  					// line 2295 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _321($yyTop)  					// line 2313 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _322($yyTop)  					// line 2299 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _322($yyTop)  					// line 2317 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _323($yyTop)  					// line 2306 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _323($yyTop)  					// line 2324 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _324($yyTop)  					// line 2310 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _324($yyTop)  					// line 2328 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _325($yyTop)  					// line 2317 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _325($yyTop)  					// line 2335 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _328($yyTop)  					// line 2327 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _328($yyTop)  					// line 2345 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _329($yyTop)  					// line 2331 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _329($yyTop)  					// line 2349 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = '';
     }
 
-    function _330($yyTop)  					// line 2339 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _330($yyTop)  					// line 2357 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = '';
     }
 
-    function _331($yyTop)  					// line 2343 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _331($yyTop)  					// line 2361 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yyVals[0+$yyTop];
     }
 
-    function _332($yyTop)  					// line 2350 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _332($yyTop)  					// line 2368 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-4+$yyTop] . $this->yW[$yyTop - 3] . $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _333($yyTop)  					// line 2354 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _333($yyTop)  					// line 2372 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _334($yyTop)  					// line 2358 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _334($yyTop)  					// line 2376 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _335($yyTop)  					// line 2362 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _335($yyTop)  					// line 2380 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[0+$yyTop];
     }
 
-    function _336($yyTop)  					// line 2366 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _336($yyTop)  					// line 2384 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-5+$yyTop] . $this->yW[$yyTop - 4] . $this->yyVals[-3+$yyTop] 
         . $this->yW[$yyTop - 2] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _337($yyTop)  					// line 2371 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _337($yyTop)  					// line 2389 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-3+$yyTop] . $this->yW[$yyTop - 2] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _338($yyTop)  					// line 2375 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _338($yyTop)  					// line 2393 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-3+$yyTop] . $this->yW[$yyTop - 2] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _339($yyTop)  					// line 2379 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _339($yyTop)  					// line 2397 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _340($yyTop)  					// line 2386 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _340($yyTop)  					// line 2404 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yyVals[0+$yyTop];
     }
 
-    function _341($yyTop)  					// line 2390 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _341($yyTop)  					// line 2408 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _342($yyTop)  					// line 2394 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _342($yyTop)  					// line 2412 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _343($yyTop)  					// line 2398 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _343($yyTop)  					// line 2416 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _344($yyTop)  					// line 2402 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _344($yyTop)  					// line 2420 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _345($yyTop)  					// line 2406 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _345($yyTop)  					// line 2424 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _346($yyTop)  					// line 2410 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _346($yyTop)  					// line 2428 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _347($yyTop)  					// line 2414 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _347($yyTop)  					// line 2432 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _348($yyTop)  					// line 2418 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _348($yyTop)  					// line 2436 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _349($yyTop)  					// line 2422 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _349($yyTop)  					// line 2440 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _350($yyTop)  					// line 2426 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _350($yyTop)  					// line 2444 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _351($yyTop)  					// line 2430 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _351($yyTop)  					// line 2448 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = '';
     }
 
-    function _352($yyTop)  					// line 2439 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _352($yyTop)  					// line 2457 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _353($yyTop)  					// line 2443 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _353($yyTop)  					// line 2461 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _354($yyTop)  					// line 2447 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _354($yyTop)  					// line 2465 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 2] . $this->yW[$yyTop - 1] . $this->yW[$yyTop];
     }
 
-    function _355($yyTop)  					// line 2451 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _355($yyTop)  					// line 2469 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _356($yyTop)  					// line 2455 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _356($yyTop)  					// line 2473 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 5] . $this->yW[$yyTop - 4] . $this->yW[$yyTop - 3] .
              $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yW[$yyTop];
     }
 
-    function _357($yyTop)  					// line 2460 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _357($yyTop)  					// line 2478 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _358($yyTop)  					// line 2468 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _358($yyTop)  					// line 2486 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _359($yyTop)  					// line 2472 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _359($yyTop)  					// line 2490 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _360($yyTop)  					// line 2476 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _360($yyTop)  					// line 2494 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop];
     }
 
-    function _361($yyTop)  					// line 2484 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _361($yyTop)  					// line 2502 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _362($yyTop)  					// line 2488 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _362($yyTop)  					// line 2506 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _363($yyTop)  					// line 2492 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _363($yyTop)  					// line 2510 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->includeLine = $this->yyLex->line;
         $lc = $this->yyLex->getLastComment();
         $this->includeComment = $lc[0];
     }
 
-    function _364($yyTop)  					// line 2497 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _364($yyTop)  					// line 2515 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $inc = array('file' => trim($this->yyVals[0+$yyTop]),
                          'type' => 'include',
@@ -2445,14 +2463,14 @@ class PHP_Parser_Structure {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _365($yyTop)  					// line 2524 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _365($yyTop)  					// line 2542 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->includeLine = $this->yyLex->line;
         $lc = $this->yyLex->getLastComment();
         $this->includeComment = $lc[0];
     }
 
-    function _366($yyTop)  					// line 2529 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _366($yyTop)  					// line 2547 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $inc  = array('file' => trim($this->yyVals[0+$yyTop]),
                          'type' => 'include_once',
@@ -2481,19 +2499,19 @@ class PHP_Parser_Structure {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _367($yyTop)  					// line 2556 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _367($yyTop)  					// line 2574 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $this->yyVals[-1+$yyTop] . $this->yW[$yyTop];
     }
 
-    function _368($yyTop)  					// line 2560 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _368($yyTop)  					// line 2578 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->includeLine = $this->yyLex->line;
         $lc = $this->yyLex->getLastComment();
         $this->includeComment = $lc[0];
     }
 
-    function _369($yyTop)  					// line 2565 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _369($yyTop)  					// line 2583 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $inc = array('file' => trim($this->yyVals[0+$yyTop]),
                          'type' => 'require',
@@ -2522,14 +2540,14 @@ class PHP_Parser_Structure {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _370($yyTop)  					// line 2592 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _370($yyTop)  					// line 2610 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->includeLine = $this->yyLex->line;
         $lc = $this->yyLex->getLastComment();
         $this->includeComment = $lc[0];
     }
 
-    function _371($yyTop)  					// line 2597 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _371($yyTop)  					// line 2615 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $inc = array('file' => trim($this->yyVals[0+$yyTop]),
                          'type' => 'require_once',
@@ -2558,23 +2576,23 @@ class PHP_Parser_Structure {
         $this->yyVal = $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _373($yyTop)  					// line 2628 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _373($yyTop)  					// line 2646 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
         $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yyVals[0+$yyTop];
     }
 
-    function _374($yyTop)  					// line 2635 "C:/devel/PHP_Parser/Parser/Core5.jay"
+    function _374($yyTop)  					// line 2653 "C:/devel/PHP_Parser/Parser/Core5.jay"
     {
             $this->yyVal = $this->yyVals[-2+$yyTop] . $this->yW[$yyTop - 1] . $this->yW[$yyTop];
             $this->_lastConst = $this->yyVals[0+$yyTop];
             $this->_lastClassname = trim($this->yyVals[-2+$yyTop]);
         }
-					// line 2556 "-"
+					// line 2574 "-"
 
-					// line 2642 "C:/devel/PHP_Parser/Parser/Core5.jay"
+					// line 2660 "C:/devel/PHP_Parser/Parser/Core5.jay"
 
 }
-					// line 2561 "-"
+					// line 2579 "-"
 
   $GLOBALS['_PHP_PARSER_STRUCTURE']['yyLhs']  = array(              -1,
     0,    0,    1,    1,    1,    5,    5,    6,    6,    6,

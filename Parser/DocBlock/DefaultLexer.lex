@@ -344,10 +344,11 @@ define ('YY_EOF' , 258);
                             $this->yy_buffer_end++;
                             $this->yy_buffer_index++;
                         } else {
-                            $this->raiseError("error, no dot[".$this->yytext()."]\n",
+                            $this->raiseError("error, no dot in simple list bullet [".$this->yytext()."]",
                             PHP_PARSER_DOCLEX_ERROR_NODOT, true);
-                            $this->_fatal = true;
-                            return false;
+                            $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
+                            $this->yybegin($this->_listOriginal);
+                            return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
                         }
                     }
                 }

@@ -1,4 +1,23 @@
 <?php
+//
+// +----------------------------------------------------------------------+
+// | PHP_Parser                                                           |
+// +----------------------------------------------------------------------+
+// | Copyright (c) 1997-2004 The PHP Group                                |
+// +----------------------------------------------------------------------+
+// | This source file is subject to version 3.0 of the PHP license,       |
+// | that is bundled with this package in the file LICENSE, and is        |
+// | available through the world-wide-web at the following url:           |
+// | http://www.php.net/license/3_0.txt.                                  |
+// | If you did not receive a copy of the PHP license and are unable to   |
+// | obtain it through the world-wide-web, please send a note to          |
+// | license@php.net so we can mail you a copy immediately.               |
+// +----------------------------------------------------------------------+
+// | Authors: Greg Beaver <cellog@php.net>                                |
+// +----------------------------------------------------------------------+
+//
+// $Id$
+//
 define('PHP_Parser_DocBlock_DefaultLexer_ERROR', 1);
 /* the tokenizer states */
 define('YYINITIAL',0);
@@ -280,10 +299,11 @@ class PHP_Parser_DocBlock_DefaultLexer
                             $this->yy_buffer_end++;
                             $this->yy_buffer_index++;
                         } else {
-                            $this->raiseError("error, no dot[".$this->yytext()."]\n",
+                            $this->raiseError("error, no dot in simple list bullet [".$this->yytext()."]",
                             PHP_PARSER_DOCLEX_ERROR_NODOT, true);
-                            $this->_fatal = true;
-                            return false;
+                            $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
+                            $this->yybegin($this->_listOriginal);
+                            return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
                         }
                     }
                 }

@@ -4,7 +4,7 @@
  // modified by cellog@users.sourceforge.net to fit PEAR CS
  // %token constants
 
- require_once 'PHP/Parser/Stack.php';
+ require_once 'PEAR/ErrorStack.php';
 
  define('PHP_PARSER_ERROR_UNEXPECTED', 1);
  define('PHP_PARSER_ERROR_SYNTAX', 2);
