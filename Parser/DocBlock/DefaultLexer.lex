@@ -91,7 +91,7 @@ define ('YY_BUFFER_SIZE', 4096);
 define ('YY_F' , -1);
 define ('YY_NO_STATE', -1);
 define ('YY_NOT_ACCEPT' ,  0);
-define ('YY_START' , 1);
+define ('yybegin' , 1);
 define ('YY_END' , 2);
 define ('YY_NO_ANCHOR' , 4);
 define ('YY_BOL' , 257);
@@ -470,7 +470,7 @@ define ('YY_EOF' , 258);
 NONNEWLINE_WHITE_SPACE_CHAR = [\ \t\b\012]+
 INLINE_ESCAPE = \*\}|\}
 NORMAL_DESC_TEXT = ([^\n<{])+
-INTERNAL_DESC_TEXT = ([^{}\n]|\}[^}])+
+INTERNAL_DESC_TEXT = ([^{}\n<]|\}[^}])+
 NOBRACKETS = [^}]*
 
 
@@ -497,6 +497,9 @@ NOBRACKETS = [^}]*
 }
 
 <YYINITIAL, INLINEINTERNALTAG, SIMPLELIST, INTERNALSIMPLELIST, INTAG> <[a-zA-Z]+> {
+    if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
+        $this->yybegin($this->_listOriginal);
+    }
     $tagname = strtolower(str_replace(array('<','>'),array('',''), $this->yytext()));
     if (isset($this->_tagMap['open'][$tagname])) {
         if ($this->debug) echo "open $tagname tag [".$this->yytext()."]\n";
@@ -520,11 +523,17 @@ NOBRACKETS = [^}]*
 }
 
 <YYINITIAL, INLINEINTERNALTAG, SIMPLELIST, INTERNALSIMPLELIST, INTAG> (<<[a-zA-Z]+>>|<<[a-zA-Z]+[\ \t\b\012]*/>>) {
+    if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
+        $this->yybegin($this->_listOriginal);
+    }
     if ($this->debug) echo "escaped tag [".$this->yytext()."]\n";
     return array(PHP_PARSER_DOCLEX_ESCAPED_TAG, $this->yytext());
 }
 
 <YYINITIAL, INLINEINTERNALTAG, SIMPLELIST, INTERNALSIMPLELIST, INTAG, INCODE, INPRE> </[a-zA-Z]+> {
+    if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
+        $this->yybegin($this->_listOriginal);
+    }
     $tagname = str_replace(array('</','>'), array('',''), $this->yytext());
     if ($this->yy_lexical_state == INCODE) {
         if ($tagname != 'code') {
@@ -563,6 +572,9 @@ NOBRACKETS = [^}]*
 }
 
 <YYINITIAL, INLINEINTERNALTAG, SIMPLELIST, INTERNALSIMPLELIST, INTAG> <[a-zA-Z]+[\ \t\b\012]*/> {
+    if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
+        $this->yybegin($this->_listOriginal);
+    }
     if ($this->debug) echo "complete tag [".$this->yytext()."]\n";
     return array(PHP_PARSER_DOCLEX_XML_TAG, $this->yytext());
 }
@@ -649,7 +661,7 @@ NOBRACKETS = [^}]*
 }
 
 <INTAG> @[a-zA-Z]+ {
-    if ($this->debug) echo 'test';exit;
+    if ($this->debug) echo 'bad condition!';exit;
 }
 
 <SIMPLELIST, INTERNALSIMPLELIST> [\n]+ {
@@ -657,7 +669,7 @@ NOBRACKETS = [^}]*
     if (strlen($this->yytext()) > 1) {
         // A simple list may not contain double newlines
         $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
-        $this->yy_start($this->_listOriginal);
+        $this->yybegin($this->_listOriginal);
         return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
     }
     $this->_atNewLine = true;
@@ -752,6 +764,9 @@ NOBRACKETS = [^}]*
 }
 
 <YYINITIAL, INLINEINTERNALTAG, SIMPLELIST, INTERNALSIMPLELIST, INTAG, INCODE, INPRE> "{@" {
+    if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
+        $this->yybegin($this->_listOriginal);
+    }
     if ($this->debug) echo "checking for inline tag\n";
     $this->_original = $this->yy_lexical_state;
     $this->yybegin(CHECKINLINE);
