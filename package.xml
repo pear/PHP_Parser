@@ -56,9 +56,11 @@ hooks into parsing to catch information.</description>
 
 Re-organized into two parsers, Structure and Extendable.  Structure is the old parser, Extendable
 is designed to be overridden and provides access to every token.
-Moved DocBlock parsing in from phpDocumentor 2.0 development</notes>
+Moved DocBlock parsing in from phpDocumentor 2.0 development
+Using PEAR_ErrorStack class for error handling, which is part of PEAR 1.3.1</notes>
     <deps>
       <dep type="php" rel="ge" version="4.3" optional="no"/>
+      <dep type="pkg" rel="ge" version="1.3.1dev" optional="no">PEAR</dep>
     </deps>
     <filelist>
       <dir baseinstalldir="PHP" name="/">
@@ -79,7 +81,6 @@ Moved DocBlock parsing in from phpDocumentor 2.0 development</notes>
         <file role="data" name="Extendable.jay"/>
         <file role="php" name="Extendable.php"/>
         <file role="php" name="MsgServer.php"/>
-        <file role="php" name="Stack.php"/>
         <file role="php" name="Structure.php"/>
         <file role="php" name="Tokenizer.php"/>
         <dir name="DocBlock">
