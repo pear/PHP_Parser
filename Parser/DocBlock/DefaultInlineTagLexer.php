@@ -11,10 +11,27 @@ class PHP_Parser_DocBlock_DefaultInlineTagLexer
      */
     var $_options = array();
     /**
+     * Stores the tokens for the inline tag
+     *
+     * The inline tag buffer has three components:
+     *
+     *  1 tokens with trailing whitespace
+     *  2 tokens without whitespace
+     *  3 trailing whitespace only
+     *
+     * $_buf is a zero-indexed array (index 0 is tokens with whitespace).
+     *
+     * If the inline tag allows separators (like ","), then it is an array
+     * of buffers as described above (see {@link $_multipleBuffers})
      * @var string
      * @access private
      */
     var $_buf;
+    /**
+     * @var Error_Stack
+     * @access private
+     */
+    var $_stack;
     /**
      * @var integer
      * @access private
@@ -44,19 +61,7 @@ class PHP_Parser_DocBlock_DefaultInlineTagLexer
               'multi-word' => 'getWords',
               'allwords' => 'getAllWords',
             );
-    /**
-     * return something useful, when a parse error occurs.
-     *
-     * used to build error messages if the parser fails, and needs to know the line number..
-     *
-     * @return   string 
-     * @access   public 
-     */
-    function parseError() 
-    {
-        return "Error at line {$this->yyline}";
-    }
-
+    
     /**
      * Set Lexer options
      *
@@ -85,26 +90,80 @@ class PHP_Parser_DocBlock_DefaultInlineTagLexer
     function getLink()
     {
         // must have at least 1 word to be a valid link
-        $ret = $this->getWord();
-        if (!$ret) {
+        $word = $this->getWord();
+        if (!$word) {
             return false;
         }
-        $save = $ret;
-        if (strpos($ret, '#')) {
-            $ret = substr($ret, strpos($ret, '#') + 1); // chop off package selector
+        $details = array();
+        $details['link'] = $details['text'] = $word;
+        $details['valid'] = true;
+        $details['type'] = 'unknown';
+        $save = $word;
+        if (strpos($word, '#')) {
+            $details['link'] = $word = substr($word, strpos($word, '#') + 1); // chop off package selector
+            $details['package'] = substr($save, 0, strlen($save) - strlen($word) - 1);
         }
-        // if the word is function or global
-        if (in_array($ret, array('function', 'global'))) {
-            $ret = $save;
-            if ($this->_readBuf(false)) {
-                $ret .= $ret . ' ' . $this->_readBuf();
+        if (in_array($word, array('function', 'global', 'object', 'constant'))) {
+            $details['link'] = false;
+            $details['type'] = $word;
+            if ($word = $this->_readBuf()) {
+                $details['text'] .= ' ' . $word;
+                $details['link'] = $word;
+                $is_func = false;
+                if (strpos($word, '::')) {
+                    $details['valid'] = false;
+                    $details['link'] = false;
+                }
+                if (strpos($word, '()') && $details['type'] != 'function') {
+                    $details['valid'] = false;
+                    $details['link'] = false;
+                } elseif ($details['type'] == 'function') {
+                    if (strpos($word, '::')) {
+                        $details['valid'] = true;
+                        $details['link'] = substr($word, strpos($word, '::') + 2);
+                        $details['class'] = substr($word, 0,
+                            strlen($word) - strlen($details['link']) - 2);
+                        $details['type'] = 'method';
+                    }
+                    $details['link'] = str_replace('()', '', $details['link']);
+                }
+                if (strpos($word, '$') === 0 && $details['type'] != 'global') {
+                    $details['valid'] = false;
+                    $details['link'] = false;
+                }
             } else {
-                return false;
+                // invalid link
+                $details['valid'] = false;
+                $details['link'] = false;
             }
         } else {
-            return $save;
+            $is_func = false;
+            $is_var = false;
+            $is_member = false;
+            if (strpos($word, '()')) {
+                $details['link'] = str_replace('()', '', $details['link']);
+                $is_func = true;
+            }
+            if (strpos($word, '$') === 0) {
+                $is_var = true;
+            }
+            if (strpos($word, '::')) {
+                $is_member = true;
+            }
+            if ($is_member) {
+                $details['link'] = substr($word, strpos($word, '::') + 2);
+                $details['class'] = substr($word, 0,
+                    strlen($word) - strlen($details['link']) - 2);
+                if (strpos($details['link'], '$') === 0) {
+                    $is_var = true;
+                }
+                $details['type'] = $is_func ? 'method' : ($is_var ? 'var' : 'class constant');
+                $details['link'] = str_replace('()', '', $details['link']);
+            } else {
+                $details['type'] = $is_func ? 'function' : ($is_var ? 'global' : 'unknown');
+            }
         }
-        return $ret;
+        return $details;
     }
     
     /**
@@ -117,7 +176,7 @@ class PHP_Parser_DocBlock_DefaultInlineTagLexer
     }
 
     /**
-     * Retrieve multiple words from the tag contents
+     * Retrieve multiple words from the tag contents with trailing whitespace
      * @param integer the number of words to return
      * @return false|string
      */
@@ -157,6 +216,7 @@ class PHP_Parser_DocBlock_DefaultInlineTagLexer
      * Read a word from the buffer
      * @param boolean whether to increment the index into the buffer
      * @param boolean whether to include whitespace
+     * @return false|string
      * @access private
      */
     function _readBuf($inc = true, $whitespace = false)
@@ -167,7 +227,7 @@ class PHP_Parser_DocBlock_DefaultInlineTagLexer
             $this->_index++;
         }
         if (!isset($buf[1][$index])) {
-            return null;
+            return false;
         }
         if ($whitespace) {
             return $buf[0][$index];
@@ -189,7 +249,7 @@ class PHP_Parser_DocBlock_DefaultInlineTagLexer
                 !isset($this->_buf[$this->_bufIndex + 1])) {
             return false;
         }
-        return $this->_bufIndex < count($this->_buf);
+        return $this->_bufIndex < count($this->_buf) - 1;
     }
     
     /**
@@ -198,12 +258,14 @@ class PHP_Parser_DocBlock_DefaultInlineTagLexer
      */
     function moveNextBuf()
     {
-        if (isset($this->_buf[++$this->_bufIndex][0])) {
-            $this->_index = 0;
-            return $this->_buf[$this->_bufIndex];
-        } else {
+        if (!$this->hasNextBuf()) {
+            if ($this->_multipleBuffers) {
+                ++$this->_bufIndex;
+            }
             return false;
         }
+        $this->_index = 0;
+        return $this->_buf[++$this->_bufIndex];
     }
     
     /**
@@ -231,25 +293,47 @@ class PHP_Parser_DocBlock_DefaultInlineTagLexer
      * Prepare inline tag contents for lexing.
      *
      * This function replaces the current buffer with the data after
-     * splitting it along whitespace, and along any separators
+     * splitting it along whitespace, and along any separators.
+     *
+     * Note that separators may be escaped using a backslash.  If the separator is
+     * a comma ",", this string "my \, is escaped, tried, and true" will split into:
+     * - "my , is escaped"
+     * - "tried"
+     * - "and true"
+     *
+     * Note that all leading whitespace is removed in all contexts ("tried" instead of " tried")
      * passed to {@link setOptions()}
      * @param string
      */
     function newTag($data)
     {
+        $this->_buf = array();
         $data = ltrim($data);
         if ($this->_options['separator']) {
             $data2 = explode($this->_options['separator'], $data);
+            $newdata = array();
+            $save = '';
+            // post-process
+            foreach ($data2 as $data) {
+                // allow escaping of the separator using "\"
+                if (substr($data, -1) == '\\') {
+                    $save = substr($data, 0, strlen($data) - 1) . $this->_options['separator'];
+                } else {
+                    $newdata[] = $save . $data;
+                    $save = '';
+                }
+            }
+            $data2 = $newdata;
             $this->_bufIndex = 0;
             foreach($data2 as $data) {
-                // strip open and close {@ } and collapse all whitespace
+                // collapse all whitespace
                 preg_match_all('/([^\s]+)(\s+)?/', ltrim($data), $this->_buf[$this->_bufIndex++]);
 //                $this->_buf[$this->_bufIndex++] = preg_split("/\s+/", ltrim($data));
             }
             $this->_bufIndex = 0;
             $this->_multipleBuffers = true;
         } else {
-            // strip open and close {@ } and collapse all whitespace
+            // collapse all whitespace
             preg_match_all('/([^\s]+)(\s+)?/', ltrim($data), $this->_buf);
         }
         $this->_index = 0;
@@ -264,5 +348,7 @@ class PHP_Parser_DocBlock_DefaultInlineTagLexer
         $this->debug = false;
         $this->setOptions();
         $this->newTag($data);
+//        $this->_stack = &PHP_Parser_Stack::singleton('PHP_Parser_DocBlock_DefaultInlineTagLexer');
     }
 }
+?>

@@ -11,6 +11,7 @@
 require_once 'TestUnit.php';
 require_once 'HTML_TestListener.php';
 require_once 'PHP/Parser.php';
+require_once 'PHP/Parser/DocBlock/DefaultInlineTagLexer.php';
 
 $title = 'PhpUnit test run, PHP_Parser package';
 ?>
@@ -60,6 +61,7 @@ $title = 'PhpUnit test run, PHP_Parser package';
     }
     
     $testcases[] = 'PHP_Parser_MsgServer_test';
+    $testcases[] = 'PHP_Parser_DocBlock_DefaultInlineTagLexer_test';
 
 	$suite = new PHPUnit_TestSuite();
 

@@ -74,12 +74,16 @@ is designed to be overridden and provides access to every token.</notes>
         <file role="php" name="Stack.php"/>
         <file role="php" name="Structure.php"/>
         <file role="php" name="Tokenizer.php"/>
+        <dir name="DocBlock">
+         <file role="php" name="DefaultInlineTagLexer.php"/>
+        </dir> <!-- Parser/DocBlock -->
         <dir name="Tokenizer">
          <file role="php" name="Structure.php"/>
         </dir> <!-- Parser/Tokenizer -->
        </dir> <!-- Parser -->
        <dir name="tests">
         <file role="test" name="HTML_TestListener.php"/>
+        <file role="test" name="PHP_Parser_DocBlock_DefaultInlineTagLexer_test.php"/>
         <file role="test" name="PHP_Parser_MsgServer_test.php"/>
         <file role="test" name="PHP_Parser_test_class.php"/>
         <file role="test" name="PHP_Parser_test_class_php5.php"/>
