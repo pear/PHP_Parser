@@ -83,7 +83,8 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
             foreach ($compare as $i => $guineapig) {
                 if ($err['level'] == $guineapig['level'] &&
                       $err['package'] == $guineapig['package'] &&
-                      $err['message'] == $guineapig['message']) {
+                      $err['message'] == $guineapig['message'] &&
+                      $err['code'] == $guineapig['code']) {
                     unset($compare[$i]);
                 }
             }
@@ -91,14 +92,15 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
         $compare = array_values($compare);
         if (count($compare)) {
             foreach ($compare as $err) {
-                $this->assertFalse(true, "$method Extra error: package $err[package], message '$err[message]', level $err[level], code" . $this->errorCodeToString($err['package'], $err['code']));
+                $this->assertFalse(true, "$method Extra error: package $err[package], message '$err[message]', level $err[level], code " . $this->errorCodeToString($err['package'], $err['code']));
             }
         }
         foreach ($save as $err) {
             foreach ($errors as $i => $guineapig) {
                 if ($err['level'] == $guineapig['level'] &&
                       $err['package'] == $guineapig['package'] &&
-                      $err['message'] == $guineapig['message']) {
+                      $err['message'] == $guineapig['message'] &&
+                      $err['code'] == $guineapig['code']) {
                     unset($errors[$i]);
                 }
             }
@@ -380,7 +382,7 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
                     'package' => 'PHP_Parser_MsgServer',
                     'level' => 'exception',
                     'message' => $b,
-                    'code' => PHP_PARSER_MSGSERVER_ERR_NO_LISTENERS,
+                    'code' => PHP_PARSER_MSGSERVER_ERR_NONE_REGISTERED,
                 )
             ),
         'testcatchMessage1');
@@ -401,7 +403,7 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
                     'package' => 'PHP_Parser_MsgServer',
                     'level' => 'exception',
                     'message' => $b,
-                    'code' => PHP_PARSER_MSGSERVER_ERR_NOT_REGISTERED,
+                    'code' => PHP_PARSER_MSGSERVER_ERR_NOT_REGISTERED_YET,
                 )
             ),
         'testcatchMessage2');
@@ -433,10 +435,13 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
         $a = new hasHandleMessageDefault;
         $res = $this->_msgserver->registerListener(5, $a);
         $this->assertSame(true, $res, 'registration failed');
+        $this->assertNoErrors('testcatchMessage4', 'registration failed- errors');
         $res = $this->_msgserver->catchMessage(5, 5);
         $this->assertSame(true, $res, 'integer message type, default handler failed');
+        $this->assertNoErrors('testcatchMessage4', 'integer message type, default handler failed- errors');
         $res = $this->_msgserver->catchMessage(5, 'string');
         $this->assertSame(true, $res, 'string message type, default handler failed');
+        $this->assertNoErrors('testcatchMessage4', 'string message type, default handler failed- errors');
     }
     
     function testcatchMessage5()
@@ -444,10 +449,13 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
         $a = new hasHandleMessageOther;
         $res = $this->_msgserver->registerListener(5, $a);
         $this->assertSame(true, $res, 'registration failed');
+        $this->assertNoErrors('testcatchMessage5', 'registration failed- errors');
         $res = $this->_msgserver->catchMessage(5, 5, 'Other');
         $this->assertSame(true, $res, 'integer message type, different handler failed');
+        $this->assertNoErrors('testcatchMessage5', 'integer message type, different handler failed- errors');
         $res = $this->_msgserver->catchMessage(5, 'string', 'Other');
         $this->assertSame(true, $res, 'string message type, different handler failed');
+        $this->assertNoErrors('testcatchMessage5', 'string message type, different handler failed- errors');
     }
     
     function testcatchMessage6()
@@ -455,22 +463,52 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
         $a = new hasHandleMessageOther;
         $res = $this->_msgserver->registerListener(5, $a);
         $this->assertSame(true, $res, 'registration failed');
+        $this->assertNoErrors('testcatchMessage6', 'registration failed- errors');
         $res = $this->_msgserver->catchMessage(5, 5);
-        $this->assertEquals('msgserver_exception', get_class($res), 'didn\'t return exception');
         $b = 'Message handler method ' .
-                '"handleMessage" doesn\'t exist for listener "5", class "hashandlemessageother"';
+                '"handleMessage" doesn\'t exist for listener "5", class "' . get_class($a) .
+                '"';
+        $this->assertErrors(
+            array(
+                array(
+                    'package' => 'PHP_Parser_MsgServer',
+                    'level' => 'exception',
+                    'message' => $b,
+                    'code' => PHP_PARSER_MSGSERVER_ERR_HANDLER_DOESNT_EXIST,
+                )
+            ),
+        'testcatchMessage6');
         $res = $this->_msgserver->catchMessage(5, 'string');
-        $this->assertEquals('msgserver_exception', get_class($res), 'didn\'t return exception');
         $b = 'Message handler method ' .
-                '"handleMessage" doesn\'t exist for listener "5", class "hashandlemessageother"';
+                '"handleMessage" doesn\'t exist for listener "5", class "' . get_class($a) .
+                '"';
+        $this->assertErrors(
+            array(
+                array(
+                    'package' => 'PHP_Parser_MsgServer',
+                    'level' => 'exception',
+                    'message' => $b,
+                    'code' => PHP_PARSER_MSGSERVER_ERR_HANDLER_DOESNT_EXIST,
+                )
+            ),
+        'testcatchMessage6');
     }
     
     function teststopCatchingMessages1()
     {
         $res = $this->_msgserver->stopCatchingMessages(array(), 5);
-        $this->assertEquals('msgserver_exception', get_class($res), 'didn\'t return exception');
         $b = 'Invalid parameter passed to $message_type, ' .
                 'should be type "string|integer", is "array"';
+        $this->assertErrors(
+            array(
+                array(
+                    'package' => 'PHP_Parser_MsgServer',
+                    'level' => 'exception',
+                    'message' => $b,
+                    'code' => PHP_PARSER_MSGSERVER_ERR_INVALID_INPUT,
+                )
+            ),
+        'teststopCatchingMessages1');
     }
     
     function teststopCatchingMessages2()
@@ -478,30 +516,59 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
         $a = new hasHandleMessageOther;
         $res = $this->_msgserver->registerListener(5, $a);
         $this->assertSame(true, $res, 'registration failed');
+        $this->assertNoErrors('teststopCatchingMessages2', 'registration failed- errors');
         $res = $this->_msgserver->catchMessage(5, 5, 'other');
         $this->assertSame(true, $res, 'catchmessage failed');
+        $this->assertNoErrors('teststopCatchingMessages2', 'catchmessage failed- errors');
         $res = $this->_msgserver->stopCatchingMessages(5, 5);
-        $this->assertEquals('msgserver_exception', get_class($res), 'didn\'t return exception');
         $b = 'Invalid parameter passed to $unique_ids, ' .
                 'should be type "array", is "integer"';
+        $this->assertErrors(
+            array(
+                array(
+                    'package' => 'PHP_Parser_MsgServer',
+                    'level' => 'exception',
+                    'message' => $b,
+                    'code' => PHP_PARSER_MSGSERVER_ERR_INVALID_INPUT,
+                )
+            ),
+        'teststopCatchingMessages2');
     }
     
     function teststopCatchingMessages3()
     {
         $res = $this->_msgserver->stopCatchingMessages(5, array());
         $this->assertSame(true, $res, 'stop catching failed, should work');
-        $this->assertEquals('msgserver_notice', get_class($this->_caught), 'didn\'t throw notice');
         $b = 'No Listeners registered for ' .
                 'message type "5"';
+        $this->assertErrors(
+            array(
+                array(
+                    'package' => 'PHP_Parser_MsgServer',
+                    'level' => 'notice',
+                    'message' => $b,
+                    'code' => PHP_PARSER_MSGSERVER_ERR_NO_LISTENERS,
+                )
+            ),
+        'teststopCatchingMessages3');
     }
     
     function teststopCatchingMessages4()
     {
         $this->testcatchMessage5();
         $res = $this->_msgserver->stopCatchingMessages(5, array(null, array()));
-        $this->assertEquals('msgserver_exception', get_class($res), 'didn\'t return exception');
         $b = 'Unique ID must be string or integer,' .
                 ' not NULL';
+        $this->assertErrors(
+            array(
+                array(
+                    'package' => 'PHP_Parser_MsgServer',
+                    'level' => 'exception',
+                    'message' => $b,
+                    'code' => PHP_PARSER_MSGSERVER_ERR_BAD_UNIQUE_ID,
+                )
+            ),
+        'teststopCatchingMessages4');
     }
     
     function teststopCatchingMessages5()
@@ -509,10 +576,18 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
         $this->testcatchMessage5();
         $res = $this->_msgserver->stopCatchingMessages(5, array(7));
         $this->assertSame(true, $res, 'stop catching failed, should work');
-        $this->assertEquals('msgserver_notice', get_class($this->_caught), 'didn\'t throw notice');
-        $res = $this->_caught;
         $b = 'Listener "7" is not listening ' .
                 'to message "5"';
+        $this->assertErrors(
+            array(
+                array(
+                    'package' => 'PHP_Parser_MsgServer',
+                    'level' => 'notice',
+                    'message' => $b,
+                    'code' => PHP_PARSER_MSGSERVER_ERR_NOT_LISTENING,
+                )
+            ),
+        'teststopCatchingMessages5');
     }
     
     function teststopCatchingMessages6()
@@ -520,9 +595,18 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
         $this->testcatchMessage5();
         $res = $this->_msgserver->stopCatchingMessages(5, array(7));
         $this->assertSame(true, $res, 'stop catching failed, should work');
-        $this->assertEquals('msgserver_notice', get_class($this->_caught), 'didn\'t throw notice');
         $b = 'Listener "7" is not listening ' .
                 'to message "5"';
+        $this->assertErrors(
+            array(
+                array(
+                    'package' => 'PHP_Parser_MsgServer',
+                    'level' => 'notice',
+                    'message' => $b,
+                    'code' => PHP_PARSER_MSGSERVER_ERR_NOT_LISTENING,
+                )
+            ),
+        'teststopCatchingMessages6');
     }
     
     function teststopCatchingMessages7()
@@ -531,29 +615,53 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
         $res = $this->_msgserver->stopCatchingMessages(5, array(5, 7));
         $this->assertSame(true, $res, 'stop catching failed, should work');
         $this->assertNull(@$this->_msgserver->_reg_store[5], 'didn\'t unregister');
-        $this->assertSame(1, count($this->_caught), count($this->_caught). ' errors thrown');
-        $this->assertEquals('msgserver_notice', get_class($this->_caught[0]), 'didn\'t throw notice');
-        $res = $this->_caught[0];
         $b = 'Listener "7" is not listening ' .
                 'to message "5"';
+        $this->assertErrors(
+            array(
+                array(
+                    'package' => 'PHP_Parser_MsgServer',
+                    'level' => 'notice',
+                    'message' => $b,
+                    'code' => PHP_PARSER_MSGSERVER_ERR_NOT_LISTENING,
+                )
+            ),
+        'teststopCatchingMessages7');
     }
     
     function teststopCatchingMessage1()
     {
         $this->testcatchMessage5();
         $res = $this->_msgserver->stopCatchingMessage(array());
-        $this->assertEquals('msgserver_exception', get_class($res), 'didn\'t return exception');
         $b = 'Invalid parameter passed to $messagetype, ' .
                 'should be type "string|integer", is "array"';
+        $this->assertErrors(
+            array(
+                array(
+                    'package' => 'PHP_Parser_MsgServer',
+                    'level' => 'exception',
+                    'message' => $b,
+                    'code' => PHP_PARSER_MSGSERVER_ERR_INVALID_INPUT,
+                )
+            ),
+        'teststopCatchingMessages7');
     }
     
     function teststopCatchingMessage2()
     {
         $res = $this->_msgserver->stopCatchingMessage(5);
         $this->assertSame(true, $res, 'stop catch failed, should work');
-        $this->assertEquals('msgserver_notice', get_class($this->_caught), 'didn\'t throw notice');
-        $res = $this->_caught;
         $b = 'No Listeners registered for message type "5"';
+        $this->assertErrors(
+            array(
+                array(
+                    'package' => 'PHP_Parser_MsgServer',
+                    'level' => 'notice',
+                    'message' => $b,
+                    'code' => PHP_PARSER_MSGSERVER_ERR_NO_LISTENERS,
+                )
+            ),
+        'teststopCatchingMessages7');
     }
     
     function teststopCatchingMessage3()
@@ -561,7 +669,7 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
         $this->testcatchMessage5();
         $res = $this->_msgserver->stopCatchingMessage(5);
         $this->assertSame(true, $res, 'stop catch failed, should work');
-        $this->assertSame(false, $this->_caught, 'threw error, and shouldn\'t');
+        $this->assertNoErrors('teststopCatchingMessage3', 'stop catch failed- errors');
         $this->assertNull(@$this->_msgserver->_reg_store[5], 'didn\'t unset!');
     }
     
@@ -570,15 +678,24 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
         $this->testcatchMessage5();
         $res = $this->_msgserver->unregisterId(5);
         $this->assertSame(true, $res, 'unregisterId failed, should work');
-        $this->assertSame(false, $this->_caught, 'threw error, and shouldn\'t');
+        $this->assertNoErrors('testunRegisterId', 'unregisterId failed- errors');
     }
     
     function testunregisterIds1()
     {
         $res = $this->_msgserver->unregisterIds(6);
-        $this->assertEquals('msgserver_exception', get_class($res), 'didn\'t return exception');
         $b = 'Invalid parameter passed to $unique_ids, ' .
                 'should be type "array", is "integer"';
+        $this->assertErrors(
+            array(
+                array(
+                    'package' => 'PHP_Parser_MsgServer',
+                    'level' => 'exception',
+                    'message' => $b,
+                    'code' => PHP_PARSER_MSGSERVER_ERR_INVALID_INPUT,
+                )
+            ),
+        'teststopCatchingMessages7');
     }
     
     function testunregisterIds2()
@@ -587,9 +704,10 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
         $a = new noHandleMessage;
         $res = $this->_msgserver->registerListener(6, $a);
         $this->assertSame(true, $res, 'registration of other failed');
+        $this->assertNoErrors('testunRegisterIds2', 'registration of other failed- errors');
         $res = $this->_msgserver->unregisterIds(array(5, 6));
         $this->assertSame(true, $res, 'unregisterId failed, should work');
-        $this->assertSame(false, $this->_caught, 'threw error, and shouldn\'t');
+        $this->assertNoErrors('testunRegisterIds2', 'unregisterId failed- errors');
         $this->assertEquals(array(), $this->_msgserver->_ref_store, 'refstore not empty');
         $this->assertEquals(array(), $this->_msgserver->_reg_store, 'regstore not empty');
     }
@@ -598,10 +716,18 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
     {
         $res = $this->_msgserver->sendMessage(5, 5);
         $this->assertSame(true, $res, 'sendmessage should work');
-        $this->assertEquals('msgserver_notice', get_class($this->_caught), 'not notice');
-        $res = $this->_caught;
         $b = 'No registered listeners for ' .
                 'any message, use registerListener() first';
+        $this->assertErrors(
+            array(
+                array(
+                    'package' => 'PHP_Parser_MsgServer',
+                    'level' => 'notice',
+                    'message' => $b,
+                    'code' => PHP_PARSER_MSGSERVER_ERR_NONE_REGISTERED,
+                )
+            ),
+        'teststopCatchingMessages7');
     }
     
     function testsendMessage2()
