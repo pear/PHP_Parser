@@ -585,20 +585,13 @@ NOBRACKETS = [^}]*
     return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
 }
 
-<YYINITIAL, INLINEINTERNALTAG> [\n]+ {
+<YYINITIAL, INLINEINTERNALTAG, INTAG> [\n]+ {
     if (strlen($this->yytext()) >= 2) {
         $this->yy_buffer_index = $this->yy_buffer_end = $this->yy_buffer_start + 2;
         if ($this->debug) echo "initial double newline ".strlen($this->yytext())."\n";
         return array(PHP_PARSER_DOCLEX_DOUBLENL, $this->yytext());
     }
     if ($this->debug) echo "initial newline ".strlen($this->yytext())."\n";
-    return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-}
-
-<INTAG> [\n]+ {
-    if ($this->debug) echo "tags newline\n";
-    $this->_atNewLine = true;
-    $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start + 1;
     return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
 }
 
