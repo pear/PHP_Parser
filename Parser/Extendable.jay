@@ -36,26 +36,16 @@ class PHP_Parser_Extendable {
      * Options, used to control how the parser collects
      * and distributes the data it finds.
      *
-     * Currently, options are grouped into two categories:
-     * - containers for data
-     * - publishing of data
-     *
-     * Default action is to return arrays of parsed data
-     * for use by other applications.  The first set of
-     * options, container options, provide a means to
-     * tell the parser to encapsulate data in objects
-     * instead of in arrays.  The option tells the parser which
-     * class to instantiate for each documentable element.  The
-     * default value of false will prompt the usage of arrays
-     * instead.
-     *
-     * The second set of options provide for intermediary
-     * publishing of data while parsing, to allow other
-     * classes to hook into functionality if they desire
+     * - preservewhitespace: This option, if set to true, tells the
+     *   parser to prepend all whitespace to each token.  This is useful
+     *   for parsers that wish to preserve the exact look of the source, like
+     *   syntax highlighters
      * @var array
      * @access private
      */
-    var $_options = array();
+    var $_options = array(
+            'preservewhitespace' => false,
+        );
     
     /**
      * @var boolean
@@ -72,11 +62,15 @@ class PHP_Parser_Extendable {
     var $_inGlobal = false;
     
     /**
-     * @see __construct
+     * @access private
+     */
+    var $_lastConst = false;
+    /**
+     * @var PHP_Parser_Stack
      */
     function PHP_Parser_Extendable($options = array())
     {
-        $this->__construct($options);
+        $this->_errors = PHP_Parser_Stack::singleton('PHP_Parser_Extendable');
     }
     
     /**
@@ -85,35 +79,23 @@ class PHP_Parser_Extendable {
      * @param message text to be displayed.
      * @param expected vector of acceptable tokens, if available.
      */
-    function raiseError ($message, $expected = null)
+    function raiseError ($message, $code, $params)
     {     
-        if ($expected !== null ) {
-            $m = "$message expecting";
-            foreach($expected as $e) {
-                $m .= " $e";
+        if (isset($params['expected'])) {
+            $p = $params['expected'];
+            $m = "$message, expecting ";
+            if (count($p) - 1) {
+                $last = array_pop($p);
+                array_push($p, 'or ' . $last);
             }
+            $m .= implode(', ', $p);
         } else {
             $m = $message;
         }
-        if ($expected === null) {
-            $expected = array();
-        }
         return PHP_Parser_Stack::staticPush('PHP_Parser_Extendable',
             PHP_PARSER_EXTENDABLE_ERROR_PARSE,
-            'error', $expected,
-            $message);  
-    }
-
-    /**
-     * Set up options for parsing
-     *
-     * This class is designed to be extended, and so does not contain
-     * any options
-     * @see $_options
-     */
-    function __construct($options = array())
-    {
-        $this->_errors = PHP_Parser_Stack::singleton('PHP_Parser_Extendable');
+            'error', $params,
+            $m);  
     }
 
     /**
@@ -152,19 +134,6 @@ class PHP_Parser_Extendable {
         }
     }
     
-    /**
-     * Catenate tokens together
-     *
-     * This is here to allow extensibility of catenating basic tokens together.
-     * A syntax highlighter could use this to higlight tokens before returning
-     * them, or other operations can be performed
-     * @param string $args... unlimited string arguments
-     */
-    function concat()
-    {
-        return implode(func_get_args(), ' ');
-    }
-
     /**
      * Global Variable helper routine
      * @param string global variable name
@@ -208,6 +177,83 @@ class PHP_Parser_Extendable {
     function getFileDocs($messagetype, $message)
     {
         $this->documentation = $message;
+    }
+    
+    /**
+     * Handles the top_statement_list rule
+     * @see top_statement()
+     * @param integer top of the stack, use with $this->yyVal and $this->yW
+     * @param mixed
+     * @param mixed
+     */
+    function top_statement_list($yyTop, $top_statement_list, $top_statement)
+    {
+        return $this->yyVal[$yyTop];
+    }
+    
+    /**
+     * Handles the top_statement rule
+     * @see top_statement()
+     * @param integer top of the stack, use with $this->yyVal and $this->yW
+     * @param mixed
+     * @param statement|function_declaration_statement|class_declaration_statement
+     */
+    function top_statement($yyTop, $param, $top_statementType)
+    {
+        return $this->yyVal[$yyTop];
+    }
+    
+    /**
+     * Handles the inner_statement_list rule
+     * @see inner_statement()
+     * @param integer top of the stack, use with $this->yyVal and $this->yW
+     * @param mixed
+     * @param statement|function_declaration_statement|class_declaration_statement
+     */
+    function inner_statement_list($yyTop, $inner_statement_list, $inner_statement)
+    {
+        return $this->yyVal[$yyTop];
+    }
+    
+    /**
+     * Handles the inner_statement rule
+     * @see top_statement()
+     * @param integer top of the stack, use with $this->yyVal and $this->yW
+     * @param mixed
+     * @param statement|function_declaration_statement|class_declaration_statement
+     */
+    function inner_statement($yyTop, $param, $inner_statementType)
+    {
+        return $this->yyVal[$yyTop];
+    }
+    
+    /**
+     * Handles the unticked_statement '{' inner_statement_list '}' rule
+     * @param integer top of the stack, use with $this->yyVal and $this->yW
+     * @param { With whitespace if preservewhitespace option is true
+     * @param mixed an {@link inner_statement_list() inner_statement_list} rule
+     * @param } With whitespace if preservewhitespace option is true
+     */
+    function unticked_statement_isl($yyTop, $leftBracket, $inner_statement_list, $rightBracket)
+    {
+        return $this->yyVal[$yyTop];
+    }
+    
+    /**
+     * Handles the unticked_statement T_IF '(' expr ')'  statement  elseif_list else_single rule
+     * @param integer top of the stack, use with $this->yyVal and $this->yW
+     * @param T_IF With whitespace if preservewhitespace option is true
+     * @param ( With whitespace if preservewhitespace option is true
+     * @param mixed an expr rule
+     * @param ) With whitespace if preservewhitespace option is true
+     * @param mixed a statement
+     * @param mixed an elseif_list rule
+     * @param mixed an else_single rule
+     */
+    function unticked_statement_if1($yyTop, $if, $leftParens, $expr, $rightParens, $statement,
+                                    $elseif_list, $else_single)
+    {
+        return $this->yyVal[$yyTop];
     }
 %}
 
@@ -312,21 +358,22 @@ class PHP_Parser_Extendable {
 %token T_LIST 355
 %token T_ARRAY 356
 %token T_CLASS_C 357
-%token T_FUNC_C 358
-%token T_LINE 359
-%token T_FILE 360
-%token T_COMMENT 361
-%token T_DOC_COMMENT 362
-%token T_OPEN_TAG 363
-%token T_OPEN_TAG_WITH_ECHO 364
-%token T_CLOSE_TAG 365
-%token T_WHITESPACE 366
-%token T_START_HEREDOC 367
-%token T_END_HEREDOC 368
-%token T_DOLLAR_OPEN_CURLY_BRACES 369
-%token T_CURLY_OPEN 370
-%token T_PAAMAYIM_NEKUDOTAYIM 371
-%token T_CLONE 372
+%token T_METHOD_C 358
+%token T_FUNC_C 359
+%token T_LINE 360
+%token T_FILE 361
+%token T_COMMENT 362
+%token T_DOC_COMMENT 363
+%token T_OPEN_TAG 364
+%token T_OPEN_TAG_WITH_ECHO 365
+%token T_CLOSE_TAG 366
+%token T_WHITESPACE 367
+%token T_START_HEREDOC 368
+%token T_END_HEREDOC 369
+%token T_DOLLAR_OPEN_CURLY_BRACES 370
+%token T_CURLY_OPEN 371
+%token T_PAAMAYIM_NEKUDOTAYIM 372
+%token T_CLONE 373
 
 %right T_STATIC T_ABSTRACT T_FINAL T_PRIVATE T_PROTECTED T_PUBLIC
 %left T_ELSEIF
@@ -350,9 +397,11 @@ class PHP_Parser_Extendable {
 %left T_SL T_SR
 %left '+' '-' '.'
 %left '*' '/' '%'
-%right '!' '~' T_INC T_DEC T_INT_CAST T_DOUBLE_CAST T_STRING_CAST T_ARRAY_CAST T_OBJECT_CAST T_BOOL_CAST T_UNSET_CAST '@'
+%right '!'
+%nonassoc T_INSTANCEOF
+%right '~' T_INC T_DEC T_INT_CAST T_DOUBLE_CAST T_STRING_CAST T_ARRAY_CAST T_OBJECT_CAST T_BOOL_CAST T_UNSET_CAST '@'
 %right '['
-%nonassoc T_NEW T_INSTANCEOF T_CLONE
+%nonassoc T_NEW T_CLONE
 
 %start top_statement_list
 
@@ -360,36 +409,75 @@ class PHP_Parser_Extendable {
 
 top_statement_list:
 		top_statement_list  top_statement
+		{
+		    $$ = $this->top_statement_list($yyTop, $1, $2);
+		}
 	|	/* empty */
 ;
 
 top_statement:
 		statement
+		{
+		    $$ = $this->top_statement($yyTop, $1, 'statement');
+		}
 	|	function_declaration_statement	
+		{
+		    $$ = $this->top_statement($yyTop, $1, 'function_declaration_statement');
+		}
 	|	class_declaration_statement
+		{
+		    $$ = $this->top_statement($yyTop, $1, 'class_declaration_statement');
+		}
 ;
 
 
 inner_statement_list:
 		inner_statement_list   inner_statement 
+		{
+		    $$ = $this->inner_statement_list($yyTop, $1, $2);
+		}
 	|	/* empty */
 ;
 
 
 inner_statement:
 		statement
+		{
+		    $$ = $this->inner_statement($yyTop, $1, 'statement');
+		}
 	|	function_declaration_statement
+		{
+		    $$ = $this->inner_statement($yyTop, $1, 'function_declaration_statement');
+		}
 	|	class_declaration_statement
+		{
+		    $$ = $this->inner_statement($yyTop, $1, 'class_declaration_statement');
+		}
 ;
 
 
 statement:
-		unticked_statement 
+		unticked_statement
 ;
 
 unticked_statement:
 		'{' inner_statement_list '}'
+		{
+		    if ($this->_options['preservewhitespace']) {
+		        $$ = $this->unticked_statement_isl($yyTop, $this->yW[$yyTop - 2], $2, $this->yW[$yyTop]);
+		    } else {
+		        $$ = $this->unticked_statement_isl($yyTop, $1, $2, $3);
+		    }
+		}
 	|	T_IF '(' expr ')'  statement  elseif_list else_single 
+	{
+	    if ($this->_options['preservewhitespace']) {
+	        $$ = $this->unticked_statement_if1($yyTop, $this->yW[$yyTop - 6], $this->yW[$yyTop - 5], $3, $this->yW[$yyTop - 3],
+	               $5, $6, $7);
+	    } else {
+	        $$ = $this->unticked_statement_if1($yyTop, $1, $2, $3, $4, $5, $6, $7);
+	    }
+	}
 	|	T_IF '(' expr ')' ':'  inner_statement_list  new_elseif_list new_else_single T_ENDIF ';' 
 	|	T_WHILE '('  expr  ')'  while_statement 
 	|	T_DO  statement T_WHILE '('  expr ')' ';' 
@@ -411,13 +499,13 @@ unticked_statement:
 	|	T_RETURN expr_without_variable ';'
     {
         if (isset($this->returns)) {
-            $this->returns[] = $2;
+            $this->returns[] = trim($2);
         }
     }
 	|	T_RETURN variable ';'
     {
         if (isset($this->returns)) {
-            $this->returns[] = $2;
+            $this->returns[] = trim($2);
         }
     }
 	|	T_GLOBAL global_var_list ';'
@@ -427,9 +515,9 @@ unticked_statement:
 	|	expr ';'				
 	|	T_USE use_filename ';'
 	|	T_UNSET '(' unset_variables ')' ';'
-	|	T_FOREACH '(' variable T_AS w_variable foreach_optional_arg ')' foreach_statement
+	|	T_FOREACH '(' variable T_AS foreach_variable foreach_optional_arg ')' foreach_statement
 
-	|	T_FOREACH '(' expr_without_variable T_AS  w_variable foreach_optional_arg ')'  foreach_statement 
+	|	T_FOREACH '(' expr_without_variable T_AS w_variable foreach_optional_arg ')'  foreach_statement 
 	|	T_DECLARE  '(' declare_list ')' declare_statement 
 	|	';'		/* empty statement */
 	|	T_TRY  '{' inner_statement_list '}'
@@ -437,7 +525,10 @@ unticked_statement:
 		additional_catches
     {
         if (isset($this->catches)) {
-            $this->catches[] = $7;
+            $this->catches[] = trim($7);
+        }
+        if (isset($this->referencedClasses)) {
+            $this->referencedClasses[] = trim($7);
         }
     }
 	|	T_THROW
@@ -447,11 +538,15 @@ unticked_statement:
     {
         $this->_get_class = false;
         if (isset($this->throws)) {
-            $this->throws[] = $3;
+            $this->throws[] = trim($3);
         }
     }
 ;
 
+foreach_variable:
+        w_variable
+    |   '&' w_variable
+;
 
 additional_catches:
 		non_empty_additional_catches
@@ -462,13 +557,19 @@ non_empty_additional_catches:
 		non_empty_additional_catches T_CATCH '(' fully_qualified_class_name T_VARIABLE ')'  '{' inner_statement_list '}' 
     {
         if (isset($this->catches)) {
-            $this->catches[] = $4;
+            $this->catches[] = trim($4);
+        }
+        if (isset($this->referencedClasses)) {
+            $this->referencedClasses[] = trim($4);
         }
     }
 	|	T_CATCH '(' fully_qualified_class_name T_VARIABLE ')'  '{' inner_statement_list '}' 
     {
         if (isset($this->catches)) {
-            $this->catches[] = $3;
+            $this->catches[] = trim($3);
+        }
+        if (isset($this->referencedClasses)) {
+            $this->referencedClasses[] = trim($3);
         }
     }
 ;
@@ -477,6 +578,9 @@ non_empty_additional_catches:
 unset_variables:
 		unset_variable
 	|	unset_variables ',' unset_variable
+    {
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
+    }
 ;
 
 unset_variable:
@@ -485,13 +589,7 @@ unset_variable:
 
 use_filename:
 		T_CONSTANT_ENCAPSED_STRING
-    {
-        $$ = $1;
-    }
 	|	'(' T_CONSTANT_ENCAPSED_STRING ')'
-    {
-        $$ = $2;
-    }
 ;
 
 
@@ -528,6 +626,8 @@ unticked_function_declaration_statement:
         $this->statics = array();
         $this->funcglobals = array();
         $this->superglobals = array();
+        $this->referencedClasses = array();
+        $this->referencedFunctions = array();
         $this->returns = array();
         $this->throws = array();
         $this->catches = array();
@@ -540,11 +640,15 @@ unticked_function_declaration_statement:
     }
 			'(' parameter_list ')'  '{' inner_statement_list '}'
     {
+        $this->referencedClasses = array_values(array_unique($this->referencedClasses));
+        $this->referencedFunctions = array_values(array_unique($this->referencedFunctions));
         if ($this->_options['functionContainer']) {
             $container = $this->_options['functionContainer'];
             $this->functions[$3] = new $container;
             $this->functions[$3]->setName($3);
             $this->functions[$3]->setReference($2);
+            $this->functions[$3]->setReferencedClasses($this->referencedClasses);
+            $this->functions[$3]->setReferencedClasses($this->referencedFunctions);
             $this->functions[$3]->setParams($this->params);
             $this->functions[$3]->setGlobals($this->funcglobals);
             $this->functions[$3]->setSuperGlobals($this->superglobals);
@@ -556,13 +660,16 @@ unticked_function_declaration_statement:
             $this->functions[$3]->setEndLine($this->yyLex->line);
         } else {
             $this->functions[$3] = array(
+                'name' => $3,
                 'returnsReference' => $2,
                 'params' => $this->params,
                 'globals' => $this->funcglobals,
                 'statics' => $this->statics,
-                'returns' => $this->returns,
                 'throws' => $this->throws,
                 'catches' => $this->catches,
+                'referencedFunctions' => $this->referencedFunctions,
+                'referencedClasses' => $this->referencedClasses,
+                'returns' => $this->returns,
                 'superglobals' => $this->superglobals,
                 'startline' => $this->functionLine,
                 'endline' => $this->yyLex->line,
@@ -592,17 +699,19 @@ unticked_function_declaration_statement:
         unset($this->funcglobals);
         unset($this->superglobals);
         unset($this->throws);
+        unset($this->referencedClasses);
     }
 ;
 
 unticked_class_declaration_statement:
+	class_entry_type
     {
         $this->classLine = $this->yyLex->line; 
         $this->classPos = $this->yyLex->pos;
         $lc = $this->yyLex->getLastComment();
         $this->classComment = $lc[0];
         $this->classCommentToken = $this->yyLex->lastCommentToken;
-    }	class_entry_type T_STRING extends_from
+    } T_STRING extends_from
     {
         $this->methods = array();
         $this->vars = array();
@@ -614,23 +723,24 @@ unticked_class_declaration_statement:
 				class_statement_list
 			'}'
     {
+        $name = trim($3);
         if ($this->_options['classContainer']) {
             $container = $this->_options['classContainer'];
-            $this->classes[$3] = new $container;
-            $this->classes[$3]->setName($3);
-            $this->classes[$3]->setExtends($4);
-            $this->classes[$3]->setType($2);
-            $this->classes[$3]->setMethods($this->methods);
-            $this->classes[$3]->setVars($this->vars);
-            $this->classes[$3]->setConsts($this->consts);
-            $this->classes[$3]->setImplements($this->implementsInterfaces);
-            $this->classes[$3]->setDocumentation($this->classComment);
-            $this->classes[$3]->setStartLine($this->classLine);
-            $this->classes[$3]->setEndLine($this->yyLex->line);
+            $this->classes[$name] = new $container;
+            $this->classes[$name]->setName(trim($name));
+            $this->classes[$name]->setExtends(trim($4));
+            $this->classes[$name]->setType($2);
+            $this->classes[$name]->setMethods($this->methods);
+            $this->classes[$name]->setVars($this->vars);
+            $this->classes[$name]->setConsts($this->consts);
+            $this->classes[$name]->setImplements($this->implementsInterfaces);
+            $this->classes[$name]->setDocumentation($this->classComment);
+            $this->classes[$name]->setStartLine($this->classLine);
+            $this->classes[$name]->setEndLine($this->yyLex->line);
         } else {
             // use arrays if no class container is defined
-            $this->classes[$3] = array(
-                 'extends' => $4,
+            $this->classes[trim($name)] = array(
+                 'extends' => trim($4),
                  'type' => $2,
                  'methods' => $this->methods,
                  'vars' => $this->vars,
@@ -664,7 +774,71 @@ unticked_class_declaration_statement:
         unset($this->throws);
         unset($this->implementsInterfaces);
     }
-;
+    |   interface_entry
+    {
+        $this->classLine = $this->yyLex->line; 
+        $this->classPos = $this->yyLex->pos;
+        $lc = $this->yyLex->getLastComment();
+        $this->classComment = $lc[0];
+        $this->classCommentToken = $this->yyLex->lastCommentToken;
+        $this->implementsInterfaces = array();
+    } T_STRING interface_extends_list
+    {
+        $this->methods = array();
+        $this->vars = array();
+        $this->consts = array();
+    } 
+    '{' class_statement_list '}'
+    {
+        $name = trim($3);
+        if ($this->_options['interfaceContainer']) {
+            $container = $this->_options['interfaceContainer'];
+            $this->interfaces[$name] = new $container;
+            $this->interfaces[$name]->setName($name);
+            $this->interfaces[$name]->setExtends('');
+            $this->interfaces[$name]->setMethods($this->methods);
+            $this->interfaces[$name]->setVars($this->vars);
+            $this->interfaces[$name]->setConsts($this->consts);
+            $this->interfaces[$name]->setExtends($this->implementsInterfaces);
+            $this->interfaces[$name]->setDocumentation($this->classComment);
+            $this->interfaces[$name]->setStartLine($this->classLine);
+            $this->interfaces[$name]->setEndLine($this->yyLex->line);
+        } else {
+            // use arrays if no class container is defined
+            $this->interfaces[$name] = array(
+                 'methods' => $this->methods,
+                 'vars' => $this->vars,
+                 'consts' => $this->consts,
+                 'extends' => $this->implementsInterfaces,
+                 'startline' => $this->classLine,
+                 'endline' => $this->yyLex->line,
+                 'documentation' => $this->classComment,
+                 );
+        }
+        // publish the newly parsed class, if classes should be published
+        if ($this->_options['publisher'] && $this->_options['publishInterfaces']) {
+            $publish = $this->_options['publishMethod'];
+            $message = 'class';
+            if ($this->_options['publishInterfaceMessage']) {
+                $message = $this->_options['publishInterfaceMessage'];
+            }
+            if ($this->_options['publishMessageClass']) {
+                $pc = $this->_options['publishMessageClass'];
+                $publisher = $this->_options['publisher'];
+                $message = new $pc($message, $this->classes[$3]);
+                $publisher->$publish($pc);
+            } else {
+                $publisher = $this->_options['publisher'];
+                $publisher->$publish($message, $this->classes[$3]);
+            }
+        }
+        unset($this->methods);
+        unset($this->vars);
+        unset($this->consts);
+        unset($this->throws);
+        unset($this->implementsInterfaces);
+    }
+ ;
 
 
 class_entry_type:
@@ -680,10 +854,6 @@ class_entry_type:
     {
         $$ = 'final';
     }
-	|	T_INTERFACE
-    {
-        $$ = 'interface';
-    }
 ;
 
 extends_from:
@@ -697,6 +867,18 @@ extends_from:
     }
 ;
 
+interface_entry:
+    T_INTERFACE
+    {
+        $$ = 'interface';
+    }
+;
+
+interface_extends_list:
+        /* empty */
+    |   T_EXTENDS interface_list
+;
+
 implements_list:
 		/* empty */
 	|	T_IMPLEMENTS interface_list
@@ -706,13 +888,13 @@ interface_list:
 		fully_qualified_class_name
     {
         if (isset($this->implementsInterfaces)) {
-            $this->implementsInterfaces[] = $1;
+            $this->implementsInterfaces[] = trim($1);
         }
     }
 	|	interface_list ',' fully_qualified_class_name
     {
         if (isset($this->implementsInterfaces)) {
-            $this->implementsInterfaces[] = $3;
+            $this->implementsInterfaces[] = trim($3);
         }
     }
 ;
@@ -807,43 +989,35 @@ parameter_list:
 non_empty_parameter_list:
 		optional_class_type T_VARIABLE
     {
-        $this->params[$2] = array('default' => null, 'type' => $1, 'isReference' => false, 'const' => false);
+        $this->params[$2] = array('default' => null, 'type' => $1, 'isReference' => false);
     }
 	|	optional_class_type '&' T_VARIABLE
     {
-        $this->params[$3] = array('default' => null, 'type' => $1, 'isReference' => true, 'const' => false);
+        $this->params[$3] = array('default' => null, 'type' => $1, 'isReference' => true);
     }
 	|	optional_class_type '&' T_VARIABLE '=' static_scalar
     {
-        $this->params[$3] = array('default' => $5, 'type' => $1, 'isReference' => true, 'const' => false);
-    }
-	|	T_CONST optional_class_type T_VARIABLE
-    {
-        $this->params[$2] = array('default' => null, 'type' => $2, 'isReference' => false, 'const' => true);
+        $this->params[$3] = array('default' => trim($5), 'type' => $1, 'isReference' => true);
     }
 	|	optional_class_type T_VARIABLE '=' static_scalar
     {
-        $this->params[$2] = array('default' => $4, 'type' => $1, 'isReference' => false, 'const' => false);
+        $this->params[$2] = array('default' => trim($4), 'type' => $1, 'isReference' => false);
     }
 	|	non_empty_parameter_list ',' optional_class_type T_VARIABLE
     {
-        $this->params[$4] = array('default' => null, 'type' => $3, 'isReference' => false, 'const' => false);
+        $this->params[$4] = array('default' => null, 'type' => $3, 'isReference' => false);
     }
 	|	non_empty_parameter_list ',' optional_class_type '&' T_VARIABLE
     {
-        $this->params[$5] = array('default' => null, 'type' => $3, 'isReference' => true, 'const' => false);
+        $this->params[$5] = array('default' => null, 'type' => $3, 'isReference' => true);
     }
 	|	non_empty_parameter_list ',' optional_class_type '&' T_VARIABLE	 '=' static_scalar
     {
-        $this->params[$5] = array('default' => $7, 'type' => $3, 'isReference' => true, 'const' => false);
-    }
-	|	non_empty_parameter_list ',' T_CONST optional_class_type T_VARIABLE
-    {
-        $this->params[$5] = array('default' => null, 'type' => $4, 'isReference' => false, 'const' => true);
+        $this->params[$5] = array('default' => trim($7), 'type' => $3, 'isReference' => true);
     }
 	|	non_empty_parameter_list ',' optional_class_type T_VARIABLE '=' static_scalar
     {
-        $this->params[$4] = array('default' => $6, 'type' => $3, 'isReference' => false, 'const' => false);
+        $this->params[$4] = array('default' => trim($6), 'type' => $3, 'isReference' => false);
     }
 ;
 
@@ -853,7 +1027,7 @@ optional_class_type:
     {
         $$ = '';
     }
-	|	fully_qualified_class_name
+	|	T_STRING
     {
         $$ = $1;
     }
@@ -861,7 +1035,8 @@ optional_class_type:
 
 
 function_call_parameter_list:
-		non_empty_function_call_parameter_list	|	/* empty */				
+    non_empty_function_call_parameter_list
+    |    /* empty */                
     {
         $$ = '';
     }
@@ -873,31 +1048,31 @@ non_empty_function_call_parameter_list:
 	|	variable				
 	|	'&' w_variable 				
     {
-        $$ = '&' . $2;
+        $$ = $this->yW[$yyTop - 1] . $2;
     }
 	|	non_empty_function_call_parameter_list ',' expr_without_variable
     {
         if ($this->_grabDefine) {
-            $this->defineName = $1;
-            $this->defineValue = $3;
+            $this->defineName = trim($1);
+            $this->defineValue = trim($3);
         }
-        $$ = $1 . ', ' . $3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	non_empty_function_call_parameter_list ',' variable					
     {
         if ($this->_grabDefine) {
-            $this->defineName = $1;
-            $this->defineValue = $3;
+            $this->defineName = trim($1);
+            $this->defineValue = trim($3);
         }
-        $$ = $1 . ', ' . $3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	non_empty_function_call_parameter_list ',' '&' w_variable				
     {
         if ($this->_grabDefine) {
-            $this->defineName = $1;
-            $this->defineValue = '&' . $4;
+            $this->defineName = trim($1);
+            $this->defineValue = '&' . trim($4);
         }
-        $$ = $1 . ', &' . $4;
+        $$ = $1 . $this->yW[$yyTop - 2] . $this->yW[$yyTop - 1] . $4;
     }
 ;
 
@@ -930,7 +1105,7 @@ static_var_list:
     }
 	|	static_var_list ',' T_VARIABLE '=' static_scalar
     {
-        $this->statics[] = array('name' => $3, 'default' => $5);
+        $this->statics[] = array('name' => $3, 'default' => trim($5));
     }
 	|	T_VARIABLE
     {
@@ -938,7 +1113,7 @@ static_var_list:
     }
 	|	T_VARIABLE '=' static_scalar
     {
-        $this->statics[] = array('name' => $1, 'default' => $3);
+        $this->statics[] = array('name' => $1, 'default' => trim($3));
     }
 ;
 
@@ -946,9 +1121,6 @@ static_var_list:
 class_statement_list:
 		class_statement_list class_statement
 	|	/* empty */
-    {
-        $$ = '';
-    }
 ;
 
 
@@ -971,7 +1143,10 @@ class_statement:
                 $var['access'] = $1;
                 $var['static'] = $is_static;
             }
-            $this->vars[] = $var;
+            if ($is_static) {
+                $1[$z['static']] = 'static';
+            }
+            $this->vars[$var['name']] = $var;
             // publish the newly parsed var, if vars should be published
             if ($this->_options['publisher'] && $this->_options['publishVars']) {
                 $publish = $this->_options['publishMethod'];
@@ -992,7 +1167,7 @@ class_statement:
         }
     } ';'
 	|	class_constant_declaration ';'
-	|
+    |   method_modifiers T_FUNCTION 
     {
         $this->methodLine = $this->yyLex->line; 
         $this->methodPos = $this->yyLex->pos;
@@ -1000,13 +1175,15 @@ class_statement:
         $this->methodComment = $lc[0];
         $this->methodCommentToken = $this->yyLex->lastCommentToken;
     }
-    method_modifiers T_FUNCTION is_reference T_STRING
+    is_reference T_STRING
     {
         $this->throws = array();
         $this->catches = array();
         $this->params = array();
         $this->returns = array();
         $this->referencedVars = array();
+        $this->referencedMethods = array();
+        $this->referencedFunctions = array();
         $this->referencedClasses = array();
         $this->statics = array();
         $this->funcglobals = array();
@@ -1015,10 +1192,27 @@ class_statement:
 			parameter_list ')' method_body
     {
         $is_static = false;
-        if (in_array('static', $2)) {
+        $is_abstract = false;
+        if (in_array('static', $1)) {
             $is_static = true;
-            $z = array_flip($2);
-            unset($2[$z['static']]);
+            $z = array_flip($1);
+            unset($1[$z['static']]);
+        }
+        if (in_array('abstract', $1)) {
+            $is_abstract = true;
+            $z = array_flip($1);
+            unset($1[$z['abstract']]);
+        }
+        // remove duplicates
+        $this->referencedClasses = array_values(array_unique($this->referencedClasses));
+        $this->referencedFunctions = array_values(array_unique($this->referencedFunctions));
+        $ar = $this->referencedMethods;
+        foreach ($ar as $key => $val) {
+            $this->referencedMethods[$key] = array_values(array_unique($val));
+        }
+        $ar = $this->referencedVars;
+        foreach ($ar as $key => $val) {
+            $this->referencedVars[$key] = array_values(array_unique($val));
         }
         if ($this->_options['methodContainer']) {
             $container = $this->_options['methodContainer'];
@@ -1027,6 +1221,8 @@ class_statement:
             $this->methods[$5]->setReference($4);
             $this->methods[$5]->setParams($this->params);
             $this->methods[$5]->setReferencedVars($this->referencedVars);
+            $this->methods[$5]->setReferencedMethods($this->referencedMethods);
+            $this->methods[$5]->setReferencedFunctions($this->referencedFunctions);
             $this->methods[$5]->setReferencedClasses($this->referencedClasses);
             $this->methods[$5]->setGlobals($this->funcglobals);
             $this->methods[$5]->setSuperGlobals($this->superglobals);
@@ -1039,18 +1235,25 @@ class_statement:
             if ($is_static) {
                 $this->methods[$5]->setStaticMethod();
             }
-            $this->methods[$5]->setModifiers($2);
+            if ($is_abstract) {
+                $this->methods[$5]->setAbstractMethod();
+            }
+            $this->methods[$5]->setModifiers(array_values($1));
         } else {
             $this->methods[$5] = array(
-                'modifiers' => $2,
+                'name' => $5,
+                'access' => array_values($1),
                 'static' => $is_static,
+                'abstract' => $is_abstract,
                 'returnsReference' => $4,
                 'params' => $this->params,
                 'globals' => $this->funcglobals,
                 'statics' => $this->statics,
                 'throws' => $this->throws,
                 'catches' => $this->catches,
+                'referencedFunctions' => $this->referencedFunctions,
                 'referencedVars' => $this->referencedVars,
+                'referencedMethods' => $this->referencedMethods,
                 'referencedClasses' => $this->referencedClasses,
                 'returns' => $this->returns,
                 'superglobals' => $this->superglobals,
@@ -1077,7 +1280,9 @@ class_statement:
             }
         }
         unset($this->returns);
+        unset($this->referencedFunctions);
         unset($this->referencedVars);
+        unset($this->referencedMethods);
         unset($this->referencedClasses);
         unset($this->statics);
         unset($this->throws);
@@ -1192,7 +1397,7 @@ class_variable_declaration:
             $var->setEndLine($this->yyLex->line);
             $lc = $this->yyLex->getLastComment();
             $var->setDocumentation($lc[0]);
-            $var->setDefault($6);
+            $var->setDefault(trim($6));
             $$[] = $var;
         } else {
             $lc = $this->yyLex->getLastComment();
@@ -1200,7 +1405,7 @@ class_variable_declaration:
                          'startline' => $this->yyLex->line,
                          'endline' => $this->yyLex->line,
                          'documentation' => $lc[0],
-                         'default' => $6);
+                         'default' => trim($6));
         }
     }
 	|
@@ -1237,7 +1442,7 @@ class_variable_declaration:
             $var->setEndLine($this->yyLex->line);
             $lc = $this->yyLex->getLastComment();
             $var->setDocumentation($lc[0]);
-            $var->setDefault($4);
+            $var->setDefault(trim($4));
             $$ = array($var);
         } else {
             $lc = $this->yyLex->getLastComment();
@@ -1245,7 +1450,7 @@ class_variable_declaration:
                              'startline' => $this->_varLine,
                              'endline' => $this->yyLex->line,
                              'documentation' => $lc[0],
-                             'default' => $4));
+                             'default' => trim($4)));
         }
     }
 ;
@@ -1256,7 +1461,7 @@ class_constant_declaration:
         $lc = $this->yyLex->getLastComment();
         $this->constLine = $this->yyLex->line;
         $this->constComment = $lc[0];
-    } '=' const_scalar_expr
+    } '=' static_scalar
     {
         if ($this->_options['classConstContainer']) {
             $container = $this->_options['classConstContainer'];
@@ -1264,11 +1469,11 @@ class_constant_declaration:
             $const->setStartLine($this->constLine);
             $const->setEndLine($this->yyLex->line);
             $const->setDocumentation($this->constComment);
-            $const->setValue($6);
+            $const->setValue(trim($6));
             $const->setName($3);
         } else {
             $const = array('name' => $3,
-                           'value' => $6,
+                           'value' => trim($6),
                            'startline' => $this->constLine,
                            'endline' => $this->yyLex->line,
                            'documentation' => $this->constComment);
@@ -1297,7 +1502,7 @@ class_constant_declaration:
         $this->constLine = $this->yyLex->line;
         $lc = $this->yyLex->getLastComment();
         $this->constComment = $lc[0];
-    } T_CONST T_STRING '=' const_scalar_expr
+    } T_CONST T_STRING '=' static_scalar
     {
         if ($this->_options['classConstContainer']) {
             $container = $this->_options['classConstContainer'];
@@ -1305,11 +1510,11 @@ class_constant_declaration:
             $const->setStartLine($this->constLine);
             $const->setEndLine($this->yyLex->line);
             $const->setDocumentation($this->constComment);
-            $const->setValue($5);
+            $const->setValue(trim($5));
             $const->setName($3);
         } else {
             $const = array('name' => $3,
-                           'value' => $5,
+                           'value' => trim($5),
                            'startline' => $this->constLine,
                            'endline' => $this->yyLex->line,
                            'documentation' => $this->constComment);
@@ -1354,17 +1559,18 @@ non_empty_for_expr:
 expr_without_variable:	
 		T_LIST '('  assignment_list ')' '=' expr
     {
-        $$ = $this->concat($1, $2, $3, $4, $5, $6);//'list(' . $3 . ') = ' . $6;
+        $$ = $this->yW[$yyTop - 5] . $this->yW[$yyTop - 4] . $3 . 
+            $this->yW[$yyTop - 2] . $this->yW[$yyTop - 1] . $6;
     }
 	|	variable '='
     {
-        $this->_initGlobal($1);
+        $this->_initGlobal(trim($1));
     } expr
     {
         if ($this->_inGlobal) {
             $this->_processGlobal($1, $4);
         }
-        $$ = $this->concat($1, $2, $4);//$1 . ' = '. $4;
+        $$ = $1 . $this->yW[$yyTop - 1] . $4;
     }
 	|	variable '=' '&'
     {
@@ -1374,284 +1580,274 @@ expr_without_variable:
         if ($this->_inGlobal) {
             $this->_processGlobal($1, '&' .$5);
         }
-        $$ = $this->concat($1, $2, $3, $5);//$1 .' =& '.$5;
+        $$ = $1 . $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $5;
     }
-	|	variable
-     '=' '&' T_NEW
+    |    variable '=' '&' T_NEW
     {
         $this->_initGlobal($1);
     } class_name_reference  ctor_arguments 
     {
         if ($this->_inGlobal) {
-            $this->_processGlobal($1, '&new ' . $6 . $7);
-        } else {
-            if (isset($this->referencedClasses)) {
-                $this->referencedClasses[] = $6;
-            }
+            $this->_processGlobal($1, '&' . $this->yW[$yyTop - 4] . $6 . $7);
         }
         if ($this->_get_class) {
             $$ = $6;
         } else {
-            $$ = $this->concat($1, $2, $3, $4, $6, $7);//$1 .' =& new '. $6 . $7;
+            $$ = $1 . $this->yW[$yyTop - 5]. $this->yW[$yyTop - 4] . $this->yW[$yyTop - 3] . $6 . $7;
         }
     }
 	|	T_NEW class_name_reference  ctor_arguments
     {
-        if (isset($this->referencedClasses)) {
-            $this->referencedClasses[] = $2;
-        }
         if ($this->_get_class) {
             $$ = $2;
         } else {
-            $$ = $this->concat($1, $2, $3);//'new '.$2 . $3;
+            $$ = $this->yW[$yyTop - 2] . $2 . $3;
         }
     }
     |   T_CLONE expr
     {
-        $$ = $2;
+        $$ = $this->yW[$yyTop - 1] . $2;
     }
 	|	variable T_PLUS_EQUAL expr
     {
-        $$ = $this->concat($1, $2, $3);//$1 . ' += '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	variable T_MINUS_EQUAL expr	
     {
-        $$ = $this->concat($1, $2, $3);//$1 . ' -= '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	variable T_MUL_EQUAL expr		
     {
-        $$ = $this->concat($1, $2, $3);//$1 . ' *= '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	variable T_DIV_EQUAL expr		
     {
-        $$ = $this->concat($1, $2, $3);//$1 . ' /= '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	variable T_CONCAT_EQUAL expr	
     {
-        $$ = $this->concat($1, $2, $3);//$1 . ' .= '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	variable T_MOD_EQUAL expr		
     {
-        $$ = $this->concat($1, $2, $3);//$1 . ' %= '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	variable T_AND_EQUAL expr		
     {
-        $$ = $this->concat($1, $2, $3);//$1 . ' &= '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	variable T_OR_EQUAL expr 		
     {
-        $$ = $this->concat($1, $2, $3);//$1 . ' |= '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	variable T_XOR_EQUAL expr 		
     {
-        $$ = $this->concat($1, $2, $3);//$1 . ' ^= '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	variable T_SL_EQUAL expr	 
     {
-        $$ = $this->concat($1, $2, $3);//$1 . ' <<= '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	variable T_SR_EQUAL expr	 
     {
-        $$ = $this->concat($1, $2, $3);//$1 . ' >>= '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	rw_variable T_INC 
     {
-        $$ = $this->concat($1, $2);//$1 . '++';
+        $$ = $1 . $this->yW[$yyTop];
     }
 	|	T_INC rw_variable 
     {
-        $$ = $this->concat($1, $2);//'++' . $2;
+        $$ = $this->yW[$yyTop - 1] . $2;
     }
 	|	rw_variable T_DEC 
     {
-        $$ = $this->concat($1, $2);//$1 . '--';
+        $$ = $1 . $this->yW[$yyTop];
     }
 	|	T_DEC rw_variable 
     {
-        $$ = $this->concat($1, $2);//'--' . $2;
+        $$ = $this->yW[$yyTop - 1] . $2;
     }
 	|	expr T_BOOLEAN_OR  expr 
     {
-        $$ = $this->concat($1, $2, $3);//$1 . ' || ' . $3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	expr T_BOOLEAN_AND  expr   
     {
-        $$ = $this->concat($1, $2, $3);//$1 . ' && ' . $3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	expr T_LOGICAL_OR  expr 
     {
-        $$ = $this->concat($1, $2, $3);//$1 . ' or ' . $3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	expr T_LOGICAL_AND  expr 
     {
-        $$ = $this->concat($1, $2, $3);//$1 . ' and ' . $3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	expr T_LOGICAL_XOR expr 
     {
-        $$ = $this->concat($1, $2, $3);//$1 . ' xor ' . $3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	expr '|' expr
     {
-        $$ = $this->concat($1, $2, $3);//$1 .' | '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	expr '&' expr
     {
-        $$ = $this->concat($1, $2, $3);//$1 .' & '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	expr '^' expr
     {
-        $$ = $this->concat($1, $2, $3);//$1 .' ^ '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	expr '.' expr
     {
-        $$ = $this->concat($1, $2, $3);//$1 .' . '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	expr '+' expr
     {
-        $$ = $this->concat($1, $2, $3);//$1 .' + '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	expr '-' expr
     {
-        $$ = $this->concat($1, $2, $3);//$1 .' - '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	expr '*' expr
     {
-        $$ = $this->concat($1, $2, $3);//$1 .' * '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	expr '/' expr	
     {
-        $$ = $this->concat($1, $2, $3);//$1 .' / '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	expr '%' expr 	
     {
-        $$ = $this->concat($1, $2, $3);//$1 .' % '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	| 	expr T_SL expr	
     {
-        $$ = $this->concat($1, $2, $3);//$1 .' << '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	expr T_SR expr	
     {
-        $$ = $this->concat($1, $2, $3);//$1 .' >> '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	'+' expr 
     {
-        $$ = $this->concat($1, $2);//' + ' . $2;
+        $$ = $this->yW[$yyTop - 1] . $2;
     }
 	|	'-' expr 
     {
-        $$ = $this->concat($1, $2);//' - ' . $2;
+        $$ = $this->yW[$yyTop - 1] . $2;
     }
 	|	'!' expr 
     {
-        $$ = $this->concat($1, $2);//'!' . $2;
+        $$ = $this->yW[$yyTop - 1] . $2;
     }
 	|	'~' expr 
     {
-        $$ = $this->concat($1, $2);//'~' . $2;
+        $$ = $this->yW[$yyTop - 1] . $2;
     }
 	|	expr T_IS_IDENTICAL expr		
     {
-        $$ = $this->concat($1, $2, $3);//$1 .' === '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	expr T_IS_NOT_IDENTICAL expr	
     {
-        $$ = $this->concat($1, $2, $3);//$1 .' !== '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	expr T_IS_EQUAL expr			
     {
-        $$ = $this->concat($1, $2, $3);//$1 .' == '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	expr T_IS_NOT_EQUAL expr 		
     {
-        $$ = $this->concat($1, $2, $3);//$1 . $2 . $3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	expr '<' expr 					
     {
-        $$ = $this->concat($1, $2, $3);//$1 .' < '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	expr T_IS_SMALLER_OR_EQUAL expr 
     {
-        $$ = $this->concat($1, $2, $3);//$1 .' <= '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	expr '>' expr 					
     {
-        $$ = $this->concat($1, $2, $3);//$1 .' > '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	expr T_IS_GREATER_OR_EQUAL expr 
     {
-        $$ = $this->concat($1, $2, $3);//$1 .' >= '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	expr T_INSTANCEOF class_name_reference 
     {
-        $$ = $this->concat($1, $2, $3);//$1 .' instanceof '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	'(' expr ')'
     {
         if ($this->_get_class) {
             $$ = $2;
         } else {
-            $$ = $this->concat($1, $2, $3);//'(' . $2 . ')';
+            $$ = $this->yW[$yyTop - 2] . $2 . $this->yW[$yyTop];
         }
     }
 	|	expr '?' 
 		expr ':' 
 		expr
     {
-        $$ = $this->concat($1, $2, $3, $4, $5);//$1 . ' ? ' . $3 .' : '. $5;
+        $$ = $1 . $this->yW[$yyTop - 3] . $3 . $this->yW[$yyTop - 1] . $5;
     }
 	|	internal_functions_in_yacc
 	|	T_INT_CAST expr
     {
-        $$ = $this->concat($1, $2);//'(int) ' . $2;
+        $$ = $this->yW[$yyTop - 1] . $2;
     }
 	|	T_DOUBLE_CAST expr 	
     {
-        $$ = $this->concat($1, $2);//'(double) ' . $2;
+        $$ = $this->yW[$yyTop - 1] . $2;
     }
 	|	T_STRING_CAST expr	 
     {
-        $$ = $this->concat($1, $2);//'(string) ' . $2;
+        $$ = $this->yW[$yyTop - 1] . $2;
     }
 	|	T_ARRAY_CAST expr 	
     {
-        $$ = $this->concat($1, $2);//'(array) ' . $2;
+        $$ = $this->yW[$yyTop - 1] . $2;
     }
 	|	T_OBJECT_CAST expr 	
     {
-        $$ = $this->concat($1, $2);//'(object) ' . $2;
+        $$ = $this->yW[$yyTop - 1] . $2;
     }
 	|	T_BOOL_CAST expr	
     {
-        $$ = $this->concat($1, $2);//'(bool) ' . $2;
+        $$ = $this->yW[$yyTop - 1] . $2;
     }
 	|	T_UNSET_CAST expr	
     {
-        $$ = $this->concat($1, $2);//'(unset) ' . $2;
+        $$ = $this->yW[$yyTop - 1] . $2;
     }
 	|	T_EXIT exit_expr
     {
-        $$ = $this->concat($1, $2);//$1 . $2;
+        $$ = $this->yW[$yyTop - 1] . $2;
     }
 	|	'@'  expr
     {
-        $$ = $this->concat($1, $2);//'@' . $2;
+        $$ = $this->yW[$yyTop - 1] . $2;
     }
 	|	scalar
-    {
-        $$ = $1;
-    }
 	|	T_ARRAY '(' array_pair_list ')'
     {
-        $$ = $this->concat($1, $2, $3, $4);
+        $$ = $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $3
+            . $this->yW[$yyTop];
     }
 	|	'`' encaps_list '`'
     {
-        $$ = $this->concat($1 . $2 . $3);
+        $$ = $this->yW[$yyTop - 2] . $2 . $this->yW[$yyTop];
     }
 	|	T_PRINT expr
     {
-        $$ = $this->concat($1 . $2);
+        $$ = $this->yW[$yyTop - 1] . $2;
     }
 ;
 
@@ -1668,7 +1864,18 @@ function_call:
         }
     } '(' function_call_parameter_list ')'
     {
+        if (isset($this->referencedFunctions)) {
+            $this->referencedFunctions[] = $1;
+        }
         if ($this->_grabDefine && !empty($this->defineName)) {
+            // attempt to determine whether this is a simple string
+            $test = token_get_all('<?php ;' . $this->defineName);
+            $simple = false;
+            if (count($test) == 3 && $test[2][0] == T_CONSTANT_ENCAPSED_STRING) {
+                // it's a simple define
+                $this->defineName = substr($this->defineName, 1, strlen($this->defineName) - 2);
+                $simple = true;
+            }
             if ($this->_options['constContainer']) {
                 $container = $this->_options['constContainer'];
                 $const = new $container;
@@ -1676,10 +1883,11 @@ function_call:
                 $const->setEndLine($this->yyLex->line);
                 $const->setDocumentation($this->defineComment);
                 $const->setValue($this->defineValue);
-                $const->setName($this->defineName);
+                $const->setName($this->defineName, $simple);
             } else {
                 $const = array('name' => $this->defineName,
                                'value' => $this->defineValue,
+                               'simple' => $simple,
                                'startline' => $this->defineLine,
                                'endline' => $this->yyLex->line,
                                'documentation' => $this->defineComment);
@@ -1704,26 +1912,61 @@ function_call:
             }
         }
         $this->_grabDefine = false;
-        $$ = $this->concat($1, $3, $4, $5);
+        $$ = $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $4 . $this->yW[$yyTop];
     }
 	|	class_constant '(' function_call_parameter_list ')'
     {
-        $$ = $this->concat($1, $2, $3, $4);
+        $this->referencedMethods[$this->_lastClassname][] = $this->_lastConst;
+        $$ = $1 . $this->yW[$yyTop - 2] . $3 . $this->yW[$yyTop];
+    }
+    |   static_member '('
+    {
+    } function_call_parameter_list ')'
+    {
+        if (isset($this->referencedVars)) {
+            foreach ($this->referencedVars[$this->_lastClassname] as $i => $var) {
+                if ($var == $this->_lastVar) {
+                    break;
+                }
+            }
+            unset ($this->referencedVars[$this->_lastClassname][$i]);
+            if (!count($this->referencedVars[$this->_lastClassname])) {
+                unset($this->referencedVars[$this->_lastClassname]);
+            }
+            $this->referencedMethods[$this->_lastClassname][] = $this->_lastVar;
+        }
+        $$ = $1 . $this->yW[$yyTop - 3] . $4 . $this->yW[$yyTop];
     }
 	|	variable_without_objects  '(' 
 			function_call_parameter_list ')'
 	{
-        $$ = $this->concat($1, $2, $3, $4);
+        $$ = $1 . $this->yW[$yyTop - 2] . $3 . $this->yW[$yyTop];
     }
+            
 ;
 
 fully_qualified_class_name:
 		T_STRING 
+    {
+        if (isset($this->referencedClasses) && strtolower($1) != 'self' && strtolower($1) != 'parent') {
+            $this->referencedClasses[] = $1;
+        }
+        $$ = $this->yW[$yyTop];
+    }
 ;
 
 class_name_reference:
 		T_STRING				
+        {
+            $$ = $this->yW[$yyTop];
+            if (isset($this->referencedClasses)) {
+                $this->referencedClasses[] = $1;
+            }
+        }
 	|	dynamic_class_name_reference	
+    {
+        $$ = $1;
+    }
 ;
 
 
@@ -1731,29 +1974,26 @@ dynamic_class_name_reference:
 		base_variable T_OBJECT_OPERATOR 
 			object_property  dynamic_class_name_variable_properties
 	{
-        echo 'here';
-        if (isset($this->referencedVars)) {
-            $this->referencedVars[] = $this->concat($1, $2, $3, $4);
-        }
+                $$ = $1 . $this->yW[$yyTop - 2] . $3 . $4;
     }
 	|	base_variable
-    {
-        if (isset($this->referencedVars)) {
-            $this->referencedVars[] = $1;
-        }
-        $$ = $1;
-    }
 ;
 
 
 dynamic_class_name_variable_properties:
 		dynamic_class_name_variable_properties dynamic_class_name_variable_property
+        {
+            $$ = $1 . $2;
+        }
 	|	/* empty */
 ;
 
 
 dynamic_class_name_variable_property:
 		T_OBJECT_OPERATOR object_property 
+    {
+        $$ = $this->yW[$yyTop - 1] . $2;
+    }
 ;
 
 exit_expr:
@@ -1763,11 +2003,11 @@ exit_expr:
     }
 	|	'(' ')'			
     {
-        $$ = '()';
+        $$ = $this->yW[$yyTop - 1] . $this->yW[$yyTop];
     }
 	|	'(' expr ')'	
     {
-        $$ = $this->concat('(', $2, ')');
+        $$ = $this->yW[$yyTop - 2] . $2 . $this->yW[$yyTop];
     }
 ;
 
@@ -1779,118 +2019,61 @@ ctor_arguments:
     }
 	|	'(' function_call_parameter_list ')'
     {
-        $$ = '(' . $2 . ')';
+        $$ = $this->yW[$yyTop - 2] . $2 . $this->yW[$yyTop];
     }
 ;
 
 
 common_scalar:
 		T_LNUMBER
+    {
+        $$ = $this->yW[$yyTop];
+    }
 	|	T_DNUMBER
+    {
+        $$ = $this->yW[$yyTop];
+    }
 	|	T_CONSTANT_ENCAPSED_STRING
+    {
+        $$ = $this->yW[$yyTop];
+    }
 	|	T_LINE
+    {
+        $$ = $this->yW[$yyTop];
+    }
 	|	T_FILE
+    {
+        $$ = $this->yW[$yyTop];
+    }
 	|	T_CLASS_C
 	|	T_FUNC_C
-;
-
-
-const_scalar_expr: /* compile-time evaluated scalar expressions */
-		const_scalar
-	|   const_scalar_expr_list
-;
-
-const_scalar_expr_list:
-		const_scalar_expr T_SL const_scalar_expr
     {
-        $$ = $this->concat($1, $2, $3);//$1 . ' << ' . $3;
+        $$ = $this->yW[$yyTop];
     }
-	|	const_scalar_expr T_SR const_scalar_expr 
+	|	T_METHOD_C
     {
-        $$ = $this->concat($1, $2, $3);//$1 . ' >> ' . $3;
+        $$ = $this->yW[$yyTop];
     }
-	|	const_scalar_expr T_LOGICAL_XOR  const_scalar_expr 
-    {
-        $$ = $this->concat($1, $2, $3);//$1 . ' xor ' . $3;
-    }
-	|   const_scalar_expr '|'  const_scalar_expr  
-    {
-        $$ = $this->concat($1, $2, $3);//$1 . ' | ' . $3;
-    }
-	|   const_scalar_expr '&'  const_scalar_expr  
-    {
-        $$ = $this->concat($1, $2, $3);//$1 . ' & ' . $3;
-    }
-	|   const_scalar_expr '^'  const_scalar_expr  
-    {
-        $$ = $this->concat($1, $2, $3);//$1 . ' ^ ' . $3;
-    }
-	|	const_scalar_expr '.'  const_scalar_expr  
-    {
-        $$ = $this->concat($1, $2, $3);//$1 . ' . ' . $3;
-    }
-	|   const_scalar_expr '+'  const_scalar_expr  
-    {
-        $$ = $this->concat($1, $2, $3);//$1 . ' + ' . $3;
-    }
-	|   const_scalar_expr '-'  const_scalar_expr 
-    {
-        $$ = $this->concat($1, $2, $3);//$1 . ' - ' . $3;
-    }
-	|   const_scalar_expr '*'  const_scalar_expr  
-    {
-        $$ = $this->concat($1, $2, $3);//$1 . ' * ' . $3;
-    }
-	|   const_scalar_expr '/'  const_scalar_expr  
-    {
-        $$ = $this->concat($1, $2, $3);//$1 . ' / ' . $3;
-    }
-	|   const_scalar_expr '%'  const_scalar_expr  
-    {
-        $$ = $this->concat($1, $2, $3);//$1 . ' % ' . $3;
-    }
-	|                     '~'  const_scalar_expr 
-    {
-        $$ = $this->concat($1, $2);//'~' . $1;
-    }
-	|   '(' const_scalar_expr ')'
-    {
-        $$ = $this->concat($1, $2, $3);//'(' . $2 . ')';
-    }
-;
-
-const_scalar:
-		common_scalar
-	|	T_STRING
-	|	'+' const_scalar
-    {
-        $$ = $this->concat($1, $2);//'+' . $2;
-    }
-	|	'-' const_scalar
-    {
-        $$ = $this->concat($1, $2);//'-' . $2;
-    }
-	|	T_ARRAY '(' static_array_pair_list ')'
-    {
-        $$ = $this->concat($1, $2, $3, $4);//'array(' . $3 . ')';
-    }
-	|	static_class_constant
 ;
 
 static_scalar: /* compile-time evaluated scalars */
 		common_scalar
 	|	T_STRING
+    {
+        $$ = $this->yW[$yyTop];
+    }
 	|	'+' static_scalar
     {
-        $$ = '+' . $2;
+        $$ = $this->yW[$yyTop - 1] . $2;
     }
 	|	'-' static_scalar
     {
-        $$ = '-' . $2;
+        $$ = $this->yW[$yyTop - 1] . $2;
     } 
 	|	T_ARRAY '(' static_array_pair_list ')'
     {
-        $$ = 'array(' . $3 . ')';
+        $$ = $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $3
+            . $this->yW[$yyTop];
     }
 	|	static_class_constant
 ;
@@ -1898,26 +2081,35 @@ static_scalar: /* compile-time evaluated scalars */
 static_class_constant:
 		T_STRING T_PAAMAYIM_NEKUDOTAYIM T_STRING
     {
-        $$ = $this->concat($1, $2, $3);//$1 . '::' . $3;
+        if (isset($this->referencedClasses)) {
+            $this->referencedClasses[] = $1;
+        }
+        $$ = $this->yW[$yyTop - 2] . $this->yW[$yyTop - 1] . $this->yW[$yyTop];
     }
 ;
 
 scalar:
 		T_STRING
+    {
+        $$ = $this->yW[$yyTop];
+    }
 	|	T_STRING_VARNAME
+    {
+        $$ = $this->yW[$yyTop];
+    }
 	|	class_constant
 	|	common_scalar
 	|	'"' encaps_list '"'
     {
-        $$ = '"' . $2 . '"';
+        $$ = $this->yW[$yyTop - 2] . $2 . $this->yW[$yyTop];
     }
 	|	'\'' encaps_list '\''
     {
-        $$ = "'" . $2 . "'";
+        $$ = $this->yW[$yyTop - 2] . $2 . $this->yW[$yyTop];
     }
 	|	T_START_HEREDOC encaps_list T_END_HEREDOC
     {
-        $$ = $2;
+        $$ = $this->yW[$yyTop - 2] . $2 . $this->yW[$yyTop];
     }
 ;
 
@@ -1940,22 +2132,22 @@ possible_comma:
     }
 	|	','
     {
-        $$ = ', ';
+        $$ = $this->yW[$yyTop];
     }
 ;
 
 non_empty_static_array_pair_list:
 		non_empty_static_array_pair_list ',' static_scalar T_DOUBLE_ARROW static_scalar
     {
-        $$ = $1 . ",\n" . $3 . ' => ' . $5;
+        $$ = $1 . $this->yW[$yyTop - 3] . $3 . $this->yW[$yyTop - 1] . $5;
     }
 	|	non_empty_static_array_pair_list ',' static_scalar
     {
-        $$ = $1 . ",\n" . $3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	static_scalar T_DOUBLE_ARROW static_scalar
     {
-        $$ = $1 . ' => '. $3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	static_scalar 
 ;
@@ -1983,11 +2175,15 @@ variable:
 		base_variable_with_function_calls T_OBJECT_OPERATOR object_property method_or_not variable_properties
     {
         if (isset($this->referencedVars)) {
-            if ($1 == '$this' && !$4) {
-                $this->referencedVars[] = $3;
+            if (trim($1) == '$this') {
+                if (!$4) {
+                    $this->referencedVars['$this'][] = trim($3);
+                } else {
+                    $this->referencedMethods['$this'][] = trim($3);
             }
         }
-        $$ = $1 . $2 . $3 . $4 . $5;
+        }
+        $$ = $1 . $this->yW[$yyTop - 3] . $3 . $4 . $5;
     }
 	|	base_variable_with_function_calls
     {
@@ -2001,30 +2197,35 @@ variable_properties:
         $$ = $1 . $2;
     }
 	|	/* empty */ 
+    {
+        $$ = '';
+    }
 ;
 
 
 variable_property:
 		T_OBJECT_OPERATOR object_property  method_or_not
     {
-        $$ = $1 . $2 . $3;
+        $$ = $this->yW[$yyTop - 2] . $2 . $3;
     }
 ;
 
 method_or_not:
-		'(' 
-				function_call_parameter_list ')' 
+        '(' function_call_parameter_list ')' 
     {
-        $$ = $1 . $2 . $3;
+        $$ = $this->yW[$yyTop - 2] . $2 . $this->yW[$yyTop];
     }
 	|	/* empty */ 
     {
-        $$ = false;
+        $$ = '';
     }
 ;
 
 variable_without_objects:
 		reference_variable
+    {
+        $$ = $1;
+    }
 	|	simple_indirect_reference reference_variable 
     {
         $$ = $1 . $2;
@@ -2034,73 +2235,96 @@ variable_without_objects:
 static_member:
 		fully_qualified_class_name T_PAAMAYIM_NEKUDOTAYIM variable_without_objects
     {
-        $$ = $1 . '::' . $3;
+        $this->_lastClassname = trim($1);
+        $this->_lastVar = trim($3);
+        $this->referencedVars[trim($1)][] = trim($3);
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 ;
 
 
 base_variable_with_function_calls:
 		base_variable
+    {
+        $$ = $1;
+    }
 	|	function_call
+    {
+        $$ = $1;
+    }
 ;
 
 
 base_variable:
 		reference_variable
+    {
+        $$ = $1;
+    }
 	|	simple_indirect_reference reference_variable
     {
         $$ = $1 . $2;
     }
 	|	static_member
+    {
+        $$ = $1;
+    }
 ;
 	
 reference_variable:
 		reference_variable '[' dim_offset ']'
     {
         if (isset($this->superglobals)) {
-            if ($1 == '$GLOBALS' ||
-                $1 == '$_SERVER' ||
-                $1 == '$_REQUEST' ||
-                $1 == '$_ENV' ||
-                $1 == '$_GET' ||
-                $1 == '$_POST' ||
-                $1 == '$_COOKIE' ||
-                $1 == '$_FILES' ||
-                $1 == '$_SESSION') {
+            $test = trim($1);
+            if ($test == '$GLOBALS' ||
+                $test == '$_SERVER' ||
+                $test == '$_REQUEST' ||
+                $test == '$_ENV' ||
+                $test == '$_GET' ||
+                $test == '$_POST' ||
+                $test == '$_COOKIE' ||
+                $test == '$_FILES' ||
+                $test == '$_SESSION') {
                 $this->_get_var = false;
-                $this->superglobals[] = array('array' => $1,
-                                              'var' => $3);
+                $this->superglobals[] = array('array' => $test,
+                                              'var' => trim($3));
             }
         } else {
-            if ($1 == '$GLOBALS' ||
-                $1 == '$_SERVER' ||
-                $1 == '$_REQUEST' ||
-                $1 == '$_ENV' ||
-                $1 == '$_GET' ||
-                $1 == '$_POST' ||
-                $1 == '$_COOKIE' ||
-                $1 == '$_FILES' ||
-                $1 == '$_SESSION') {
+            $test = trim($1);
+            if ($test == '$GLOBALS' ||
+                $test == '$_SERVER' ||
+                $test == '$_REQUEST' ||
+                $test == '$_ENV' ||
+                $test == '$_GET' ||
+                $test == '$_POST' ||
+                $test == '$_COOKIE' ||
+                $test == '$_FILES' ||
+                $test == '$_SESSION') {
                 $this->_get_var = false;
-                $this->filesuperglobals[] = array('array' => $1,
-                                              'var' => $3);
+                $this->filesuperglobals[] = array('array' => $test,
+                                              'var' => trim($3));
             }
         }
-        $$ = $1 . '[' . $3 . ']';
+        $$ = $1 . $this->yW[$yyTop - 2] . $3 . $this->yW[$yyTop];
     }
 	|	reference_variable '{' expr '}'
     {
-        $$ = $1 . '{' . $3 . '}';
+        $$ = $1 . $this->yW[$yyTop - 2] . $3 . $this->yW[$yyTop];
     }
 	|	compound_variable			
+    {
+        $$ = $1;
+    }
 ;
 	
 
 compound_variable:
 		T_VARIABLE
+    {
+        $$ = $this->yW[$yyTop];
+    }
 	|	'$' '{' expr '}'
     {
-        $$ = '${' . $3 . '}';
+        $$ = $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $3 . $this->yW[$yyTop];
     }
 ;
 
@@ -2121,39 +2345,42 @@ object_property:
 object_dim_list:
 		object_dim_list '[' dim_offset ']'	
     {
-        $$ = $1 . $2 . $3 . $4;
+        $$ = $1 . $this->yW[$yyTop - 2] . $3 . $this->yW[$yyTop];
     }
 	|	object_dim_list '{' expr '}'		
     {
-        $$ = $1 . $2 . $3 . $4;
+        $$ = $1 . $this->yW[$yyTop - 2] . $3 . $this->yW[$yyTop];
     }
 	|	variable_name
-    {
-        $$ = $1;
-    }
 ;
 
 variable_name:
 		T_STRING		
     {
-        $$ = $1;
+        $$ = $this->yW[$yyTop];
     }
 	|	'{' expr '}'	
     {
-        $$ = $2;
+        $$ = $this->yW[$yyTop - 2] . $2 . $this->yW[$yyTop];
     }
 ;
 
 simple_indirect_reference:
 		'$' 
+    {
+        $$ = $this->yW[$yyTop];
+    }
 	|	simple_indirect_reference '$'
     {
-        $$ = $1 . '$';
+        $$ = $1 . $this->yW[$yyTop];
     }
 ;
 
 assignment_list:
 		assignment_list ',' assignment_list_element
+    {
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
+    }
 	|	assignment_list_element
 ;
 
@@ -2161,47 +2388,60 @@ assignment_list:
 assignment_list_element:
 		variable								
 	|	T_LIST '('  assignment_list ')'	
+    {
+        $$ = $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $3 . $this->yW[$yyTop];
+    }
 	|	/* empty */							
+    {
+        $$ = '';
+    }
 ;
 
 
 array_pair_list:
 		/* empty */ 
+    {
+        $$ = '';
+    }
 	|	non_empty_array_pair_list possible_comma
     {
-        $$ = $1;
+        $$ = $1 . $2;
     }
 ;
 
 non_empty_array_pair_list:
 		non_empty_array_pair_list ',' expr T_DOUBLE_ARROW expr
     {
-        $$ = $1 . ",\n" . $3 . ' => '. $5;
+        $$ = $1 . $this->yW[$yyTop - 3] . $3 . $this->yW[$yyTop - 1] . $5;
     }
 	|	non_empty_array_pair_list ',' expr
     {
-        $$ = $1 . ",\n" . $3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	expr T_DOUBLE_ARROW expr
     {
-        $$ = $1 .' => '.$3;
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
     }
 	|	expr 				
+    {
+        $$ = $1;
+    }                 
 	|	non_empty_array_pair_list ',' expr T_DOUBLE_ARROW '&' w_variable 
     {
-        $$ = $1 . ",\n" . $3 . ' => &' . $6;
+        $$ = $1 . $this->yW[$yyTop - 4] . $3 
+        . $this->yW[$yyTop - 2] . $this->yW[$yyTop - 1] . $6;
     }
 	|	non_empty_array_pair_list ',' '&' w_variable 
     {
-        $$ = $1 . ",\n&" . $4;
+        $$ = $1 . $this->yW[$yyTop - 2] . $this->yW[$yyTop - 1] . $4;
     }
 	|	expr T_DOUBLE_ARROW '&' w_variable	
     {
-        $$ = $1 . ' => &' . $4;
+        $$ = $1 . $this->yW[$yyTop - 2] . $this->yW[$yyTop - 1] . $4;
     }
 	|	'&' w_variable
     {
-        $$ = '&' . $2;
+        $$ = $this->yW[$yyTop - 1] . $2;
     }
 ;
 
@@ -2212,43 +2452,43 @@ encaps_list:
     }
 	|	encaps_list T_STRING			
     {
-        $$ = $1 . $2;
+        $$ = $1 . $this->yW[$yyTop];
     }
 	|	encaps_list T_NUM_STRING		
     {
-        $$ = $1 . $2;
+        $$ = $1 . $this->yW[$yyTop];
     }
 	|	encaps_list T_ENCAPSED_AND_WHITESPACE	
     {
-        $$ = $1 . $2;
+        $$ = $1 . $this->yW[$yyTop];
     }
 	|	encaps_list T_CHARACTER 		
     {
-        $$ = $1 . $2;
+        $$ = $1 . $this->yW[$yyTop];
     }
 	|	encaps_list T_BAD_CHARACTER		
     {
-        $$ = $1 . $2;
+        $$ = $1 . $this->yW[$yyTop];
     }
 	|	encaps_list '['		
     {
-        $$ = $1 . $2;
+        $$ = $1 . $this->yW[$yyTop];
     }
 	|	encaps_list ']'		
     {
-        $$ = $1 . $2;
+        $$ = $1 . $this->yW[$yyTop];
     }
 	|	encaps_list '{'		
     {
-        $$ = $1 . $2;
+        $$ = $1 . $this->yW[$yyTop];
     }
 	|	encaps_list '}'		
     {
-        $$ = $1 . $2;
+        $$ = $1 . $this->yW[$yyTop];
     }
 	|	encaps_list T_OBJECT_OPERATOR  
     {
-        $$ = $1 . $2;
+        $$ = $1 . $this->yW[$yyTop];
     }
 	|	/* empty */			
     {
@@ -2260,44 +2500,57 @@ encaps_list:
 
 encaps_var:
 		T_VARIABLE 
+    {
+        $$ = $this->yW[$yyTop];
+    }
 	|	T_VARIABLE '['  encaps_var_offset ']'	
     {
-        $$ = $1 . '[' . $3 . ']';
+        $$ = $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $3 . $this->yW[$yyTop];
     }
 	|	T_VARIABLE T_OBJECT_OPERATOR T_STRING
     {
-        $$ = $1 . $2 . $3;
+        $$ = $this->yW[$yyTop - 2] . $this->yW[$yyTop - 1] . $this->yW[$yyTop];
     }
 	|	T_DOLLAR_OPEN_CURLY_BRACES expr '}' 
     {
-        $$ = $1 . $2 . '}';
+        $$ = $this->yW[$yyTop - 2] . $2 . $this->yW[$yyTop];
     }
 	|	T_DOLLAR_OPEN_CURLY_BRACES T_STRING_VARNAME '[' expr ']' '}' 
     {
-        $$ = $1 . $2 . '[' . $4 . ']}';
+        $$ = $this->yW[$yyTop - 5] . $this->yW[$yyTop - 4] . $this->yW[$yyTop - 3] .
+             $4 . $this->yW[$yyTop - 1] . $this->yW[$yyTop];
     }
 	|	T_CURLY_OPEN variable '}'
     {
-        $$ = $1 . $2 . '}';
+        $$ = $this->yW[$yyTop - 2] . $2 . $this->yW[$yyTop];
     }
 ;
 
 
 encaps_var_offset:
 		T_STRING
+    {
+        $$ = $this->yW[$yyTop];
+    }
 	|	T_NUM_STRING
+    {
+        $$ = $this->yW[$yyTop];
+    }
 	|	T_VARIABLE
+    {
+        $$ = $this->yW[$yyTop];
+    }
 ;
 
 
 internal_functions_in_yacc:
 		T_ISSET '(' isset_variables ')'
     {
-        $$ = 'isset(' . $3 . ')';
+        $$ = $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $3 . $this->yW[$yyTop];
     }
 	|	T_EMPTY '(' variable ')'	
     {
-        $$ = 'empty(' . $3 . ')';
+        $$ = $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $3 . $this->yW[$yyTop];
     }
 	|
     {
@@ -2309,13 +2562,13 @@ internal_functions_in_yacc:
         if ($this->_options['includeContainer']) {
             $container = $this->_options['includeContainer'];
             $include = new $container;
-            $include->setFile($3);
+            $include->setFile(trim($3));
             $include->setType('include');
             $include->setStartLine($this->includeLine);
             $include->setEndLine($this->yyLex->line);
             $include->setDocumentation($this->includeComment);
         } else {
-            $include = array('file' => $3,
+            $include = array('file' => trim($3),
                              'type' => 'include',
                              'startline' => $this->includeLine,
                              'endline' => $this->yyLex->line,
@@ -2339,6 +2592,7 @@ internal_functions_in_yacc:
                 $publisher->$publish($message, $include);
             }
         }
+        $$ = $this->yW[$yyTop - 1] . $3;
     }
 	|
     {
@@ -2350,13 +2604,13 @@ internal_functions_in_yacc:
         if ($this->_options['includeContainer']) {
             $container = $this->_options['includeContainer'];
             $include = new $container;
-            $include->setFile($3);
+            $include->setFile(trim($3));
             $include->setType('include_once');
             $include->setStartLine($this->includeLine);
             $include->setEndLine($this->yyLex->line);
             $include->setDocumentation($this->includeComment);
         } else {
-            $include = array('file' => $3,
+            $include = array('file' => trim($3),
                              'type' => 'include_once',
                              'startline' => $this->includeLine,
                              'endline' => $this->yyLex->line,
@@ -2380,8 +2634,12 @@ internal_functions_in_yacc:
                 $publisher->$publish($message, $include);
             }
         }
+        $$ = $this->yW[$yyTop - 1] . $3;
     }
 	|	T_EVAL '(' expr ')' 	
+    {
+        $$ = $this->yW[$yyTop - 3] . $this->yW[$yyTop - 2] . $3 . $this->yW[$yyTop];
+    }
 	|
     {
         $this->includeLine = $this->yyLex->line;
@@ -2392,13 +2650,13 @@ internal_functions_in_yacc:
         if ($this->_options['includeContainer']) {
             $container = $this->_options['includeContainer'];
             $include = new $container;
-            $include->setFile($3);
+            $include->setFile(trim($3));
             $include->setType('require');
             $include->setStartLine($this->includeLine);
             $include->setEndLine($this->yyLex->line);
             $include->setDocumentation($this->includeComment);
         } else {
-            $include = array('file' => $3,
+            $include = array('file' => trim($3),
                              'type' => 'require',
                              'startline' => $this->includeLine,
                              'endline' => $this->yyLex->line,
@@ -2422,6 +2680,7 @@ internal_functions_in_yacc:
                 $publisher->$publish($message, $include);
             }
         }
+        $$ = $this->yW[$yyTop - 1] . $3;
     }
 	|
     {
@@ -2433,13 +2692,13 @@ internal_functions_in_yacc:
         if ($this->_options['includeContainer']) {
             $container = $this->_options['includeContainer'];
             $include = new $container;
-            $include->setFile($3);
+            $include->setFile(trim($3));
             $include->setType('require_once');
             $include->setStartLine($this->includeLine);
             $include->setEndLine($this->yyLex->line);
             $include->setDocumentation($this->includeComment);
         } else {
-            $include = array('file' => $3,
+            $include = array('file' => trim($3),
                              'type' => 'require_once',
                              'startline' => $this->includeLine,
                              'endline' => $this->yyLex->line,
@@ -2463,18 +2722,24 @@ internal_functions_in_yacc:
                 $publisher->$publish($message, $include);
             }
         }
+        $$ = $this->yW[$yyTop - 1] . $3;
     }
 ;
 
 isset_variables:
 		variable 				
 	|	isset_variables ','  variable 
+    {
+        $$ = $1 . $this->yW[$yyTop - 1] . $3;
+    }
 ;	
 
 class_constant:
 		fully_qualified_class_name T_PAAMAYIM_NEKUDOTAYIM T_STRING
         {
-            $$ = $1 . '::' . $2;
+            $$ = $1 . $this->yW[$yyTop - 1] . $this->yW[$yyTop];
+            $this->_lastConst = $3;
+            $this->_lastClassname = trim($1);
         }
 ;
 
