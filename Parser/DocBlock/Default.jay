@@ -42,7 +42,7 @@ class PHP_Parser_DocBlock_Default {
     
     /**
      * The error stack
-     * @var PHP_Parser_Stack
+     * @var PEAR_ErrorStack
      */
     var $_errorStack;
     
@@ -72,7 +72,7 @@ class PHP_Parser_DocBlock_Default {
     function PHP_Parser_DocBlock_Default($options = array())
     {
         $this->_server = &PHP_Parser_MsgServer::singleton();
-        $this->_errorStack = &PHP_Parser_Stack::singleton('PHP_Parser_Docblock_Default');
+        $this->_errorStack = &PEAR_ErrorStack::singleton('PHP_Parser_Docblock_Default');
         $this->_options['publishConstMessage'] =
         $this->_options['parseInternal'] =
         false;

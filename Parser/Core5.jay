@@ -86,13 +86,13 @@ class PHP_Parser_Structure {
      */
     var $_lastConst = false;
     /**
-     * @var PHP_Parser_Stack
+     * @var PEAR_ErrorStack
      */
     var $_errors;
 
     function PHP_Parser_Structure($options = array())
     {
-        $this->_errors = &PHP_Parser_Stack::singleton('PHP_Parser_Structure');
+        $this->_errors = &PEAR_ErrorStack::singleton('PHP_Parser_Structure');
         $this->_server = &PHP_Parser_MsgServer::singleton();
         $this->_serverId = $this->_server->registerListener($this);
         $this->_options['classContainer'] =
@@ -186,7 +186,7 @@ class PHP_Parser_Structure {
         } else {
             $m = $message;
         }
-        return PHP_Parser_Stack::staticPush('PHP_Parser_Structure',
+        return PEAR_ErrorStack::staticPush('PHP_Parser_Structure',
             PHP_PARSER_STRUCTURE_ERROR_PARSE,
             'error', $params,
             $m);  

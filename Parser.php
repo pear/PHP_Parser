@@ -32,7 +32,7 @@
 require_once 'System.php';
 // this will be used if the package is approved in PEAR 
 //require_once 'Error/Stack.php';
-require_once 'PHP/Parser/Stack.php';
+require_once 'PEAR/ErrorStack.php';
 
 define('PHP_PARSER_ERROR_NODRIVER', 1);
 define('PHP_PARSER_ERROR_NOTINITIALIZED', 2);
@@ -129,7 +129,7 @@ class PHP_Parser {
     
     function raiseError($msg, $code, $params = array())
     {
-        return PHP_Parser_Stack::staticPush('PHP_Parser', $code,
+        return PEAR_ErrorStack::staticPush('PHP_Parser', $code,
             'exception', $params, $msg);
     }
     

@@ -66,11 +66,11 @@ class PHP_Parser_Extendable {
      */
     var $_lastConst = false;
     /**
-     * @var PHP_Parser_Stack
+     * @var PEAR_ErrorStack
      */
     function PHP_Parser_Extendable($options = array())
     {
-        $this->_errors = PHP_Parser_Stack::singleton('PHP_Parser_Extendable');
+        $this->_errors = PEAR_ErrorStack::singleton('PHP_Parser_Extendable');
     }
     
     /**
@@ -92,7 +92,7 @@ class PHP_Parser_Extendable {
         } else {
             $m = $message;
         }
-        return PHP_Parser_Stack::staticPush('PHP_Parser_Extendable',
+        return PEAR_ErrorStack::staticPush('PHP_Parser_Extendable',
             PHP_PARSER_EXTENDABLE_ERROR_PARSE,
             'error', $params,
             $m);  

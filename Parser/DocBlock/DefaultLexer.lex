@@ -249,7 +249,7 @@ define ('YY_EOF' , 258);
     {
         $m = $message;
         $params = array('fatal' => $params);
-        $ret = PHP_Parser_Stack::staticPush('PHP_Parser_Docblock_DefaultLexer',
+        $ret = PEAR_ErrorStack::staticPush('PHP_Parser_Docblock_DefaultLexer',
             PHP_PARSER_DOCBLOCK_DEFAULTLEXER_ERROR,
             'error', $params,
             $m);

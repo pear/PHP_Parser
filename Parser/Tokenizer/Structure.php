@@ -328,7 +328,7 @@ class PHP_Parser_Tokenizer_Structure {
                                         'commenttoken' => $this->lastCommentToken,
                                         'lexer' => $this->_options['documentationLexer'],
                                                       ));
-            if (PHP_Parser_Stack::staticHasErrors()) {
+            if (PEAR_ErrorStack::staticHasErrors()) {
                 $this->lastComment = false;
                 $this->lastCommentLine = -1;
                 $this->lastCommentToken = -1;
