@@ -166,6 +166,13 @@ class PHP_Parser_Tokenizer {
         call_user_func_array(array(&$this, '__construct'), $a);
     }
     
+    
+    function setOptions() {
+        $a = func_get_args();
+        call_user_func_array(array(&$this, '__construct'), $a);
+    }
+    
+    
     function __construct($data, $options = array()) 
     {
         $this->_options['documentationParser'] =
@@ -207,6 +214,9 @@ class PHP_Parser_Tokenizer {
                     $this->_options['publishMessageClass'] = false;
                 }
             }
+        }
+        if (!$data) {
+            return;
         }
         $this->tokens = token_get_all($data);
         $this->N = count($this->tokens);
@@ -446,7 +456,7 @@ class PHP_Parser_Tokenizer {
         if ($GLOBALS['_PHP_PARSER_TOKENIZER']['map'] !== null) {
             return;
         }
-        require_once 'PHP/Parser/Core.php';
+        //require_once 'PHP/Parser/Core.php';
         $start = (token_name(257) == 'UNKNOWN') ? 258 : 257;
         
         $map = array();
