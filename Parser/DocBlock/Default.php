@@ -107,7 +107,7 @@ class PHP_Parser_DocBlock_Default {
     function PHP_Parser_DocBlock_Default($options = array())
     {
         $this->_server = &PHP_Parser_MsgServer::singleton();
-        $this->_errorStack = &PEAR_ErrorStack::singleton('PHP_Parser_Docblock_Default');
+        $this->_errorStack = &PEAR_ErrorStack::singleton('PHP_Parser_DocBlock_Default');
         $this->_options['publishConstMessage'] =
         $this->_options['parseInternal'] =
         false;
@@ -589,7 +589,7 @@ class PHP_Parser_DocBlock_Default {
      * @throws yyException on irrecoverable parse error.
      */
     function yyparse (&$yyLex) {
-//t        $this->debug = true;
+        $this->debug = true;
         $this->yyLex = &$yyLex;
         if (!$this->yyGlobalName) {
             echo "\n\nYou must define \$this->yyGlobalName to match the build option -g _XXXXX \n\n";
@@ -1112,9 +1112,9 @@ class PHP_Parser_DocBlock_Default {
     {
             $tag = $this->_options['completeTagClass'];
             if ($tag) {
-                $this->yyVal = array(new $tag($this->yyVals[0+$yyTop]));
+                $this->yyVal = new $tag($this->yyVals[0+$yyTop]);
             } else {
-                $this->yyVal = array(array('completetag' => $this->yyVals[0+$yyTop]));
+                $this->yyVal = array('completetag' => $this->yyVals[0+$yyTop]);
             }
         }
 
@@ -1122,9 +1122,9 @@ class PHP_Parser_DocBlock_Default {
     {
             $tag = $this->_options['completeTagClass'];
             if ($tag) {
-                $this->yyVal = array(new $tag($this->yyVals[0+$yyTop]));
+                $this->yyVal = new $tag($this->yyVals[0+$yyTop]);
             } else {
-                $this->yyVal = array(array('completetag' => $this->yyVals[0+$yyTop]));
+                $this->yyVal = array('completetag' => $this->yyVals[0+$yyTop]);
             }
         }
 
@@ -1232,9 +1232,9 @@ class PHP_Parser_DocBlock_Default {
     {
             $list = $this->_options['listClass'];
             if ($list) {
-                $this->yyVal = new $list(2);
+                $this->yyVal = new $list($this->yyVals[-1+$yyTop], $this->yyVals[-2+$yyTop]);
             } else {
-                $this->yyVal = array('list' => $this->yyVals[-1+$yyTop]);
+                $this->yyVal = array('list' => $this->yyVals[-1+$yyTop], 'type' => $this->yyVals[-2+$yyTop]);
             }
         }
 
@@ -1282,72 +1282,102 @@ class PHP_Parser_DocBlock_Default {
 
     function _84($yyTop)  					// line 1077 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
-            $this->yyVal = array('list' => $this->yyVals[-1+$yyTop], 'type' => $this->yyVals[-2+$yyTop]);
+            $this->yyVal = $this->yyVals[0+$yyTop];
         }
 
     function _85($yyTop)  					// line 1081 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
-            $this->yyVal = $this->yyVals[-3+$yyTop];
-            $this->yyVal[] = $this->yyVals[-1+$yyTop];
+            $this->yyVal = $this->yyVals[-2+$yyTop];
         }
 
-    function _86($yyTop)  					// line 1089 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _86($yyTop)  					// line 1088 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
-            $this->yyVal = array('list' => $this->yyVals[-1+$yyTop], 'type' => $this->yyVals[-2+$yyTop]);
+            $this->yyVal = $this->yyVals[0+$yyTop];
         }
 
-    function _87($yyTop)  					// line 1093 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _87($yyTop)  					// line 1092 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    {
+            $this->yyVal = $this->yyVals[-2+$yyTop];
+        }
+
+    function _88($yyTop)  					// line 1099 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    {
+            $this->yyVal = array('list' => array($this->yyVals[-1+$yyTop]), 'type' => $this->yyVals[-2+$yyTop]);
+        }
+
+    function _89($yyTop)  					// line 1103 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->yyVals[-3+$yyTop];
-            $this->yyVal[] = $this->yyVals[-1+$yyTop];
+            $this->yyVal['list'][] = $this->yyVals[-1+$yyTop];
         }
 
-    function _88($yyTop)  					// line 1101 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _90($yyTop)  					// line 1110 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    {
+            $this->yyVal = array('list' => array($this->yyVals[-1+$yyTop]), 'type' => $this->yyVals[-2+$yyTop]);
+        }
+
+    function _91($yyTop)  					// line 1114 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    {
+            $this->yyVal = $this->yyVals[-3+$yyTop];
+            $this->yyVal['list'][] = $this->yyVals[-1+$yyTop];
+        }
+
+    function _95($yyTop)  					// line 1129 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    {
+            $this->yyVal = $this->yyVals[0+$yyTop];
+        }
+
+    function _96($yyTop)  					// line 1133 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    {
+            $this->yyVal = $this->yyVals[0+$yyTop];
+        }
+
+    function _97($yyTop)  					// line 1140 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = 'unordered';
         }
 
-    function _89($yyTop)  					// line 1105 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _98($yyTop)  					// line 1144 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = 'ordered';
         }
 
-    function _90($yyTop)  					// line 1109 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _99($yyTop)  					// line 1148 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = 'ordered';
         }
 
-    function _92($yyTop)  					// line 1117 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _100($yyTop)  					// line 1155 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = 'unordered';
         }
 
-    function _93($yyTop)  					// line 1121 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _101($yyTop)  					// line 1159 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = 'ordered';
         }
 
-    function _94($yyTop)  					// line 1125 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _102($yyTop)  					// line 1163 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = 'ordered';
         }
 
-    function _99($yyTop)  					// line 1140 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _103($yyTop)  					// line 1171 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = array($this->yyVals[0+$yyTop]);
         }
 
-    function _100($yyTop)  					// line 1144 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _104($yyTop)  					// line 1175 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = array(str_replace(array('<<', '>>', '/'), array('<', '>', ''), $this->yyVals[0+$yyTop]));
         }
 
-    function _101($yyTop)  					// line 1148 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _105($yyTop)  					// line 1179 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = array($this->yyVals[0+$yyTop]);
         }
 
-    function _102($yyTop)  					// line 1152 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _106($yyTop)  					// line 1183 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             if ($this->yyVals[0+$yyTop] == '{@}') {
                 $this->yyVal = array('{@');
@@ -1358,23 +1388,23 @@ class PHP_Parser_DocBlock_Default {
             }
         }
 
-    function _103($yyTop)  					// line 1162 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _107($yyTop)  					// line 1193 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = array($this->yyVals[0+$yyTop]);
         }
 
-    function _104($yyTop)  					// line 1166 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _108($yyTop)  					// line 1197 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = array($this->yyVals[0+$yyTop]);
         }
 
-    function _105($yyTop)  					// line 1170 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _109($yyTop)  					// line 1201 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->yyVals[-1+$yyTop];
             $this->yyVal[] = $this->yyVals[0+$yyTop];
         }
 
-    function _106($yyTop)  					// line 1175 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _110($yyTop)  					// line 1206 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->yyVals[-1+$yyTop];
             if (is_string($this->yyVal[$index])) {
@@ -1384,13 +1414,13 @@ class PHP_Parser_DocBlock_Default {
             }
         }
 
-    function _107($yyTop)  					// line 1184 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _111($yyTop)  					// line 1215 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->yyVals[-1+$yyTop];
             $this->yyVal[] = $this->yyVals[0+$yyTop];
         }
 
-    function _108($yyTop)  					// line 1189 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _112($yyTop)  					// line 1220 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             if ($this->yyVals[0+$yyTop] == '{@}') {
                 $t = array('{@');
@@ -1407,29 +1437,29 @@ class PHP_Parser_DocBlock_Default {
             }
         }
 
-    function _109($yyTop)  					// line 1205 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _113($yyTop)  					// line 1236 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->yyVals[-1+$yyTop];
             $this->yyVal[] = $this->yyVals[0+$yyTop];
         }
 
-    function _110($yyTop)  					// line 1210 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _114($yyTop)  					// line 1241 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->yyVals[-1+$yyTop];
             $this->yyVal[] = $this->yyVals[0+$yyTop];
         }
 
-    function _112($yyTop)  					// line 1219 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _116($yyTop)  					// line 1250 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $this->yyVals[0+$yyTop]);
         }
 
-    function _113($yyTop)  					// line 1223 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _117($yyTop)  					// line 1254 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = array($this->yyVals[0+$yyTop]);
         }
 
-    function _114($yyTop)  					// line 1227 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _118($yyTop)  					// line 1258 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             if ($this->yyVals[0+$yyTop] == '{@}') {
                 $this->yyVal = array('{@');
@@ -1440,28 +1470,28 @@ class PHP_Parser_DocBlock_Default {
             }
         }
 
-    function _115($yyTop)  					// line 1237 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _119($yyTop)  					// line 1268 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = array($this->yyVals[0+$yyTop]);
         }
 
-    function _116($yyTop)  					// line 1241 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _120($yyTop)  					// line 1272 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = array($this->yyVals[0+$yyTop]);
         }
 
-    function _117($yyTop)  					// line 1245 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _121($yyTop)  					// line 1276 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = array($this->yyVals[0+$yyTop]);
         }
 
-    function _118($yyTop)  					// line 1249 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _122($yyTop)  					// line 1280 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->yyVals[-1+$yyTop];
             $this->yyVal[] = $this->yyVals[0+$yyTop];
         }
 
-    function _119($yyTop)  					// line 1254 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _123($yyTop)  					// line 1285 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->yyVals[-1+$yyTop];
             $index = count($this->yyVal) - 1;
@@ -1472,13 +1502,13 @@ class PHP_Parser_DocBlock_Default {
             }
         }
 
-    function _120($yyTop)  					// line 1264 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _124($yyTop)  					// line 1295 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->yyVals[-1+$yyTop];
             $this->yyVal[] = $this->yyVals[0+$yyTop];
         }
 
-    function _121($yyTop)  					// line 1269 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _125($yyTop)  					// line 1300 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             if ($this->yyVals[0+$yyTop] == '{@}') {
                 $t = array('{@');
@@ -1496,7 +1526,7 @@ class PHP_Parser_DocBlock_Default {
             }
         }
 
-    function _122($yyTop)  					// line 1286 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _126($yyTop)  					// line 1317 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->yyVals[-1+$yyTop];
             $index = count($this->yyVal) - 1;
@@ -1507,39 +1537,39 @@ class PHP_Parser_DocBlock_Default {
             }
         }
 
-    function _123($yyTop)  					// line 1296 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _127($yyTop)  					// line 1327 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->yyVals[-1+$yyTop];
             $this->yyVal[] = $this->yyVals[0+$yyTop];
         }
 
-    function _124($yyTop)  					// line 1301 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _128($yyTop)  					// line 1332 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->yyVals[-1+$yyTop];
             $this->yyVal[] = $this->yyVals[0+$yyTop];
         }
 
-    function _125($yyTop)  					// line 1309 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _129($yyTop)  					// line 1340 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = array('list' => $this->yyVals[-1+$yyTop], 'type' => $this->yyVals[-2+$yyTop]);
         }
 
-    function _126($yyTop)  					// line 1316 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _130($yyTop)  					// line 1347 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = array('list' => $this->yyVals[-1+$yyTop], 'type' => $this->yyVals[-2+$yyTop]);
         }
 
-    function _127($yyTop)  					// line 1323 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _131($yyTop)  					// line 1354 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->_parseInlineTag($this->yyVals[-2+$yyTop], $this->yyVals[-1+$yyTop]);
         }
 
-    function _128($yyTop)  					// line 1327 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _132($yyTop)  					// line 1358 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->_parseInlineTag($this->yyVals[-1+$yyTop], array());
         }
 
-    function _129($yyTop)  					// line 1334 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _133($yyTop)  					// line 1365 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             if ($this->_options['parseInternal']) {
                 $this->yyVal = $this->yyVals[-1+$yyTop];
@@ -1548,7 +1578,7 @@ class PHP_Parser_DocBlock_Default {
             }
         }
 
-    function _130($yyTop)  					// line 1345 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _134($yyTop)  					// line 1376 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             if ($this->_options['parseInternal']) {
                 $this->yyVal = $this->yyVals[-1+$yyTop];
@@ -1556,13 +1586,13 @@ class PHP_Parser_DocBlock_Default {
                 $this->yyVal = '';
             }
         }
-					// line 1560 "-"
+					// line 1590 "-"
 
-					// line 1353 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+					// line 1384 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
 
     /**#@-*/
 }
-					// line 1566 "-"
+					// line 1596 "-"
 
   $GLOBALS['_PHP_PARSER_DOCBLOCK_DEFAULT']['yyLhs']  = array(              -1,
     0,    0,    0,    0,    0,    0,    3,    2,    2,    2,
@@ -1573,11 +1603,12 @@ class PHP_Parser_DocBlock_Default {
     6,    7,    7,    7,    7,    7,    7,    7,   12,   12,
    12,   12,   12,   12,   12,   15,   21,   16,   22,   17,
    23,   18,   24,   19,   25,   20,   26,   27,   27,   28,
-   28,   29,   30,    8,    8,   13,   13,   31,   31,   31,
-   31,   35,   35,   35,   33,   33,   33,   33,   32,   32,
-   32,   32,   32,   32,   32,   32,   32,   32,   32,   32,
-   34,   34,   34,   34,   34,   34,   34,   34,   34,   34,
-   34,   34,   34,   34,   36,   37,    9,    9,   10,   14,
+   28,   29,   30,    8,    8,   13,   13,   31,   31,   32,
+   32,   35,   35,   35,   33,   33,   37,   37,   37,   38,
+   38,   38,   34,   34,   34,   34,   34,   34,   34,   34,
+   34,   34,   34,   34,   36,   36,   36,   36,   36,   36,
+   36,   36,   36,   36,   36,   36,   36,   36,   39,   40,
+    9,    9,   10,   14,
   );
   $GLOBALS['_PHP_PARSER_DOCBLOCK_DEFAULT']['yyLen'] = array(           2,
     1,    2,    3,    2,    2,    1,    2,    1,    2,    3,
@@ -1588,414 +1619,403 @@ class PHP_Parser_DocBlock_Default {
     2,    1,    1,    1,    1,    1,    1,    1,    1,    1,
     1,    1,    1,    1,    1,    3,    3,    3,    3,    3,
     3,    3,    3,    3,    3,    3,    3,    1,    2,    1,
-    2,    3,    3,    3,    4,    3,    4,    1,    1,    1,
-    2,    2,    2,    2,    1,    1,    1,    3,    1,    1,
-    1,    1,    1,    1,    2,    2,    2,    2,    2,    2,
-    1,    1,    1,    1,    1,    1,    1,    2,    2,    2,
-    2,    2,    2,    2,    3,    3,    4,    3,    3,    3,
+    2,    3,    3,    1,    3,    1,    3,    3,    4,    3,
+    4,    1,    1,    1,    1,    2,    1,    1,    1,    2,
+    2,    2,    1,    1,    1,    1,    1,    1,    2,    2,
+    2,    2,    2,    2,    1,    1,    1,    1,    1,    1,
+    1,    2,    2,    2,    2,    2,    2,    2,    3,    3,
+    4,    3,    3,    3,
   );
   $GLOBALS['_PHP_PARSER_DOCBLOCK_DEFAULT']['yyDefRed'] = array(            0,
-   88,   89,   90,    0,    0,    0,    0,    0,    0,    0,
+   97,   98,   99,    0,    0,    0,    0,    0,    0,    0,
     0,   22,   52,   21,   16,   23,    0,    0,    0,    0,
-    0,    6,    0,   14,   17,    0,   19,   20,   53,   54,
-   55,   56,   57,   58,    0,   91,    0,    0,    0,    0,
-    0,    0,   59,   38,   33,   39,    0,   40,   36,    0,
-   34,    0,   37,   60,   61,   62,   63,   64,   65,    0,
-    0,    0,   78,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,   29,   30,   28,   24,   31,    0,    2,    0,
-   25,    0,   27,   32,    5,   15,    0,   99,    0,  100,
-  102,  103,  101,    0,    0,  104,    0,    0,   80,    0,
-    0,    0,    0,    0,    0,    0,   46,   41,   47,   48,
-   44,   42,    0,   45,    0,  111,  112,  114,  115,  113,
-  116,    0,    0,  117,    0,   76,   79,   68,    0,   66,
-   72,   74,   70,  129,    0,  128,    0,    0,    3,    0,
-   92,   93,   94,  105,    0,   96,  106,  108,   97,  109,
-  107,   84,  110,    0,    0,   77,   81,   69,   67,   73,
-   75,   71,  130,   50,    0,  118,  119,  121,  122,  120,
-  123,   86,  124,    0,   82,    0,  127,   85,    0,  125,
-   83,   87,  126,   98,
+    0,    6,    0,   14,   17,   18,   19,   20,   53,   54,
+   55,   56,   57,   58,    0,    0,   95,   96,    0,    0,
+    0,    0,    0,    0,   59,   38,   33,   39,    0,   40,
+   36,    0,   34,   35,   37,   60,   61,   62,   63,   64,
+   65,    0,    0,    0,    0,   78,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,   29,   30,   28,   24,   31,
+    0,    2,    0,   25,   26,   27,   32,    5,   15,    0,
+    0,  103,    0,  104,  106,  107,  105,    0,    0,  108,
+    0,    0,   80,    0,    0,    0,    0,    0,    0,    0,
+   46,   41,   47,   48,   44,   42,   43,   45,    0,    0,
+  115,  116,  118,  119,  117,  120,    0,    0,  121,    0,
+   76,   79,   68,    0,   66,   72,   74,   70,  133,    0,
+  132,    0,    0,    3,   85,    0,  100,  101,  102,  109,
+   92,   93,  110,  112,   94,  113,  111,   88,  114,    0,
+    0,   77,   81,   69,   67,   73,   75,   71,  134,   50,
+   87,    0,  122,  123,  125,  126,  124,  127,   90,  128,
+    0,   82,    0,  131,   89,  129,   83,   91,  130,
   );
   $GLOBALS['_PHP_PARSER_DOCBLOCK_DEFAULT']['yyDgoto']  = array(            20,
-   64,   22,   80,   23,   65,   24,   25,   26,   27,   28,
-   50,   51,   52,   53,   29,   30,   31,   32,   33,   34,
-   54,   55,   56,   57,   58,   59,   62,   98,   63,   99,
-   35,   94,  152,  122,   95,   96,  124,
+   67,   22,   83,   23,   68,   24,   25,   26,   27,   28,
+   52,   53,   54,   55,   29,   30,   31,   32,   33,   34,
+   56,   57,   58,   59,   60,   61,   65,  102,   66,  103,
+   35,   62,   36,   98,  158,  127,   37,   99,  100,  129,
   );
-  $GLOBALS['_PHP_PARSER_DOCBLOCK_DEFAULT']['yySindex'] = array(          387,
-    0,    0,    0,  210,  716,   13,  753,  753,  753,  753,
-  753,    0,    0,    0,    0,    0,  753,   30,  112,    0,
-  278,    0,   71,    0,    0,  210,    0,    0,    0,    0,
-    0,    0,    0,    0,  848,    0,  129,  716,  716,  716,
-  716,  716,    0,    0,    0,    0,  187,    0,    0,  424,
-    0,  210,    0,    0,    0,    0,    0,    0,    0,  818,
-  753,  119,    0,  461,   28,   31,  -14,   85,  193,  131,
-  753,  194,    0,    0,    0,    0,    0,  753,    0,   74,
-    0,  210,    0,    0,    0,    0,  848,    0,  238,    0,
-    0,    0,    0,   69,  848,    0,  716,  162,    0,  494,
-  531,  568,  605,  642,  107,  147,    0,    0,    0,    0,
-    0,    0,  210,    0,  818,    0,    0,    0,    0,    0,
-    0,   35,  818,    0,   33,    0,    0,    0,  753,    0,
-    0,    0,    0,    0,  165,    0,  170,  165,    0,   69,
-    0,    0,    0,    0,  209,    0,    0,    0,    0,    0,
-    0,    0,    0,   69,  679,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,   35,    0,    0,    0,    0,    0,
-    0,    0,    0,   35,    0,  461,    0,    0,  230,    0,
-    0,    0,    0,    0,
+  $GLOBALS['_PHP_PARSER_DOCBLOCK_DEFAULT']['yySindex'] = array(          349,
+    0,    0,    0,  126,  678,   12,  715,  715,  715,  715,
+  715,    0,    0,    0,    0,    0,  715,   -2,   66,    0,
+  312,    0,   34,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,  183,  794,    0,    0,   28,  678,
+  678,  678,  678,  678,    0,    0,    0,    0,  102,    0,
+    0,  386,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,  215,  764,  715,   95,    0,  423,   10,   69,   -5,
+  116,   43,  153,  715,  128,    0,    0,    0,    0,    0,
+  715,    0,  190,    0,    0,    0,    0,    0,    0,  222,
+  794,    0,  144,    0,    0,    0,    0,   30,  794,    0,
+  678,  152,    0,  456,  493,  530,  567,  604,   73,  118,
+    0,    0,    0,    0,    0,    0,    0,    0,  232,  764,
+    0,    0,    0,    0,    0,    0,   -4,  764,    0,    6,
+    0,    0,    0,  715,    0,    0,    0,    0,    0,  127,
+    0,  151,  127,    0,    0,   30,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,   30,
+  641,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,   -4,    0,    0,    0,    0,    0,    0,    0,    0,
+   -4,    0,  423,    0,    0,    0,    0,    0,    0,
   );
   $GLOBALS['_PHP_PARSER_DOCBLOCK_DEFAULT']['yyRindex'] = array(            0,
-    0,    0,    0,    0,    0,    0,   36,   99,   82,  101,
-  202,    0,    0,    0,    0,    0,  145,  242,    0,    0,
-  244,    0,    0,    0,    0,  312,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,   63,   89,  138,  123,
+  174,    0,    0,    0,    0,    0,  165,  219,    0,    0,
+  227,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,  275,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,   75,
-    0,  872,    0,    0,    0,    0,    0,    0,    0,    0,
-   97,    0,    0,  773,    0,    0,    0,    0,    0,    0,
-  100,    0,    0,    0,    0,    0,    0,   89,    0,  245,
-    0,  350,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,   60,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,  818,    0,   29,    0,    0,  231,    0,    0,    0,
+    0,    0,    0,   19,    0,    0,    0,    0,    0,    0,
+   22,    0,  229,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,   95,    0,    0,    0,    0,
-    0,    0,  901,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,  246,    0,    0,   56,    0,    0,
-    0,    0,    0,    0,    1,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,   74,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,  789,    0,    0,    0,    0,
-    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,  236,
+    0,    0,   61,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,  735,    0,    0,    0,    0,    0,    0,
   );
   $GLOBALS['_PHP_PARSER_DOCBLOCK_DEFAULT']['yyGindex'] = array(            0,
-    8,   23,    0,  207,  136,  -23,   27,   -7,   55,   -5,
-  222,   83,   88,  149,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,  203,  157,
-  122,  106,   93,   79,   53,  -52,  -96,
+    7,   -3,    0,  188,  197,   -7,  -12,  -18,   32,  -16,
+   48,   49,   14,   90,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,  167,  137,
+    0,    0,  139,  112,  -46,   92,   13,  -11,  -83, -116,
   );
-  $GLOBALS['_PHP_PARSER_DOCBLOCK_DEFAULT']['yyTable'] = array(            86,
-   95,   95,   95,   95,   95,   95,   95,   21,   95,   95,
-   95,  131,   95,   82,   95,   84,   95,   95,   95,   95,
-  129,   95,   95,   61,   95,  173,   95,   95,   95,   95,
-   95,   95,   95,   95,   95,   95,   95,   95,  166,  145,
-  146,  153,   89,   79,   37,   85,   38,   81,   39,  128,
-   40,   41,   42,  175,  130,    7,   82,   11,   84,   49,
-   71,   92,  129,   43,  167,  129,  168,  129,  173,  169,
-   11,   19,  144,  145,  146,   83,   89,  173,    6,    5,
-    7,   86,    8,   51,    9,   10,   11,  153,   11,   93,
-   81,    7,   49,   49,   49,   49,   49,   13,  147,    9,
-  148,  153,  139,   49,  111,   19,   18,   11,   51,   18,
-   51,  132,  123,   92,  120,    5,   11,   11,   83,  129,
-  150,   92,   11,   11,   11,   36,   60,   11,   49,   61,
-   49,   11,  112,   11,   11,   11,  176,  113,  126,   97,
-  163,   93,  121,   66,   67,   68,   69,   87,  151,   93,
-   72,   49,   70,  164,  111,  111,  111,  111,  111,   60,
-   60,   60,   60,   60,  134,  129,  150,  123,   82,  120,
-   84,   60,   97,  115,  123,  123,  170,  120,   11,   11,
-  150,  156,  112,  112,  112,  112,  112,  113,  113,  113,
-  113,  113,  140,  165,  151,    5,  125,  121,  114,  129,
-  154,  174,   81,   87,  171,  121,  135,  177,  151,  111,
-    1,    2,    3,  138,  172,  179,    4,  123,   60,  170,
-  133,   60,   60,   60,   60,   60,  123,  129,  170,   11,
-   83,  136,  178,  137,  115,  184,   11,  112,  141,  142,
-  143,    8,  113,    1,    4,   10,  180,  171,  114,  114,
-  114,  114,  114,  105,  157,    0,  171,  182,   95,  100,
-  101,  102,  103,  104,  127,    0,  183,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,   60,    0,    1,    2,
-    3,    0,    0,    0,    4,    0,   73,    6,    0,    7,
-    0,    8,  149,    9,   10,   11,   74,    0,    0,    0,
-    0,    0,    0,  114,    0,    0,   13,   75,   76,   77,
-   17,   18,   78,   18,   19,    0,    0,    0,  155,    0,
-   18,   18,    0,   18,    0,   18,  149,   18,   18,   18,
-   18,    0,   18,   18,    0,   18,    0,   18,   18,   18,
-   18,   18,   18,   18,   18,   18,   18,   18,   18,   26,
-    0,    0,    0,    0,    0,    0,    0,    0,   26,   26,
-    0,   26,    0,   26,    0,   26,   26,   26,   26,    0,
-   26,   26,    0,   26,    0,   26,   26,   26,   26,   26,
-   26,   26,   26,   26,   26,   26,   26,    1,    2,    3,
-    0,    0,    0,    4,    0,    5,    6,    0,    7,    0,
-    8,    0,    9,   10,   11,   12,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,   13,   14,   15,   16,   17,
-    0,    0,   18,   19,    1,    2,    3,    0,    0,    0,
-    4,    0,    0,   37,    0,   38,    0,   39,    0,   40,
-   41,   42,  106,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,   43,  107,  108,  109,   47,    0,  110,    0,
-   19,    1,    2,    3,    0,    0,    0,    4,    0,   73,
-    6,    0,    7,    0,    8,    0,    9,   10,   11,   74,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,   13,
-   75,   76,   77,   17,    1,    2,    3,   19,    0,    0,
-    4,    0,    0,   37,    0,   38,    0,   39,    0,   40,
-   41,   42,    0,    0,    0,  158,    0,    0,    0,    0,
-    0,    0,   43,  107,  108,  109,   47,    0,  110,    0,
+  $GLOBALS['_PHP_PARSER_DOCBLOCK_DEFAULT']['yyTable'] = array(           173,
+  151,  152,   85,   93,   87,   39,   21,   40,   84,   41,
+  180,   42,   43,   44,  159,   89,   38,   82,    9,   88,
+  136,   11,   64,   96,   45,  174,  182,  175,   74,  134,
+  176,  133,   19,  150,  151,  152,   51,   93,  101,    6,
+  134,    7,    5,    8,  134,    9,   10,   11,   85,   11,
+   87,  128,   86,   11,   84,  180,   11,   11,   13,  153,
+    7,  154,  159,   11,  180,  117,   19,   97,   51,   18,
+  138,   51,   51,   51,   51,   51,  159,  134,   96,  144,
+  179,    5,   49,  115,   11,  156,   96,  104,  105,  106,
+  107,  108,  135,   51,  125,   51,    7,   11,   86,  185,
+  116,   89,   38,  134,   75,   64,  169,   49,  128,   49,
+    5,  126,   11,  186,  131,  128,  128,  117,  117,  117,
+  117,  117,   97,   11,  170,  188,    1,    2,    3,  157,
+   97,   38,   51,  156,  189,  115,  115,  115,  115,  115,
+  183,  118,  137,   63,  147,  148,  149,  156,  161,   11,
+  134,  125,  116,  116,  116,  116,  116,   11,  177,  125,
+  128,  134,  101,   11,   85,  141,   87,  142,  126,  128,
+   84,  162,   11,   91,  117,  178,  126,  157,   63,   63,
+   63,   63,   63,    1,    2,    3,  139,  134,  184,   90,
+   63,  157,  115,  118,  118,  118,  118,  118,   11,   11,
+  120,   11,  146,  177,   69,   70,   71,   72,   11,  116,
+  160,  172,  177,   73,   86,    1,    2,    3,    8,  181,
+  178,  119,    1,    2,    3,   18,    1,  145,    4,  178,
+   12,  132,    1,    2,    3,   10,  109,  171,  163,   63,
+    0,    0,   63,   63,   63,   63,   63,    0,    0,    0,
+  118,   12,   12,  155,   12,    0,   12,   12,   12,    0,
+  130,    0,    0,    0,   12,   12,   12,    0,    0,    0,
+  140,    0,    0,    0,   84,    0,    0,  143,    0,    0,
+    0,    0,    0,   84,   84,    0,   84,  155,   84,    0,
+   84,   84,   84,   84,    0,   84,   84,    0,   84,   63,
+   84,   84,   84,   84,   84,   84,   84,   84,   84,   84,
+   84,   84,    1,    2,    3,    0,    0,    0,    4,    0,
+   76,    6,    0,    7,    0,    8,    0,    9,   10,   11,
+   77,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+   13,   78,   79,   80,   17,    0,   81,   18,   19,    1,
+    2,    3,    0,    0,    0,    4,    0,    5,    6,    0,
+    7,    0,    8,    0,    9,   10,   11,   12,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,   13,   14,   15,
+   16,   17,    0,    0,   18,   19,    1,    2,    3,    0,
+    0,    0,    4,    0,    0,   39,    0,   40,    0,   41,
+    0,   42,   43,   44,  110,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,   45,  111,  112,  113,   49,    0,
+  114,    0,   19,    1,    2,    3,    0,    0,    0,    4,
+    0,   76,    6,    0,    7,    0,    8,    0,    9,   10,
+   11,   77,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,   13,   78,   79,   80,   17,    1,    2,    3,   19,
+    0,    0,    4,    0,    0,   39,    0,   40,    0,   41,
+    0,   42,   43,   44,    0,    0,    0,  164,    0,    0,
+    0,    0,    0,    0,   45,  111,  112,  113,   49,    0,
+  114,    0,   19,    1,    2,    3,    0,    0,    0,    4,
+    0,    0,   39,    0,   40,    0,   41,    0,   42,   43,
+   44,    0,    0,    0,    0,    0,  165,    0,    0,    0,
+    0,   45,  111,  112,  113,   49,    0,  114,    0,   19,
+    1,    2,    3,    0,    0,    0,    4,    0,    0,   39,
+    0,   40,    0,   41,    0,   42,   43,   44,    0,    0,
+    0,    0,    0,    0,    0,  166,    0,    0,   45,  111,
+  112,  113,   49,    0,  114,    0,   19,    1,    2,    3,
+    0,    0,    0,    4,    0,    0,   39,    0,   40,    0,
+   41,    0,   42,   43,   44,    0,    0,    0,    0,    0,
+    0,    0,    0,  167,    0,   45,  111,  112,  113,   49,
+    0,  114,    0,   19,    1,    2,    3,    0,    0,    0,
+    4,    0,    0,   39,    0,   40,    0,   41,    0,   42,
+   43,   44,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,  168,   45,  111,  112,  113,   49,    0,  114,    0,
    19,    1,    2,    3,    0,    0,    0,    4,    0,    0,
-   37,    0,   38,    0,   39,    0,   40,   41,   42,    0,
-    0,    0,    0,    0,  159,    0,    0,    0,    0,   43,
-  107,  108,  109,   47,    0,  110,    0,   19,    1,    2,
-    3,    0,    0,    0,    4,    0,    0,   37,    0,   38,
-    0,   39,    0,   40,   41,   42,    0,    0,    0,    0,
-    0,    0,    0,  160,    0,    0,   43,  107,  108,  109,
-   47,    0,  110,    0,   19,    1,    2,    3,    0,    0,
-    0,    4,    0,    0,   37,    0,   38,    0,   39,    0,
-   40,   41,   42,    0,    0,    0,    0,    0,    0,    0,
-    0,  161,    0,   43,  107,  108,  109,   47,    0,  110,
-    0,   19,    1,    2,    3,    0,    0,    0,    4,    0,
-    0,   37,    0,   38,    0,   39,    0,   40,   41,   42,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,  162,
-   43,  107,  108,  109,   47,    0,  110,    0,   19,    1,
-    2,    3,    0,    0,    0,    4,    0,    0,   37,    0,
-   38,    0,   39,    0,   40,   41,   42,    0,    0,  181,
-    0,    0,    0,    0,    0,    0,    0,   43,  107,  108,
-  109,   47,    0,  110,    0,   19,    1,    2,    3,    0,
-    0,    0,    4,    0,    0,   37,    0,   38,    0,   39,
-    0,   40,   41,   42,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,   43,   44,   45,   46,   47,    0,
-   48,    0,   19,    1,    2,    3,    0,    0,    0,    4,
-    0,    0,    6,    0,    7,    0,    8,    0,    9,   10,
-   11,   12,   12,    0,    0,    0,    0,    0,    0,    0,
-    0,   13,   14,   15,   16,   17,    0,    0,   13,   19,
-    0,    0,    0,   12,   12,    0,   12,    0,   12,   12,
-   12,    0,    0,    0,    0,    0,   12,   12,   12,   13,
-   13,    0,   13,    0,   13,   13,   13,    0,    0,    0,
-    0,  116,   13,   13,   13,   89,    0,   37,    0,   38,
-    0,   39,    0,   40,   41,   42,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,   43,  117,    0,  118,
-    0,   88,  119,    0,   19,   89,    0,    6,    0,    7,
-    0,    8,    0,    9,   10,   11,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,   13,   90,    0,   91,
-   35,   35,    0,   35,   19,   35,    0,   35,   35,   35,
-   35,    0,   35,   35,    0,   35,    0,   35,   35,   35,
-   35,   35,   35,   35,   35,   35,   35,   35,   35,   43,
-   43,    0,   43,    0,   43,    0,   43,   43,   43,   43,
-    0,   43,   43,    0,   43,    0,   43,   43,   43,   43,
-   43,   43,   43,   43,   43,   43,   43,   43,
+   39,    0,   40,    0,   41,    0,   42,   43,   44,    0,
+    0,  187,    0,    0,    0,    0,    0,    0,    0,   45,
+  111,  112,  113,   49,    0,  114,    0,   19,    1,    2,
+    3,    0,    0,    0,    4,    0,    0,   39,    0,   40,
+    0,   41,    0,   42,   43,   44,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,   45,   46,   47,   48,
+   49,    0,   50,    0,   19,    1,    2,    3,    0,    0,
+    0,    4,    0,    0,    6,    0,    7,    0,    8,    0,
+    9,   10,   11,   12,   13,    0,    0,    0,    0,    0,
+    0,    0,    0,   13,   14,   15,   16,   17,    0,    0,
+    0,   19,    0,    0,    0,   13,   13,    0,   13,    0,
+   13,   13,   13,    0,    0,    0,    0,  121,   13,   13,
+   13,   93,    0,   39,    0,   40,    0,   41,    0,   42,
+   43,   44,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,   45,  122,    0,  123,    0,   92,  124,    0,
+   19,   93,    0,    6,    0,    7,    0,    8,    0,    9,
+   10,   11,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,   13,   94,    0,   95,   86,   86,    0,   86,
+   19,   86,    0,   86,   86,   86,   86,    0,   86,   86,
+    0,   86,    0,   86,   86,   86,   86,   86,   86,   86,
+   86,   86,   86,   86,   86,
   );
- $GLOBALS['_PHP_PARSER_DOCBLOCK_DEFAULT']['yyCheck'] = array(            23,
-    0,    1,    2,    3,    4,    5,    6,    0,    8,    9,
-   10,   26,   12,   21,   14,   21,   16,   17,   18,   19,
-   35,   21,   22,   11,   24,  122,   26,   27,   28,   29,
-   30,   31,   32,   33,   34,   35,   36,   37,    4,    5,
-    6,   94,    8,   21,   10,   23,   12,   21,   14,   22,
-   16,   17,   18,   21,   24,    0,   64,   22,   64,    5,
-   31,   35,   35,   29,   30,   35,   32,   35,  165,   35,
-   35,   37,    4,    5,    6,   21,    8,  174,   10,    9,
-   12,  105,   14,    9,   16,   17,   18,  140,    0,   35,
-   64,   36,   38,   39,   40,   41,   42,   29,   30,    0,
-   32,  154,   80,    9,   50,   37,   36,   26,   34,   36,
-   36,   27,   60,   87,   60,    9,   35,   21,   64,   35,
-   94,   95,   24,   35,   36,    4,    5,   27,   34,   11,
-   36,   35,   50,   35,   35,   35,  129,   50,   20,   11,
-   34,   87,   60,    8,    9,   10,   11,   26,   94,   95,
-   39,   97,   17,    7,  100,  101,  102,  103,  104,   38,
-   39,   40,   41,   42,   34,   35,  140,  115,  176,  115,
-  176,   50,   11,   52,  122,  123,  122,  123,   34,   35,
-  154,   20,  100,  101,  102,  103,  104,  100,  101,  102,
-  103,  104,   87,  115,  140,    9,   61,  115,   50,   35,
-   95,  123,  176,   82,  122,  123,   71,   38,  154,  155,
-    1,    2,    3,   78,  122,    7,    7,  165,   97,  165,
-   28,  100,  101,  102,  103,  104,  174,   35,  174,   28,
-  176,   38,  140,   40,  113,    6,   35,  155,    1,    2,
-    3,    0,  155,    0,    0,    0,  154,  165,  100,  101,
-  102,  103,  104,   47,   98,   -1,  174,  165,  258,   38,
-   39,   40,   41,   42,   62,   -1,  174,   -1,   -1,   -1,
-   -1,   -1,   -1,   -1,   -1,   -1,  155,   -1,    1,    2,
-    3,   -1,   -1,   -1,    7,   -1,    9,   10,   -1,   12,
-   -1,   14,  258,   16,   17,   18,   19,   -1,   -1,   -1,
-   -1,   -1,   -1,  155,   -1,   -1,   29,   30,   31,   32,
-   33,    0,   35,   36,   37,   -1,   -1,   -1,   97,   -1,
-    9,   10,   -1,   12,   -1,   14,  258,   16,   17,   18,
-   19,   -1,   21,   22,   -1,   24,   -1,   26,   27,   28,
-   29,   30,   31,   32,   33,   34,   35,   36,   37,    0,
-   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,    9,   10,
-   -1,   12,   -1,   14,   -1,   16,   17,   18,   19,   -1,
-   21,   22,   -1,   24,   -1,   26,   27,   28,   29,   30,
-   31,   32,   33,   34,   35,   36,   37,    1,    2,    3,
-   -1,   -1,   -1,    7,   -1,    9,   10,   -1,   12,   -1,
-   14,   -1,   16,   17,   18,   19,   -1,   -1,   -1,   -1,
-   -1,   -1,   -1,   -1,   -1,   29,   30,   31,   32,   33,
-   -1,   -1,   36,   37,    1,    2,    3,   -1,   -1,   -1,
-    7,   -1,   -1,   10,   -1,   12,   -1,   14,   -1,   16,
-   17,   18,   19,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-   -1,   -1,   29,   30,   31,   32,   33,   -1,   35,   -1,
-   37,    1,    2,    3,   -1,   -1,   -1,    7,   -1,    9,
-   10,   -1,   12,   -1,   14,   -1,   16,   17,   18,   19,
-   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   29,
-   30,   31,   32,   33,    1,    2,    3,   37,   -1,   -1,
-    7,   -1,   -1,   10,   -1,   12,   -1,   14,   -1,   16,
-   17,   18,   -1,   -1,   -1,   22,   -1,   -1,   -1,   -1,
-   -1,   -1,   29,   30,   31,   32,   33,   -1,   35,   -1,
-   37,    1,    2,    3,   -1,   -1,   -1,    7,   -1,   -1,
-   10,   -1,   12,   -1,   14,   -1,   16,   17,   18,   -1,
-   -1,   -1,   -1,   -1,   24,   -1,   -1,   -1,   -1,   29,
-   30,   31,   32,   33,   -1,   35,   -1,   37,    1,    2,
-    3,   -1,   -1,   -1,    7,   -1,   -1,   10,   -1,   12,
-   -1,   14,   -1,   16,   17,   18,   -1,   -1,   -1,   -1,
-   -1,   -1,   -1,   26,   -1,   -1,   29,   30,   31,   32,
-   33,   -1,   35,   -1,   37,    1,    2,    3,   -1,   -1,
-   -1,    7,   -1,   -1,   10,   -1,   12,   -1,   14,   -1,
-   16,   17,   18,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-   -1,   27,   -1,   29,   30,   31,   32,   33,   -1,   35,
-   -1,   37,    1,    2,    3,   -1,   -1,   -1,    7,   -1,
-   -1,   10,   -1,   12,   -1,   14,   -1,   16,   17,   18,
-   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   28,
-   29,   30,   31,   32,   33,   -1,   35,   -1,   37,    1,
-    2,    3,   -1,   -1,   -1,    7,   -1,   -1,   10,   -1,
-   12,   -1,   14,   -1,   16,   17,   18,   -1,   -1,   21,
+ $GLOBALS['_PHP_PARSER_DOCBLOCK_DEFAULT']['yyCheck'] = array(             4,
+    5,    6,   21,    8,   21,   10,    0,   12,   21,   14,
+  127,   16,   17,   18,   98,   23,    4,   21,    0,   23,
+   26,    0,   11,   36,   29,   30,   21,   32,   31,   35,
+   35,   22,   37,    4,    5,    6,    5,    8,   11,   10,
+   35,   12,    9,   14,   35,   16,   17,   18,   67,   21,
+   67,   63,   21,   35,   67,  172,   35,   36,   29,   30,
+    0,   32,  146,   35,  181,   52,   37,   36,    9,   36,
+   28,   40,   41,   42,   43,   44,  160,   35,   91,   83,
+  127,    9,    9,   52,   22,   98,   99,   40,   41,   42,
+   43,   44,   24,   34,   63,   36,   36,   35,   67,  146,
+   52,  109,   90,   35,   39,   11,   34,   34,  120,   36,
+    9,   63,   24,  160,   20,  127,  128,  104,  105,  106,
+  107,  108,   91,   35,    7,  172,    1,    2,    3,   98,
+   99,  119,  101,  146,  181,  104,  105,  106,  107,  108,
+  134,   52,   27,    5,    1,    2,    3,  160,  101,   27,
+   35,  120,  104,  105,  106,  107,  108,   35,  127,  128,
+  172,   35,   11,   26,  183,   38,  183,   40,  120,  181,
+  183,   20,   35,   35,  161,  127,  128,  146,   40,   41,
+   42,   43,   44,    1,    2,    3,   34,   35,   38,    7,
+   52,  160,  161,  104,  105,  106,  107,  108,   34,   35,
+   62,   28,   91,  172,    8,    9,   10,   11,   35,  161,
+   99,  120,  181,   17,  183,    1,    2,    3,    0,  128,
+  172,    7,    1,    2,    3,   36,    0,    6,    0,  181,
+    0,   65,    1,    2,    3,    0,   49,    6,  102,  101,
+   -1,   -1,  104,  105,  106,  107,  108,   -1,   -1,   -1,
+  161,   21,   22,  258,   24,   -1,   26,   27,   28,   -1,
+   64,   -1,   -1,   -1,   34,   35,   36,   -1,   -1,   -1,
+   74,   -1,   -1,   -1,    0,   -1,   -1,   81,   -1,   -1,
+   -1,   -1,   -1,    9,   10,   -1,   12,  258,   14,   -1,
+   16,   17,   18,   19,   -1,   21,   22,   -1,   24,  161,
+   26,   27,   28,   29,   30,   31,   32,   33,   34,   35,
+   36,   37,    1,    2,    3,   -1,   -1,   -1,    7,   -1,
+    9,   10,   -1,   12,   -1,   14,   -1,   16,   17,   18,
+   19,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   29,   30,   31,   32,   33,   -1,   35,   36,   37,    1,
+    2,    3,   -1,   -1,   -1,    7,   -1,    9,   10,   -1,
+   12,   -1,   14,   -1,   16,   17,   18,   19,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   29,   30,   31,
-   32,   33,   -1,   35,   -1,   37,    1,    2,    3,   -1,
+   32,   33,   -1,   -1,   36,   37,    1,    2,    3,   -1,
    -1,   -1,    7,   -1,   -1,   10,   -1,   12,   -1,   14,
-   -1,   16,   17,   18,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   16,   17,   18,   19,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   29,   30,   31,   32,   33,   -1,
+   35,   -1,   37,    1,    2,    3,   -1,   -1,   -1,    7,
+   -1,    9,   10,   -1,   12,   -1,   14,   -1,   16,   17,
+   18,   19,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   29,   30,   31,   32,   33,    1,    2,    3,   37,
+   -1,   -1,    7,   -1,   -1,   10,   -1,   12,   -1,   14,
+   -1,   16,   17,   18,   -1,   -1,   -1,   22,   -1,   -1,
    -1,   -1,   -1,   -1,   29,   30,   31,   32,   33,   -1,
    35,   -1,   37,    1,    2,    3,   -1,   -1,   -1,    7,
    -1,   -1,   10,   -1,   12,   -1,   14,   -1,   16,   17,
-   18,   19,    0,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-   -1,   29,   30,   31,   32,   33,   -1,   -1,    0,   37,
-   -1,   -1,   -1,   21,   22,   -1,   24,   -1,   26,   27,
-   28,   -1,   -1,   -1,   -1,   -1,   34,   35,   36,   21,
-   22,   -1,   24,   -1,   26,   27,   28,   -1,   -1,   -1,
-   -1,    4,   34,   35,   36,    8,   -1,   10,   -1,   12,
+   18,   -1,   -1,   -1,   -1,   -1,   24,   -1,   -1,   -1,
+   -1,   29,   30,   31,   32,   33,   -1,   35,   -1,   37,
+    1,    2,    3,   -1,   -1,   -1,    7,   -1,   -1,   10,
+   -1,   12,   -1,   14,   -1,   16,   17,   18,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   26,   -1,   -1,   29,   30,
+   31,   32,   33,   -1,   35,   -1,   37,    1,    2,    3,
+   -1,   -1,   -1,    7,   -1,   -1,   10,   -1,   12,   -1,
+   14,   -1,   16,   17,   18,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   27,   -1,   29,   30,   31,   32,   33,
+   -1,   35,   -1,   37,    1,    2,    3,   -1,   -1,   -1,
+    7,   -1,   -1,   10,   -1,   12,   -1,   14,   -1,   16,
+   17,   18,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   28,   29,   30,   31,   32,   33,   -1,   35,   -1,
+   37,    1,    2,    3,   -1,   -1,   -1,    7,   -1,   -1,
+   10,   -1,   12,   -1,   14,   -1,   16,   17,   18,   -1,
+   -1,   21,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   29,
+   30,   31,   32,   33,   -1,   35,   -1,   37,    1,    2,
+    3,   -1,   -1,   -1,    7,   -1,   -1,   10,   -1,   12,
    -1,   14,   -1,   16,   17,   18,   -1,   -1,   -1,   -1,
-   -1,   -1,   -1,   -1,   -1,   -1,   29,   30,   -1,   32,
-   -1,    4,   35,   -1,   37,    8,   -1,   10,   -1,   12,
-   -1,   14,   -1,   16,   17,   18,   -1,   -1,   -1,   -1,
-   -1,   -1,   -1,   -1,   -1,   -1,   29,   30,   -1,   32,
-    9,   10,   -1,   12,   37,   14,   -1,   16,   17,   18,
-   19,   -1,   21,   22,   -1,   24,   -1,   26,   27,   28,
-   29,   30,   31,   32,   33,   34,   35,   36,   37,    9,
-   10,   -1,   12,   -1,   14,   -1,   16,   17,   18,   19,
-   -1,   21,   22,   -1,   24,   -1,   26,   27,   28,   29,
-   30,   31,   32,   33,   34,   35,   36,   37,
+   -1,   -1,   -1,   -1,   -1,   -1,   29,   30,   31,   32,
+   33,   -1,   35,   -1,   37,    1,    2,    3,   -1,   -1,
+   -1,    7,   -1,   -1,   10,   -1,   12,   -1,   14,   -1,
+   16,   17,   18,   19,    0,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   29,   30,   31,   32,   33,   -1,   -1,
+   -1,   37,   -1,   -1,   -1,   21,   22,   -1,   24,   -1,
+   26,   27,   28,   -1,   -1,   -1,   -1,    4,   34,   35,
+   36,    8,   -1,   10,   -1,   12,   -1,   14,   -1,   16,
+   17,   18,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   29,   30,   -1,   32,   -1,    4,   35,   -1,
+   37,    8,   -1,   10,   -1,   12,   -1,   14,   -1,   16,
+   17,   18,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   29,   30,   -1,   32,    9,   10,   -1,   12,
+   37,   14,   -1,   16,   17,   18,   19,   -1,   21,   22,
+   -1,   24,   -1,   26,   27,   28,   29,   30,   31,   32,
+   33,   34,   35,   36,   37,
   );
 
   $GLOBALS['_PHP_PARSER_DOCBLOCK_DEFAULT']['yyFinal'] = 20;
-//t$GLOBALS['_PHP_PARSER_DOCBLOCK_DEFAULT']['yyRule'] = array(
-//t   "\$accept :  docblock ",
-//t    "docblock :  paragraph ",
-//t    "docblock :  paragraph   tags ",
-//t    "docblock :  paragraph   text   tags ",
-//t    "docblock :  paragraph   text ",
-//t    "docblock :  paragraphs_with_p   tags ",
-//t    "docblock :  tags ",
-//t    "text :  T_DOUBLE_NL   paragraphs ",
-//t    "tags :  T_TAG ",
-//t    "tags :  T_TAG   T_TEXT ",
-//t    "tags :  T_TAG   T_TEXT   paragraphs ",
-//t    "paragraphs :",
-//t    "paragraphs :  paragraph ",
-//t    "paragraphs :  paragraphs   T_DOUBLE_NL   paragraph ",
-//t    "paragraphs_with_p :  paragraph_with_p ",
-//t    "paragraphs_with_p :  paragraphs_with_p   paragraph_with_p ",
-//t    "paragraph :  T_TEXT ",
-//t    "paragraph :  htmltag ",
-//t    "paragraph :  simplelist ",
-//t    "paragraph :  inlinetag ",
-//t    "paragraph :  internaltag ",
-//t    "paragraph :  T_ESCAPED_TAG ",
-//t    "paragraph :  T_CLOSE_P ",
-//t    "paragraph :  T_INLINE_ESC ",
-//t    "paragraph :  paragraph   T_TEXT ",
-//t    "paragraph :  paragraph   htmltag ",
-//t    "paragraph :  paragraph   simplelist ",
-//t    "paragraph :  paragraph   inlinetag ",
-//t    "paragraph :  paragraph   T_ESCAPED_TAG ",
-//t    "paragraph :  paragraph   T_OPEN_P ",
-//t    "paragraph :  paragraph   T_CLOSE_P ",
-//t    "paragraph :  paragraph   T_INLINE_ESC ",
-//t    "paragraph :  paragraph   internaltag ",
-//t    "text_expr_with_p :  T_TEXT ",
-//t    "text_expr_with_p :  htmltag_with_p ",
-//t    "text_expr_with_p :  simplelist_with_p ",
-//t    "text_expr_with_p :  inlinetag ",
-//t    "text_expr_with_p :  internaltag_with_p ",
-//t    "text_expr_with_p :  T_ESCAPED_TAG ",
-//t    "text_expr_with_p :  T_INLINE_ESC ",
-//t    "text_expr_with_p :  T_DOUBLE_NL ",
-//t    "text_expr_with_p :  text_expr_with_p   T_TEXT ",
-//t    "text_expr_with_p :  text_expr_with_p   htmltag_with_p ",
-//t    "text_expr_with_p :  text_expr_with_p   simplelist_with_p ",
-//t    "text_expr_with_p :  text_expr_with_p   inlinetag ",
-//t    "text_expr_with_p :  text_expr_with_p   internaltag_with_p ",
-//t    "text_expr_with_p :  text_expr_with_p   T_ESCAPED_TAG ",
-//t    "text_expr_with_p :  text_expr_with_p   T_INLINE_ESC ",
-//t    "text_expr_with_p :  text_expr_with_p   T_DOUBLE_NL ",
-//t    "paragraph_with_p :  T_OPEN_P   text_expr_with_p   T_CLOSE_P ",
-//t    "paragraph_with_p :  T_OPEN_P   text_expr_with_p   T_CLOSE_P   T_WHITESPACE ",
-//t    "paragraph_with_p :  T_OPEN_P   text_expr_with_p ",
-//t    "htmltag :  T_XML_TAG ",
-//t    "htmltag :  btag ",
-//t    "htmltag :  codetag ",
-//t    "htmltag :  samptag ",
-//t    "htmltag :  kbdtag ",
-//t    "htmltag :  vartag ",
-//t    "htmltag :  htmllist ",
-//t    "htmltag_with_p :  T_XML_TAG ",
-//t    "htmltag_with_p :  btag_with_p ",
-//t    "htmltag_with_p :  codetag_with_p ",
-//t    "htmltag_with_p :  samptag_with_p ",
-//t    "htmltag_with_p :  kbdtag_with_p ",
-//t    "htmltag_with_p :  vartag_with_p ",
-//t    "htmltag_with_p :  htmllist_with_p ",
-//t    "btag :  T_OPEN_B   paragraphs   T_CLOSE_B ",
-//t    "btag_with_p :  T_OPEN_B   text_expr_with_p   T_CLOSE_B ",
-//t    "codetag :  T_OPEN_CODE   paragraphs   T_CLOSE_CODE ",
-//t    "codetag_with_p :  T_OPEN_CODE   text_expr_with_p   T_CLOSE_CODE ",
-//t    "samptag :  T_OPEN_SAMP   paragraphs   T_CLOSE_SAMP ",
-//t    "samptag_with_p :  T_OPEN_SAMP   text_expr_with_p   T_CLOSE_SAMP ",
-//t    "kbdtag :  T_OPEN_KBD   paragraphs   T_CLOSE_KBD ",
-//t    "kbdtag_with_p :  T_OPEN_KBD   text_expr_with_p   T_CLOSE_KBD ",
-//t    "vartag :  T_OPEN_VAR   paragraphs   T_CLOSE_VAR ",
-//t    "vartag_with_p :  T_OPEN_VAR   text_expr_with_p   T_CLOSE_VAR ",
-//t    "htmllist :  T_OPEN_LIST   listitems   T_CLOSE_LIST ",
-//t    "htmllist_with_p :  T_OPEN_LIST   listitems_with_p   T_CLOSE_LIST ",
-//t    "listitems :  listitem ",
-//t    "listitems :  listitems   listitem ",
-//t    "listitems_with_p :  listitem_with_p ",
-//t    "listitems_with_p :  listitems_with_p   listitem_with_p ",
-//t    "listitem :  T_OPEN_LI   paragraphs   T_CLOSE_LI ",
-//t    "listitem_with_p :  T_OPEN_LI   text_expr_with_p   T_CLOSE_LI ",
-//t    "simplelist :  bullet   simplelist_contents   simplelistend ",
-//t    "simplelist :  simplelist   bullet   simplelist_contents   simplelistend ",
-//t    "simplelist_with_p :  bullet   simplelist_contents_with_p   simplelistend ",
-//t    "simplelist_with_p :  simplelist_with_p   bullet   simplelist_contents_with_p   simplelistend ",
-//t    "bullet :  T_BULLET ",
-//t    "bullet :  T_NBULLET ",
-//t    "bullet :  T_NDBULLET ",
-//t    "bullet :  T_WHITESPACE   bullet ",
-//t    "nested_bullet :  T_NESTED_WHITESPACE   T_BULLET ",
-//t    "nested_bullet :  T_NESTED_WHITESPACE   T_NBULLET ",
-//t    "nested_bullet :  T_NESTED_WHITESPACE   T_NDBULLET ",
-//t    "simplelistend :  T_SIMPLELIST_NL ",
-//t    "simplelistend :  T_SIMPLELIST_END ",
-//t    "simplelistend :  EOF ",
-//t    "simplelistend :  T_SIMPLELIST_NL   T_WHITESPACE   T_SIMPLELIST_END ",
-//t    "simplelist_contents :  T_SIMPLELIST ",
-//t    "simplelist_contents :  T_ESCAPED_TAG ",
-//t    "simplelist_contents :  inlinetag ",
-//t    "simplelist_contents :  T_INLINE_ESC ",
-//t    "simplelist_contents :  htmltag ",
-//t    "simplelist_contents :  nested_simplelist ",
-//t    "simplelist_contents :  simplelist_contents   T_SIMPLELIST ",
-//t    "simplelist_contents :  simplelist_contents   T_ESCAPED_TAG ",
-//t    "simplelist_contents :  simplelist_contents   inlinetag ",
-//t    "simplelist_contents :  simplelist_contents   T_INLINE_ESC ",
-//t    "simplelist_contents :  simplelist_contents   htmltag ",
-//t    "simplelist_contents :  simplelist_contents   nested_simplelist ",
-//t    "simplelist_contents_with_p :  T_SIMPLELIST ",
-//t    "simplelist_contents_with_p :  T_ESCAPED_TAG ",
-//t    "simplelist_contents_with_p :  inlinetag ",
-//t    "simplelist_contents_with_p :  T_INLINE_ESC ",
-//t    "simplelist_contents_with_p :  T_DOUBLE_NL ",
-//t    "simplelist_contents_with_p :  htmltag_with_p ",
-//t    "simplelist_contents_with_p :  nested_simplelist_with_p ",
-//t    "simplelist_contents_with_p :  simplelist_contents_with_p   T_SIMPLELIST ",
-//t    "simplelist_contents_with_p :  simplelist_contents_with_p   T_ESCAPED_TAG ",
-//t    "simplelist_contents_with_p :  simplelist_contents_with_p   inlinetag ",
-//t    "simplelist_contents_with_p :  simplelist_contents_with_p   T_INLINE_ESC ",
-//t    "simplelist_contents_with_p :  simplelist_contents_with_p   T_DOUBLE_NL ",
-//t    "simplelist_contents_with_p :  simplelist_contents_with_p   htmltag_with_p ",
-//t    "simplelist_contents_with_p :  simplelist_contents_with_p   nested_simplelist_with_p ",
-//t    "nested_simplelist :  nested_bullet   simplelist_contents   simplelistend ",
-//t    "nested_simplelist_with_p :  nested_bullet   simplelist_contents_with_p   simplelistend ",
-//t    "inlinetag :  T_INLINE_TAG_OPEN   T_INLINE_TAG_NAME   T_INLINE_TAG_CONTENTS   T_INLINE_TAG_CLOSE ",
-//t    "inlinetag :  T_INLINE_TAG_OPEN   T_INLINE_TAG_NAME   T_INLINE_TAG_CLOSE ",
-//t    "internaltag :  T_INTERNAL   paragraphs   T_ENDINTERNAL ",
-//t    "internaltag_with_p :  T_INTERNAL   paragraphs_with_p   T_ENDINTERNAL ",
-//t  );
+$GLOBALS['_PHP_PARSER_DOCBLOCK_DEFAULT']['yyRule'] = array(
+   "\$accept :  docblock ",
+    "docblock :  paragraph ",
+    "docblock :  paragraph   tags ",
+    "docblock :  paragraph   text   tags ",
+    "docblock :  paragraph   text ",
+    "docblock :  paragraphs_with_p   tags ",
+    "docblock :  tags ",
+    "text :  T_DOUBLE_NL   paragraphs ",
+    "tags :  T_TAG ",
+    "tags :  T_TAG   T_TEXT ",
+    "tags :  T_TAG   T_TEXT   paragraphs ",
+    "paragraphs :",
+    "paragraphs :  paragraph ",
+    "paragraphs :  paragraphs   T_DOUBLE_NL   paragraph ",
+    "paragraphs_with_p :  paragraph_with_p ",
+    "paragraphs_with_p :  paragraphs_with_p   paragraph_with_p ",
+    "paragraph :  T_TEXT ",
+    "paragraph :  htmltag ",
+    "paragraph :  simplelist ",
+    "paragraph :  inlinetag ",
+    "paragraph :  internaltag ",
+    "paragraph :  T_ESCAPED_TAG ",
+    "paragraph :  T_CLOSE_P ",
+    "paragraph :  T_INLINE_ESC ",
+    "paragraph :  paragraph   T_TEXT ",
+    "paragraph :  paragraph   htmltag ",
+    "paragraph :  paragraph   simplelist ",
+    "paragraph :  paragraph   inlinetag ",
+    "paragraph :  paragraph   T_ESCAPED_TAG ",
+    "paragraph :  paragraph   T_OPEN_P ",
+    "paragraph :  paragraph   T_CLOSE_P ",
+    "paragraph :  paragraph   T_INLINE_ESC ",
+    "paragraph :  paragraph   internaltag ",
+    "text_expr_with_p :  T_TEXT ",
+    "text_expr_with_p :  htmltag_with_p ",
+    "text_expr_with_p :  simplelist_with_p ",
+    "text_expr_with_p :  inlinetag ",
+    "text_expr_with_p :  internaltag_with_p ",
+    "text_expr_with_p :  T_ESCAPED_TAG ",
+    "text_expr_with_p :  T_INLINE_ESC ",
+    "text_expr_with_p :  T_DOUBLE_NL ",
+    "text_expr_with_p :  text_expr_with_p   T_TEXT ",
+    "text_expr_with_p :  text_expr_with_p   htmltag_with_p ",
+    "text_expr_with_p :  text_expr_with_p   simplelist_with_p ",
+    "text_expr_with_p :  text_expr_with_p   inlinetag ",
+    "text_expr_with_p :  text_expr_with_p   internaltag_with_p ",
+    "text_expr_with_p :  text_expr_with_p   T_ESCAPED_TAG ",
+    "text_expr_with_p :  text_expr_with_p   T_INLINE_ESC ",
+    "text_expr_with_p :  text_expr_with_p   T_DOUBLE_NL ",
+    "paragraph_with_p :  T_OPEN_P   text_expr_with_p   T_CLOSE_P ",
+    "paragraph_with_p :  T_OPEN_P   text_expr_with_p   T_CLOSE_P   T_WHITESPACE ",
+    "paragraph_with_p :  T_OPEN_P   text_expr_with_p ",
+    "htmltag :  T_XML_TAG ",
+    "htmltag :  btag ",
+    "htmltag :  codetag ",
+    "htmltag :  samptag ",
+    "htmltag :  kbdtag ",
+    "htmltag :  vartag ",
+    "htmltag :  htmllist ",
+    "htmltag_with_p :  T_XML_TAG ",
+    "htmltag_with_p :  btag_with_p ",
+    "htmltag_with_p :  codetag_with_p ",
+    "htmltag_with_p :  samptag_with_p ",
+    "htmltag_with_p :  kbdtag_with_p ",
+    "htmltag_with_p :  vartag_with_p ",
+    "htmltag_with_p :  htmllist_with_p ",
+    "btag :  T_OPEN_B   paragraphs   T_CLOSE_B ",
+    "btag_with_p :  T_OPEN_B   text_expr_with_p   T_CLOSE_B ",
+    "codetag :  T_OPEN_CODE   paragraphs   T_CLOSE_CODE ",
+    "codetag_with_p :  T_OPEN_CODE   text_expr_with_p   T_CLOSE_CODE ",
+    "samptag :  T_OPEN_SAMP   paragraphs   T_CLOSE_SAMP ",
+    "samptag_with_p :  T_OPEN_SAMP   text_expr_with_p   T_CLOSE_SAMP ",
+    "kbdtag :  T_OPEN_KBD   paragraphs   T_CLOSE_KBD ",
+    "kbdtag_with_p :  T_OPEN_KBD   text_expr_with_p   T_CLOSE_KBD ",
+    "vartag :  T_OPEN_VAR   paragraphs   T_CLOSE_VAR ",
+    "vartag_with_p :  T_OPEN_VAR   text_expr_with_p   T_CLOSE_VAR ",
+    "htmllist :  T_OPEN_LIST   listitems   T_CLOSE_LIST ",
+    "htmllist_with_p :  T_OPEN_LIST   listitems_with_p   T_CLOSE_LIST ",
+    "listitems :  listitem ",
+    "listitems :  listitems   listitem ",
+    "listitems_with_p :  listitem_with_p ",
+    "listitems_with_p :  listitems_with_p   listitem_with_p ",
+    "listitem :  T_OPEN_LI   paragraphs   T_CLOSE_LI ",
+    "listitem_with_p :  T_OPEN_LI   text_expr_with_p   T_CLOSE_LI ",
+    "simplelist :  simplelist_items ",
+    "simplelist :  simplelist_items   T_WHITESPACE   T_SIMPLELIST_END ",
+    "simplelist_with_p :  simplelist_items_with_p ",
+    "simplelist_with_p :  simplelist_items_with_p   T_WHITESPACE   T_SIMPLELIST_END ",
+    "simplelist_items :  bullet   simplelist_contents   simplelistend ",
+    "simplelist_items :  simplelist_items   bullet   simplelist_contents   simplelistend ",
+    "simplelist_items_with_p :  bullet   simplelist_contents_with_p   simplelistend ",
+    "simplelist_items_with_p :  simplelist_items_with_p   bullet   simplelist_contents_with_p   simplelistend ",
+    "simplelistend :  T_SIMPLELIST_NL ",
+    "simplelistend :  T_SIMPLELIST_END ",
+    "simplelistend :  EOF ",
+    "bullet :  bullet_no_whitespace ",
+    "bullet :  T_WHITESPACE   bullet_no_whitespace ",
+    "bullet_no_whitespace :  T_BULLET ",
+    "bullet_no_whitespace :  T_NBULLET ",
+    "bullet_no_whitespace :  T_NDBULLET ",
+    "nested_bullet :  T_NESTED_WHITESPACE   T_BULLET ",
+    "nested_bullet :  T_NESTED_WHITESPACE   T_NBULLET ",
+    "nested_bullet :  T_NESTED_WHITESPACE   T_NDBULLET ",
+    "simplelist_contents :  T_SIMPLELIST ",
+    "simplelist_contents :  T_ESCAPED_TAG ",
+    "simplelist_contents :  inlinetag ",
+    "simplelist_contents :  T_INLINE_ESC ",
+    "simplelist_contents :  htmltag ",
+    "simplelist_contents :  nested_simplelist ",
+    "simplelist_contents :  simplelist_contents   T_SIMPLELIST ",
+    "simplelist_contents :  simplelist_contents   T_ESCAPED_TAG ",
+    "simplelist_contents :  simplelist_contents   inlinetag ",
+    "simplelist_contents :  simplelist_contents   T_INLINE_ESC ",
+    "simplelist_contents :  simplelist_contents   htmltag ",
+    "simplelist_contents :  simplelist_contents   nested_simplelist ",
+    "simplelist_contents_with_p :  T_SIMPLELIST ",
+    "simplelist_contents_with_p :  T_ESCAPED_TAG ",
+    "simplelist_contents_with_p :  inlinetag ",
+    "simplelist_contents_with_p :  T_INLINE_ESC ",
+    "simplelist_contents_with_p :  T_DOUBLE_NL ",
+    "simplelist_contents_with_p :  htmltag_with_p ",
+    "simplelist_contents_with_p :  nested_simplelist_with_p ",
+    "simplelist_contents_with_p :  simplelist_contents_with_p   T_SIMPLELIST ",
+    "simplelist_contents_with_p :  simplelist_contents_with_p   T_ESCAPED_TAG ",
+    "simplelist_contents_with_p :  simplelist_contents_with_p   inlinetag ",
+    "simplelist_contents_with_p :  simplelist_contents_with_p   T_INLINE_ESC ",
+    "simplelist_contents_with_p :  simplelist_contents_with_p   T_DOUBLE_NL ",
+    "simplelist_contents_with_p :  simplelist_contents_with_p   htmltag_with_p ",
+    "simplelist_contents_with_p :  simplelist_contents_with_p   nested_simplelist_with_p ",
+    "nested_simplelist :  nested_bullet   simplelist_contents   simplelistend ",
+    "nested_simplelist_with_p :  nested_bullet   simplelist_contents_with_p   simplelistend ",
+    "inlinetag :  T_INLINE_TAG_OPEN   T_INLINE_TAG_NAME   T_INLINE_TAG_CONTENTS   T_INLINE_TAG_CLOSE ",
+    "inlinetag :  T_INLINE_TAG_OPEN   T_INLINE_TAG_NAME   T_INLINE_TAG_CLOSE ",
+    "internaltag :  T_INTERNAL   paragraphs   T_ENDINTERNAL ",
+    "internaltag_with_p :  T_INTERNAL   paragraphs_with_p   T_ENDINTERNAL ",
+  );
   $GLOBALS['_PHP_PARSER_DOCBLOCK_DEFAULT']['yyName'] =array(    
     "end-of-file","T_BULLET","T_NBULLET","T_NDBULLET","T_SIMPLELIST",
     "T_SIMPLELIST_NL","T_SIMPLELIST_END","T_WHITESPACE",

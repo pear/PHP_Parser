@@ -91,7 +91,7 @@ class PHP_Parser_DocBlock_Default {
     function PHP_Parser_DocBlock_Default($options = array())
     {
         $this->_server = &PHP_Parser_MsgServer::singleton();
-        $this->_errorStack = &PEAR_ErrorStack::singleton('PHP_Parser_Docblock_Default');
+        $this->_errorStack = &PEAR_ErrorStack::singleton('PHP_Parser_DocBlock_Default');
         $this->_options['publishConstMessage'] =
         $this->_options['parseInternal'] =
         false;
@@ -859,9 +859,9 @@ htmltag:
         {
             $tag = $this->_options['completeTagClass'];
             if ($tag) {
-                $$ = array(new $tag($1));
+                $$ = new $tag($1);
             } else {
-                $$ = array(array('completetag' => $1));
+                $$ = array('completetag' => $1);
             }
         }
     |   btag
@@ -877,9 +877,9 @@ htmltag_with_p:
         {
             $tag = $this->_options['completeTagClass'];
             if ($tag) {
-                $$ = array(new $tag($1));
+                $$ = new $tag($1);
             } else {
-                $$ = array(array('completetag' => $1));
+                $$ = array('completetag' => $1);
             }
         }
     |   btag_with_p
@@ -1015,9 +1015,9 @@ htmllist:
         {
             $list = $this->_options['listClass'];
             if ($list) {
-                $$ = new $list(2);
+                $$ = new $list($2, $1);
             } else {
-                $$ = array('list' => $2);
+                $$ = array('list' => $2, 'type' => $1);
             }
         }
 ;
@@ -1073,30 +1073,69 @@ listitem_with_p:
 ;
 
 simplelist:
-    bullet simplelist_contents simplelistend
-        {
-            $$ = array('list' => $2, 'type' => $1);
-        }
-    |   simplelist bullet simplelist_contents simplelistend
+    simplelist_items
         {
             $$ = $1;
-            $$[] = $3;
+        }
+    |   simplelist_items T_WHITESPACE T_SIMPLELIST_END
+        {
+            $$ = $1;
         }
 ;
 
 simplelist_with_p:
-    bullet simplelist_contents_with_p simplelistend
-        {
-            $$ = array('list' => $2, 'type' => $1);
-        }
-    |   simplelist_with_p bullet simplelist_contents_with_p simplelistend
+    simplelist_items_with_p
         {
             $$ = $1;
-            $$[] = $3;
+        }
+    |   simplelist_items_with_p T_WHITESPACE T_SIMPLELIST_END
+        {
+            $$ = $1;
         }
 ;
 
+simplelist_items:
+    bullet simplelist_contents simplelistend
+        {
+            $$ = array('list' => array($2), 'type' => $1);
+        }
+    |   simplelist_items bullet simplelist_contents simplelistend
+        {
+            $$ = $1;
+            $$['list'][] = $3;
+        }
+;
+simplelist_items_with_p:
+    bullet simplelist_contents_with_p simplelistend
+        {
+            $$ = array('list' => array($2), 'type' => $1);
+        }
+    |   simplelist_items_with_p bullet simplelist_contents_with_p simplelistend
+        {
+            $$ = $1;
+            $$['list'][] = $3;
+        }
+;
+
+
+simplelistend:
+    T_SIMPLELIST_NL
+    |   T_SIMPLELIST_END
+    |   EOF
+;
+
 bullet:
+    bullet_no_whitespace
+        {
+            $$ = $1;
+        }
+    |   T_WHITESPACE bullet_no_whitespace
+        {
+            $$ = $2;
+        }
+;
+
+bullet_no_whitespace:
     T_BULLET
         {
             $$ = 'unordered';
@@ -1109,7 +1148,6 @@ bullet:
         {
             $$ = 'ordered';
         }
-    |   T_WHITESPACE bullet
 ;
 
 nested_bullet:
@@ -1125,13 +1163,6 @@ nested_bullet:
         {
             $$ = 'ordered';
         }
-;
-
-simplelistend:
-    T_SIMPLELIST_NL
-    |   T_SIMPLELIST_END
-    |   EOF
-    |   T_SIMPLELIST_NL T_WHITESPACE T_SIMPLELIST_END
 ;
 
 

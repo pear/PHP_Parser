@@ -51,6 +51,7 @@ class PHP_Parser_DocBlock_Default_basic_test extends PHPUnit_TestCase
             'commentline' => 1,
             'lexer' => new PHP_Parser_DocBlock_DefaultLexer('')
         );
+        $this->parser->debug = false;
     }
 
     function tearDown()
@@ -171,7 +172,7 @@ class PHP_Parser_DocBlock_Default_basic_test extends PHPUnit_TestCase
         return $opt;
     }
 
-    function test_parse_htmltags_valid()
+    function test_parse_completetag()
     {
         if (!$this->_methodExists('parse')) {
             return;
@@ -179,11 +180,179 @@ class PHP_Parser_DocBlock_Default_basic_test extends PHPUnit_TestCase
         $comment = '<br />';
         $this->assertEquals(array(
                     'summary' => array(),
-                    'documentation' => array(array(array(array('completetag' => '<br />')))),
+                    'documentation' => array(array(array('completetag' => '<br />'))),
                     'tags' => array(),
                     'startline' => 1,
                     'endline' => 2,
                      ), $this->parser->parse($this->getOptions($comment, true)), 'parse');
+    }
+
+    function test_parse_boldtag()
+    {
+        if (!$this->_methodExists('parse')) {
+            return;
+        }
+        $comment = '<b>test1</b><strong>test2</strong>';
+        $this->assertEquals(array(
+                    'summary' => array(),
+                    'documentation' => array(
+                        array(
+                            array('strong' => array(array('test1'))),
+                            array('strong' => array(array('test2')))
+                        )
+                    ),
+                    'tags' => array(),
+                    'startline' => 1,
+                    'endline' => 2,
+                     ), $this->parser->parse($this->getOptions($comment, true)), 'parse');
+    }
+
+    function test_parse_codetag()
+    {
+        if (!$this->_methodExists('parse')) {
+            return;
+        }
+        $comment = '<code>test</code>';
+        $this->assertEquals(array(
+                    'summary' => array(),
+                    'documentation' => array(
+                        array(
+                            array('code' => array(array('test'))),
+                        )
+                    ),
+                    'tags' => array(),
+                    'startline' => 1,
+                    'endline' => 2,
+                     ), $this->parser->parse($this->getOptions($comment, true)), 'parse');
+    }
+
+    function test_parse_samptag()
+    {
+        if (!$this->_methodExists('parse')) {
+            return;
+        }
+        $comment = '<samp>test</samp>';
+        $this->assertEquals(array(
+                    'summary' => array(),
+                    'documentation' => array(
+                        array(
+                            array('samp' => array(array('test'))),
+                        )
+                    ),
+                    'tags' => array(),
+                    'startline' => 1,
+                    'endline' => 2,
+                     ), $this->parser->parse($this->getOptions($comment, true)), 'parse');
+    }
+
+    function test_parse_kbdtag()
+    {
+        if (!$this->_methodExists('parse')) {
+            return;
+        }
+        $comment = '<kbd>test</kbd>';
+        $this->assertEquals(array(
+                    'summary' => array(),
+                    'documentation' => array(
+                        array(
+                            array('kbd' => array(array('test'))),
+                        )
+                    ),
+                    'tags' => array(),
+                    'startline' => 1,
+                    'endline' => 2,
+                     ), $this->parser->parse($this->getOptions($comment, true)), 'parse');
+    }
+
+    function test_parse_vartag()
+    {
+        if (!$this->_methodExists('parse')) {
+            return;
+        }
+        $comment = '<var>test</var>';
+        $this->assertEquals(array(
+                    'summary' => array(),
+                    'documentation' => array(
+                        array(
+                            array('var' => array(array('test'))),
+                        )
+                    ),
+                    'tags' => array(),
+                    'startline' => 1,
+                    'endline' => 2,
+                     ), $this->parser->parse($this->getOptions($comment, true)), 'parse');
+    }
+
+    function test_parse_htmllist()
+    {
+        if (!$this->_methodExists('parse')) {
+            return;
+        }
+        $comment = '<ol><li>test</li></ol>';
+        $this->assertEquals(array(
+                    'summary' => array(),
+                    'documentation' => array(
+                        array(
+                            array('list' => 
+                                array(
+                                    array(array('test')),
+                                ),
+                                'type' => '<ol>'
+                            ),
+                        )
+                    ),
+                    'tags' => array(),
+                    'startline' => 1,
+                    'endline' => 2,
+                     ), $this->parser->parse($this->getOptions($comment, true)), 'parse');
+        $comment = '<ol><li>test</li><li>two</li></ol>';
+        $this->assertEquals(array(
+                    'summary' => array(),
+                    'documentation' => array(
+                        array(
+                            array('list' => 
+                                array(
+                                    array(array('test')),
+                                    array(array('two')),
+                                ),
+                                'type' => '<ol>'
+                            ),
+                        )
+                    ),
+                    'tags' => array(),
+                    'startline' => 1,
+                    'endline' => 2,
+                     ), $this->parser->parse($this->getOptions($comment, true)), 'parse');
+    }
+
+    function test_parse_simplelist()
+    {
+        if (!$this->_methodExists('parse')) {
+            return;
+        }
+        $comment = ' - first item
+ - second item
+ - third item';
+        $this->parser->debug = true;
+        $this->assertEquals(array(
+                    'summary' => array(),
+                    'documentation' => array(
+                        array(
+                            array('list' => 
+                                array(
+                                    array(' first item'),
+                                    array(' second item'),
+                                    array(' third item'),
+                                ),
+                                  'type' => 'unordered',
+                            ),
+                        )
+                    ),
+                    'tags' => array(),
+                    'startline' => 1,
+                    'endline' => 3,
+                     ), $this->parser->parse($this->getOptions($comment, true)), 'parse');
+        $this->assertNoErrors('test_parse_simplelist', 'oops');
     }
 }
 ?>
