@@ -22,10 +22,7 @@
  
 /*
 * usage :
-*   print_r(PHP_Parser:;parseFile($filename),null);      // no caching
-*   print_r(PHP_Parser:;parseFile($filename),'');       // caches to filename + .wddx
-*   print_r(PHP_Parser:;parseFile($filename),'/tmp/);   // caches to /tmp/filename + .wddx
-*   print_r(PHP_Parser:;parse($string));                // parses a string.
+*   print_r(PHP_Parser::staticParseFile($filename));
 */
  
 require_once 'System.php';
@@ -46,7 +43,7 @@ class PHP_Parser {
      * @static
      * @return PHP_Parser
      */
-    function &factory($parser, $tokenizer)
+    function &factory($parser='Core', $tokenizer='')
     {
         $ret = new PHP_Parser;
         $a = $ret->setParser($parser);
@@ -65,12 +62,15 @@ class PHP_Parser {
      * @param string|object
      * @return PEAR_Error|false
      */
-    function setParser($parser)
+    function setParser($parser='Core')
     {
         if (is_object($parser)) {
             $this->_parser = $parser;
             return false;
         }
+        
+        
+        
         if (!class_exists($parser)) {
             if ($this->isIncludeable('PHP/Parser/' . $parser . '.php')) {
                 include_once 'PHP/Parser/' . $parser . '.php';
@@ -90,13 +90,20 @@ class PHP_Parser {
      * @param string|object
      * @return PEAR_Error|false
      */
-    function setTokenizer($tokenizer)
+    function setTokenizer($tokenizer='')
     {
         if (is_object($tokenizer)) {
             $this->_tokenizer = $tokenizer;
             return false;
         }
-        if (!class_exists($tokenizer)) {
+        if ($tokenizer=='') {
+            $tokenizer = 'PHP_Parser_Tokenizer';
+            include_once 'PHP/Parser/Tokenizer.php';
+            $this->_tokenizer = new $tokenizer('',array('parser_class'=>get_class($this->_parser)));
+            return false;
+        }
+        
+        if (!class_exists('PHP_Parser_Tokenizer_'.$tokenizer)) {
             if ($this->isIncludeable('PHP/Parser/Tokenizer/' . $tokenizer . '.php')) {
                 include_once 'PHP/Parser/Tokenizer/' . $tokenizer . '.php';
             }
@@ -265,13 +272,19 @@ class PHP_Parser {
         }
         $this->setTokenizerOptions($php, $tokenoptions);
         $this->_parser->yyparse($this->_tokenizer);
+        // some parser do not set stuff like this..
+        
+        if (!isset($this->_parser->classes)) {
+            return;
+        }
+        
         return array(
-                'classes'  => $this->_parser->classes,
+                'classes'     => $this->_parser->classes,
                 'interfaces'  => $this->_parser->interfaces,
-                'includes' => $this->_parser->includes,
-                'functions' => $this->_parser->functions,
-                'constants' => $this->_parser->constants,
-                'globals' => $this->_parser->globals
+                'includes'   => $this->_parser->includes,
+                'functions'  => $this->_parser->functions,
+                'constants'  => $this->_parser->constants,
+                'globals'    => $this->_parser->globals
             );
     }
 }     
