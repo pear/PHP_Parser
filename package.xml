@@ -83,6 +83,7 @@ Moved DocBlock parsing in from phpDocumentor 2.0 development</notes>
         <file role="php" name="Structure.php"/>
         <file role="php" name="Tokenizer.php"/>
         <dir name="DocBlock">
+         <file role="php" name="CommonLexer.php"/>
          <file role="data" name="default.bat"/>
          <file role="data" name="Default.jay"/>
          <file role="php" name="Default.php"/>
