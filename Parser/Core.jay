@@ -132,7 +132,20 @@ class PHP_Parser_Core {
      * @access public 
      */
     var $functions = array();
-
+    /**
+     * array of constants
+     *
+     * @var array
+     * @access public 
+     */
+    var $constants = array();
+     /**
+     * array of globals
+     *
+     * @var array
+     * @access public 
+     */
+    var $globals = array();
     /**
      * global variable name of parser arrays
      * should match the build options  
