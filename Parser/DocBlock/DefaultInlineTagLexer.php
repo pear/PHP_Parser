@@ -99,8 +99,8 @@ class PHP_Parser_DocBlock_DefaultInlineTagLexer
         $details['valid'] = true;
         $details['type'] = 'unknown';
         if (strpos($word, 'mailto:') === 0 || strpos($word, '://')) {
+            // just in case someone names a class "mailto"
             if (strpos($word, 'mailto::') === false) {
-                // just in case someone names a class "mailto"
                 $details['type'] = 'url';
                 return $details;
             }
