@@ -350,7 +350,7 @@ class PHP_Parser_DocBlock_Default_basic_test extends PHPUnit_TestCase
                     ),
                     'tags' => array(),
                     'startline' => 1,
-                    'endline' => 3,
+                    'endline' => 4,
                      ), $this->parser->parse($this->getOptions($comment, true)), 'parse');
         $this->assertNoErrors('test_parse_simplelist', 'oops');
     }
