@@ -543,5 +543,39 @@ class PHP_Parser_DocBlock_Default_basic_test extends PHPUnit_TestCase
 //        echo '</pre>';
         $this->assertNoErrors('test_parse_simplelist', 'oops');
     }
+
+    function test_parse_simplelist_multiline()
+    {
+        if (!$this->_methodExists('parse')) {
+            return;
+        }
+        $comment = ' - first item
+    Does this work?
+ - second item
+ - third item';
+        $this->parser->debug = true;
+        echo '<pre>';
+        $this->assertEquals(array(
+                    'summary' => array(),
+                    'documentation' => array(
+                        array(
+                            array('list' => 
+                                array(
+                                    array(' first item', " Does this work?"),
+                                    array(' second item'),
+                                    array(' third item'),
+                                ),
+                                  'type' => '-',
+                            ),
+                        )
+                    ),
+                    'tags' => array(),
+                    'startline' => 1,
+                    'endline' => 5,
+                     ), $this->parser->parse($this->getOptions($comment, true)), 'parse');
+        echo '</pre>';
+        $this->parser->debug = false;
+        $this->assertNoErrors('test_parse_simplelist', 'oops 1');
+    }
 }
 ?>

@@ -1210,8 +1210,29 @@ nested_simplelist_with_p:
         }
 ;
 
-
 simplelist_contents:
+    simplelist_line
+    {
+        $$ = $1;
+    }
+    |   simplelist_contents T_WHITESPACE simplelist_line
+    {
+        $$ = array_merge($1, $3);
+    }
+;
+
+simplelist_contents_with_p:
+    simplelist_line_with_p
+    {
+        $$ = $1;
+    }
+    |   simplelist_contents_with_p T_WHITESPACE simplelist_line_with_p
+    {
+        $$ = array_merge($1, $3);
+    }
+;
+
+simplelist_line:
     T_SIMPLELIST
         {
             $$ = array($1);
@@ -1238,12 +1259,12 @@ simplelist_contents:
         {
             $$ = array($1);
         }
-    |   simplelist_contents T_SIMPLELIST
+    |   simplelist_line T_SIMPLELIST
         {
             $$ = $1;
             $$[] = $2;
         }
-    |   simplelist_contents T_ESCAPED_TAG
+    |   simplelist_line T_ESCAPED_TAG
         {
             $$ = $1;
             if (is_string($$[$index])) {
@@ -1252,12 +1273,12 @@ simplelist_contents:
                 $$[] = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $2);
             }
         }
-    |   simplelist_contents inlinetag
+    |   simplelist_line inlinetag
         {
             $$ = $1;
             $$[] = $2;
         }
-    |   simplelist_contents T_INLINE_ESC
+    |   simplelist_line T_INLINE_ESC
         {
             if ($2 == '{@}') {
                 $t = array('{@');
@@ -1273,14 +1294,14 @@ simplelist_contents:
                 $$[] = $t;
             }
         }
-    |   simplelist_contents htmltag
+    |   simplelist_line htmltag
         {
             $$ = $1;
             $$[] = $2;
         }
 ;
 
-simplelist_contents_with_p:
+simplelist_line_with_p:
     T_SIMPLELIST
     |   T_ESCAPED_TAG
         {
@@ -1308,12 +1329,12 @@ simplelist_contents_with_p:
         {
             $$ = array($1);
         }
-    |   simplelist_contents_with_p T_SIMPLELIST
+    |   simplelist_line_with_p T_SIMPLELIST
         {
             $$ = $1;
             $$[] = $2;
         }
-    |   simplelist_contents_with_p T_ESCAPED_TAG
+    |   simplelist_line_with_p T_ESCAPED_TAG
         {
             $$ = $1;
             $index = count($$) - 1;
@@ -1323,12 +1344,12 @@ simplelist_contents_with_p:
                 $$[] = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $2);
             }
         }
-    |   simplelist_contents_with_p inlinetag
+    |   simplelist_line_with_p inlinetag
         {
             $$ = $1;
             $$[] = $2;
         }
-    |   simplelist_contents_with_p T_INLINE_ESC
+    |   simplelist_line_with_p T_INLINE_ESC
         {
             if ($2 == '{@}') {
                 $t = array('{@');
@@ -1345,7 +1366,7 @@ simplelist_contents_with_p:
                 $$[] = $t;
             }
         }
-    |   simplelist_contents_with_p T_DOUBLE_NL
+    |   simplelist_line_with_p T_DOUBLE_NL
         {
             $$ = $1;
             $index = count($$) - 1;
@@ -1355,7 +1376,7 @@ simplelist_contents_with_p:
                 $$[] = $2;
             }
         }
-    |   simplelist_contents_with_p htmltag_with_p
+    |   simplelist_line_with_p htmltag_with_p
         {
             $$ = $1;
             $$[] = $2;

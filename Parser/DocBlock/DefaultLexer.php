@@ -1541,7 +1541,14 @@ case 19:
             }
             return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, $this->yytext());
         } else {
-            $estack->getErrors(true);
+            if (!count($estack->getErrors(true)) && !in_array($this->token, array(
+                  PHP_PARSER_DOCLEX_BULLET,
+                  PHP_PARSER_DOCLEX_NBULLET,
+                  PHP_PARSER_DOCLEX_NDBULLET))) {
+                $this->restoreState($save);
+                if ($this->debug) echo "not a simplelist newline\n";
+                return $this->yylex();
+            }
         }
     }
     $this->restoreState($save);
