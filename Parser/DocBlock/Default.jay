@@ -1237,6 +1237,10 @@ simplelist_line:
         {
             $$ = array($1);
         }
+    |   T_DOUBLE_NL
+        {
+            $$ = array("\n\n");
+        }
     |   T_ESCAPED_TAG
         {
             $$ = array(str_replace(array('<<', '>>', '/'), array('<', '>', ''), $1));
@@ -1298,6 +1302,11 @@ simplelist_line:
         {
             $$ = $1;
             $$[] = $2;
+        }
+    |   simplelist_line T_DOUBLE_NL
+        {
+            $$ = $1;
+            $$[] = "\n\n";
         }
 ;
 

@@ -1507,16 +1507,26 @@ case 18:
 }
 case 19:
 {
-    if (strlen($this->yytext()) > 1) {
-        // A simple list may not contain double newlines
-        $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
-        $this->yybegin($this->_listOriginal);
-        if ($this->debug) echo "end simple list (in \\n handler)\n";
-        $this->_atNewLine = true;
-        return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
-    }
     $this->_atNewLine = true;
-    $old = $this->yy_lexical_state;
+    if (strlen($this->yytext()) > 1) {
+        $save = $this->saveState();
+        if ($this->debug) {
+            echo "**testing tokens multi-\\n**\n";
+        }
+        $this->advance();
+        $token = $this->token;
+        $this->restoreState($save);
+        if ($token == PHP_PARSER_DOCLEX_WHITESPACE || $token == PHP_PARSER_DOCLEX_SIMPLELIST_START) {
+            if ($this->debug) echo "double newline in simplelist [" . $this->yytext() . "]\n";
+            return array(PHP_PARSER_DOCLEX_DOUBLENL, $this->yytext());
+        } else {
+            // A simple list may not contain double newlines
+            $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
+            $this->yybegin($this->_listOriginal);
+            if ($this->debug) echo "end simple list (in \\n handler)\n";
+            return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
+        }
+    }
     $save = $this->saveState();
     if ($this->debug) {
         echo "**testing tokens**\n";
