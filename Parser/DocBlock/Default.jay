@@ -642,7 +642,7 @@ text_expr_with_p:
         }
     |   T_ESCAPED_TAG
         {
-            $$ = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $1);
+            $$ = str_replace(array('<<', '>>'), array('<', '>'), $1);
         }
     |   T_INLINE_ESC
         {
@@ -693,9 +693,9 @@ text_expr_with_p:
             $$ = $1;
             $index = count($$) - 1;
             if (is_string($$[$index])) {
-                $$[$index] .= str_replace(array('<<', '>>', '/'), array('<', '>', ''), $2);
+                $$[$index] .= str_replace(array('<<', '>>'), array('<', '>'), $2);
             } else {
-                $$[] = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $2);
+                $$[] = str_replace(array('<<', '>>'), array('<', '>'), $2);
             }
         }
     |   text_expr_with_p T_INLINE_ESC
@@ -749,7 +749,7 @@ paragraph:
         }
     |   T_ESCAPED_TAG
         {
-            $$ = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $1);
+            $$ = str_replace(array('<<', '>>'), array('<', '>'), $1);
         }
     |   T_CLOSE_P
         {
@@ -795,9 +795,9 @@ paragraph:
             $$ = $1;
             $index = count($$) - 1;
             if (is_string($$[$index])) {
-                $$[$index] .= str_replace(array('<<', '>>', '/'), array('<', '>', ''), $2);
+                $$[$index] .= str_replace(array('<<', '>>'), array('<', '>'), $2);
             } else {
-                $$[] = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $2);
+                $$[] = str_replace(array('<<', '>>'), array('<', '>'), $2);
             }
         }
     |   paragraph T_OPEN_P
@@ -1243,7 +1243,7 @@ simplelist_line:
         }
     |   T_ESCAPED_TAG
         {
-            $$ = array(str_replace(array('<<', '>>', '/'), array('<', '>', ''), $1));
+            $$ = array(str_replace(array('<<', '>>'), array('<', '>'), $1));
         }
     |   inlinetag
         {
@@ -1271,10 +1271,11 @@ simplelist_line:
     |   simplelist_line T_ESCAPED_TAG
         {
             $$ = $1;
+            $index = count($$) - 1;
             if (is_string($$[$index])) {
-                $$[$index] .= str_replace(array('<<', '>>', '/'), array('<', '>', ''), $2);
+                $$[$index] .= str_replace(array('<<', '>>'), array('<', '>'), $2);
             } else {
-                $$[] = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $2);
+                $$[] = str_replace(array('<<', '>>'), array('<', '>'), $2);
             }
         }
     |   simplelist_line inlinetag
@@ -1321,7 +1322,7 @@ simplelist_line_with_p:
         }
     |   T_ESCAPED_TAG
         {
-            $$ = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $1);
+            $$ = str_replace(array('<<', '>>'), array('<', '>'), $1);
         }
     |   inlinetag
         {
@@ -1351,9 +1352,9 @@ simplelist_line_with_p:
             $$ = $1;
             $index = count($$) - 1;
             if (is_string($$[$index])) {
-                $$[$index] .= str_replace(array('<<', '>>', '/'), array('<', '>', ''), $2);
+                $$[$index] .= str_replace(array('<<', '>>'), array('<', '>'), $2);
             } else {
-                $$[] = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $2);
+                $$[] = str_replace(array('<<', '>>'), array('<', '>'), $2);
             }
         }
     |   simplelist_line_with_p inlinetag

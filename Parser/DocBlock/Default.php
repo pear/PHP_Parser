@@ -873,7 +873,7 @@ class PHP_Parser_DocBlock_Default {
 
     function _22($yyTop)  					// line 644 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
-            $this->yyVal = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $this->yyVals[0+$yyTop]);
+            $this->yyVal = str_replace(array('<<', '>>'), array('<', '>'), $this->yyVals[0+$yyTop]);
         }
 
     function _23($yyTop)  					// line 648 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
@@ -932,9 +932,9 @@ class PHP_Parser_DocBlock_Default {
             $this->yyVal = $this->yyVals[-1+$yyTop];
             $index = count($this->yyVal) - 1;
             if (is_string($this->yyVal[$index])) {
-                $this->yyVal[$index] .= str_replace(array('<<', '>>', '/'), array('<', '>', ''), $this->yyVals[0+$yyTop]);
+                $this->yyVal[$index] .= str_replace(array('<<', '>>'), array('<', '>'), $this->yyVals[0+$yyTop]);
             } else {
-                $this->yyVal[] = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $this->yyVals[0+$yyTop]);
+                $this->yyVal[] = str_replace(array('<<', '>>'), array('<', '>'), $this->yyVals[0+$yyTop]);
             }
         }
 
@@ -993,7 +993,7 @@ class PHP_Parser_DocBlock_Default {
 
     function _38($yyTop)  					// line 751 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
-            $this->yyVal = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $this->yyVals[0+$yyTop]);
+            $this->yyVal = str_replace(array('<<', '>>'), array('<', '>'), $this->yyVals[0+$yyTop]);
         }
 
     function _39($yyTop)  					// line 755 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
@@ -1046,9 +1046,9 @@ class PHP_Parser_DocBlock_Default {
             $this->yyVal = $this->yyVals[-1+$yyTop];
             $index = count($this->yyVal) - 1;
             if (is_string($this->yyVal[$index])) {
-                $this->yyVal[$index] .= str_replace(array('<<', '>>', '/'), array('<', '>', ''), $this->yyVals[0+$yyTop]);
+                $this->yyVal[$index] .= str_replace(array('<<', '>>'), array('<', '>'), $this->yyVals[0+$yyTop]);
             } else {
-                $this->yyVal[] = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $this->yyVals[0+$yyTop]);
+                $this->yyVal[] = str_replace(array('<<', '>>'), array('<', '>'), $this->yyVals[0+$yyTop]);
             }
         }
 
@@ -1444,7 +1444,7 @@ class PHP_Parser_DocBlock_Default {
 
     function _114($yyTop)  					// line 1245 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
-            $this->yyVal = array(str_replace(array('<<', '>>', '/'), array('<', '>', ''), $this->yyVals[0+$yyTop]));
+            $this->yyVal = array(str_replace(array('<<', '>>'), array('<', '>'), $this->yyVals[0+$yyTop]));
         }
 
     function _115($yyTop)  					// line 1249 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
@@ -1477,20 +1477,21 @@ class PHP_Parser_DocBlock_Default {
     function _119($yyTop)  					// line 1272 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->yyVals[-1+$yyTop];
+            $index = count($this->yyVal) - 1;
             if (is_string($this->yyVal[$index])) {
-                $this->yyVal[$index] .= str_replace(array('<<', '>>', '/'), array('<', '>', ''), $this->yyVals[0+$yyTop]);
+                $this->yyVal[$index] .= str_replace(array('<<', '>>'), array('<', '>'), $this->yyVals[0+$yyTop]);
             } else {
-                $this->yyVal[] = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $this->yyVals[0+$yyTop]);
+                $this->yyVal[] = str_replace(array('<<', '>>'), array('<', '>'), $this->yyVals[0+$yyTop]);
             }
         }
 
-    function _120($yyTop)  					// line 1281 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _120($yyTop)  					// line 1282 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->yyVals[-1+$yyTop];
             $this->yyVal[] = $this->yyVals[0+$yyTop];
         }
 
-    function _121($yyTop)  					// line 1286 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _121($yyTop)  					// line 1287 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             if ($this->yyVals[0+$yyTop] == '{@}') {
                 $t = array('{@');
@@ -1507,39 +1508,39 @@ class PHP_Parser_DocBlock_Default {
             }
         }
 
-    function _122($yyTop)  					// line 1302 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _122($yyTop)  					// line 1303 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->yyVals[-1+$yyTop];
             $this->yyVal[] = $this->yyVals[0+$yyTop];
         }
 
-    function _123($yyTop)  					// line 1307 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _123($yyTop)  					// line 1308 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->yyVals[-1+$yyTop];
             $this->yyVal[] = "\n\n";
         }
 
-    function _124($yyTop)  					// line 1315 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _124($yyTop)  					// line 1316 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = array($this->yyVals[0+$yyTop]);
         }
 
-    function _125($yyTop)  					// line 1319 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _125($yyTop)  					// line 1320 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = array("\n\n");
         }
 
-    function _126($yyTop)  					// line 1323 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _126($yyTop)  					// line 1324 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
-            $this->yyVal = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $this->yyVals[0+$yyTop]);
+            $this->yyVal = str_replace(array('<<', '>>'), array('<', '>'), $this->yyVals[0+$yyTop]);
         }
 
-    function _127($yyTop)  					// line 1327 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _127($yyTop)  					// line 1328 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = array($this->yyVals[0+$yyTop]);
         }
 
-    function _128($yyTop)  					// line 1331 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _128($yyTop)  					// line 1332 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             if ($this->yyVals[0+$yyTop] == '{@}') {
                 $this->yyVal = array('{@');
@@ -1550,35 +1551,35 @@ class PHP_Parser_DocBlock_Default {
             }
         }
 
-    function _129($yyTop)  					// line 1341 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _129($yyTop)  					// line 1342 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = array($this->yyVals[0+$yyTop]);
         }
 
-    function _130($yyTop)  					// line 1345 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _130($yyTop)  					// line 1346 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->yyVals[-1+$yyTop];
             $this->yyVal[] = $this->yyVals[0+$yyTop];
         }
 
-    function _131($yyTop)  					// line 1350 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _131($yyTop)  					// line 1351 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->yyVals[-1+$yyTop];
             $index = count($this->yyVal) - 1;
             if (is_string($this->yyVal[$index])) {
-                $this->yyVal[$index] .= str_replace(array('<<', '>>', '/'), array('<', '>', ''), $this->yyVals[0+$yyTop]);
+                $this->yyVal[$index] .= str_replace(array('<<', '>>'), array('<', '>'), $this->yyVals[0+$yyTop]);
             } else {
-                $this->yyVal[] = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $this->yyVals[0+$yyTop]);
+                $this->yyVal[] = str_replace(array('<<', '>>'), array('<', '>'), $this->yyVals[0+$yyTop]);
             }
         }
 
-    function _132($yyTop)  					// line 1360 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _132($yyTop)  					// line 1361 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->yyVals[-1+$yyTop];
             $this->yyVal[] = $this->yyVals[0+$yyTop];
         }
 
-    function _133($yyTop)  					// line 1365 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _133($yyTop)  					// line 1366 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             if ($this->yyVals[0+$yyTop] == '{@}') {
                 $t = array('{@');
@@ -1596,29 +1597,29 @@ class PHP_Parser_DocBlock_Default {
             }
         }
 
-    function _134($yyTop)  					// line 1382 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _134($yyTop)  					// line 1383 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->yyVals[-1+$yyTop];
             $this->yyVal[] = $this->yyVals[0+$yyTop];
         }
 
-    function _135($yyTop)  					// line 1387 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _135($yyTop)  					// line 1388 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->yyVals[-1+$yyTop];
             $this->yyVal[] = "\n\n";
         }
 
-    function _136($yyTop)  					// line 1395 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _136($yyTop)  					// line 1396 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->_parseInlineTag($this->yyVals[-2+$yyTop], $this->yyVals[-1+$yyTop]);
         }
 
-    function _137($yyTop)  					// line 1399 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _137($yyTop)  					// line 1400 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             $this->yyVal = $this->_parseInlineTag($this->yyVals[-1+$yyTop], array());
         }
 
-    function _138($yyTop)  					// line 1406 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _138($yyTop)  					// line 1407 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             if ($this->_options['parseInternal']) {
                 $this->yyVal = $this->yyVals[-1+$yyTop];
@@ -1627,7 +1628,7 @@ class PHP_Parser_DocBlock_Default {
             }
         }
 
-    function _139($yyTop)  					// line 1417 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+    function _139($yyTop)  					// line 1418 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
     {
             if ($this->_options['parseInternal']) {
                 $this->yyVal = $this->yyVals[-1+$yyTop];
@@ -1635,13 +1636,13 @@ class PHP_Parser_DocBlock_Default {
                 $this->yyVal = '';
             }
         }
-					// line 1639 "-"
+					// line 1640 "-"
 
-					// line 1425 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
+					// line 1426 "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay"
 
     /**#@-*/
 }
-					// line 1645 "-"
+					// line 1646 "-"
 
   $GLOBALS['_PHP_PARSER_DOCBLOCK_DEFAULT']['yyLhs']  = array(              -1,
     0,    0,    0,    0,    0,    0,    0,    3,    2,    2,

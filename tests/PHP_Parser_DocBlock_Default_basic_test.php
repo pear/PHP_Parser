@@ -573,6 +573,7 @@ class PHP_Parser_DocBlock_Default_basic_test extends PHPUnit_TestCase
                      ), $this->parser->parse($this->getOptions($comment, true)), 'parse');
         $this->assertNoErrors('test_parse_simplelist', 'oops 1');
     }
+
     function test_parse_simplelist_multiparagraph()
     {
         if (!$this->_methodExists('parse')) {
@@ -603,6 +604,39 @@ class PHP_Parser_DocBlock_Default_basic_test extends PHPUnit_TestCase
                     'tags' => array(),
                     'startline' => 1,
                     'endline' => 7,
+                     ), $this->parser->parse($this->getOptions($comment, true)), 'parse');
+//        echo '</pre>';
+//        $this->parser->debug = false;
+        $this->assertNoErrors('test_parse_simplelist', 'oops 1');
+    }
+
+    function test_parse_simplelist_escapedtag()
+    {
+        if (!$this->_methodExists('parse')) {
+            return;
+        }
+        $comment = ' - <<code>><<br/>>
+ - second item<<code>>
+ - third item';
+//        $this->parser->debug = true;
+//        echo '<pre>';
+        $this->assertEquals(array(
+                    'summary' => array(),
+                    'documentation' => array(
+                        array(
+                            array('list' => 
+                                array(
+                                    array(' <code><br/>'),
+                                    array(' second item<code>'),
+                                    array(' third item'),
+                                ),
+                                  'type' => '-',
+                            ),
+                        )
+                    ),
+                    'tags' => array(),
+                    'startline' => 1,
+                    'endline' => 4,
                      ), $this->parser->parse($this->getOptions($comment, true)), 'parse');
 //        echo '</pre>';
 //        $this->parser->debug = false;

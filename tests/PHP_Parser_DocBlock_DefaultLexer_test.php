@@ -1526,6 +1526,38 @@ again some more}}');
                 array(PHP_PARSER_DOCLEX_ENDINTERNAL, '}}'),
             ), $data, 'simple list 1');
     }
+    
+    function test_simplelist_nontext()
+    {
+        if (!$this->_methodExists('setup')) {
+            return;
+        }
+        if (!$this->_methodExists('advance')) {
+            return;
+        }
+        $this->lexer->setup(' - <<code>>
+ - <b>stuff</b>');
+        $data = array();
+        while ($a = $this->lexer->advance()) {
+            $data[] = array($this->lexer->token, $this->lexer->value);
+        }
+        $this->assertEquals(
+            array(
+                array(PHP_PARSER_DOCLEX_WHITESPACE, ' '),
+                array(PHP_PARSER_DOCLEX_BULLET, '-'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' '),
+                array(PHP_PARSER_DOCLEX_ESCAPED_TAG, '<<code>>'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, "\n"),
+                array(PHP_PARSER_DOCLEX_WHITESPACE, ' '),
+                array(PHP_PARSER_DOCLEX_BULLET, '-'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, ' '),
+                array(PHP_PARSER_DOCLEX_OPEN_B, '<b>'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST, 'stuff'),
+                array(PHP_PARSER_DOCLEX_CLOSE_B, '</b>'),
+                array(PHP_PARSER_DOCLEX_SIMPLELIST_END, ''),
+            ), $data, 'simple list with other stuff');
+        $this->assertNoErrors('test_simplelist_nontext', 'oops');
+    }
 
     function test_simplelist_invalid1()
     {

@@ -207,6 +207,17 @@ class PHP_Parser_DocBlock_DefaultLexer
                 } while ($next && $next[0] == PHP_PARSER_DOCLEX_TEXT);
                 $this->restoreState($save);
             }
+            if ($lex[0] == PHP_PARSER_DOCLEX_SIMPLELIST) {
+                $save = $this->saveState();
+                do {
+                    $next = $this->yylex();
+                    if ($next[0] == PHP_PARSER_DOCLEX_SIMPLELIST) {
+                        $save = $this->saveState();
+                        $lex[1] .= $next[1];
+                    }
+                } while ($next && $next[0] == PHP_PARSER_DOCLEX_SIMPLELIST);
+                $this->restoreState($save);
+            }
             $this->tokenWithWhitespace = $lex[0];
             $this->token = $lex[0];
             $this->value = $lex[1];
@@ -326,7 +337,7 @@ class PHP_Parser_DocBlock_DefaultLexer
         } else { // if $this->_atBullet
             if ($this->_atNewLine) {
                 $this->_atNewLine = false;
-                $test = trim($this->yytext());
+                $test = ltrim($this->yytext());
                 if (strlen($test)) {
                     $whitespace = substr($this->yytext(), 0, strpos($this->yytext(), $test));
                 } else {
@@ -344,11 +355,15 @@ class PHP_Parser_DocBlock_DefaultLexer
                 } elseif (strlen($whitespace) >= ($wstrlen + $this->_lastBulletLen + 1)) {
                     if (strlen($test) && in_array($test{0}, array('-', '+', 'o', '1'))) {
                         // check for simple lists
-                        if (strlen($test) > 2 &&
-                            ($test{0} != '1' && ($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-                            ($test{0} == '1' && (($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
+                        $save = $this->saveState();
+                        if ($this->debug) echo ">>checking next token\n";
+                        $next = $this->yylex();
+                        $this->restoreState($save);
+                        if ((strlen($test) > 2 || !in_array($next, array(PHP_PARSER_DOCLEX_DOUBLENL, false))) &&
+                            ($test{0} != '1' && ($test{1} == ' ') ||
+                            ($test{0} == '1' && (($test{1} == ' ') ||
                                                  ($test{1} == '.') &&
-                                                 ($test{2} == ' ' && preg_match("/[^\s]/", $test{3})))))) {
+                                                 ($test{2} == ' ' ))))) {
                             // found a nested list
                             array_push($this->_listTypeStack, $this->_listType);
                             array_push($this->_bulletLenStack, $this->_lastBulletLen);
@@ -430,15 +445,19 @@ class PHP_Parser_DocBlock_DefaultLexer
             return array (PHP_PARSER_DOCLEX_SIMPLELIST, $this->yytext());
         }
     }
-    function _checkList($whitespace, $test, $newstate, $startingstate)
+    function _checkList($next, $whitespace, $test, $newstate, $startingstate)
     {
+        if (is_array($next)) {
+            $next = $next[0];
+        }
         // check for simple lists
-        if (strlen($test) > 2 &&
-            ($test{0} != '1' && ($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-            ($test{0} == '1' && (($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
+        if ((strlen($test) > 2 || !in_array($next, array(PHP_PARSER_DOCLEX_DOUBLENL, false))) &&
+            ($test{0} != '1' && ($test{1} == ' ') ||
+            ($test{0} == '1' && (($test{1} == ' ') ||
                                  ($test{1} == '.') &&
-                                 ($test{2} == ' ' && preg_match("/[^\s]/", $test{3})))))) {
+                                 ($test{2} == ' '))))) {
             // found one
+            if ($this->debug) echo "found valid bullet\n";
             if ($test{1} == '.') {
                 $this->_lastNum = 0;
                 $this->_listType = LIST_NUMBERED_DOT;
@@ -1207,7 +1226,7 @@ case 2:
 }
 case 3:
 {
-    $test = trim($this->yytext());
+    $test = ltrim($this->yytext());
     if (strlen($test)) {
         $whitespace = substr($this->yytext(), 0, strpos($this->yytext(), $test));
     } else {
@@ -1215,7 +1234,11 @@ case 3:
     }
     if (strlen($test) && in_array($test{0}, array('-', '+', 'o', '1'))) {
         // check for simple lists
-        if ($res = $this->_checkList($whitespace, $test, SIMPLELIST, YYINITIAL)) {
+        $save = $this->saveState();
+        if ($this->debug) echo ">>checking next token\n";
+        $next = $this->yylex();
+        $this->restoreState($save);
+        if ($res = $this->_checkList($next, $whitespace, $test, SIMPLELIST, YYINITIAL)) {
             return $res;
         } else {
             break;
@@ -1445,7 +1468,7 @@ case 16:
 }
 case 17:
 {
-    $test = trim($this->yytext());
+    $test = ltrim($this->yytext());
     if (strlen($test)) {
         $whitespace = substr($this->yytext(), 0, strpos($this->yytext(), $test));
     } else {
@@ -1453,7 +1476,11 @@ case 17:
     }
     if (strlen($test) && in_array($test{0}, array('-', '+', 'o', '1'))) {
         // check for simple lists
-        if ($res = $this->_checkList($whitespace, $test, INTERNALSIMPLELIST, INLINEINTERNALTAG)) {
+        $save = $this->saveState();
+        if ($this->debug) echo ">>checking next token\n";
+        $next = $this->yylex();
+        $this->restoreState($save);
+        if ($res = $this->_checkList($next, $whitespace, $test, INTERNALSIMPLELIST, INLINEINTERNALTAG)) {
             return $res;
         } else {
             break;
@@ -1592,7 +1619,7 @@ case 22:
 }
 case 23:
 {
-    $test = trim($this->yytext());
+    $test = ltrim($this->yytext());
     if (strlen($test)) {
         $whitespace = substr($this->yytext(), 0, strpos($this->yytext(), $test));
     } else {
@@ -1600,7 +1627,11 @@ case 23:
     }
     if (strlen($test) && in_array($test{0}, array('-', '+', 'o', '1'))) {
         // check for simple lists
-        if ($res = $this->_checkList($whitespace, $test, SIMPLELIST, YYINITIAL)) {
+        $save = $this->saveState();
+        if ($this->debug) echo ">>checking next token\n";
+        $next = $this->yylex();
+        $this->restoreState($save);
+        if ($res = $this->_checkList($next, $whitespace, $test, SIMPLELIST, YYINITIAL)) {
             return $res;
         } else {
             break;
@@ -1795,7 +1826,7 @@ case 39:
 }
 case 40:
 {
-    $test = trim($this->yytext());
+    $test = ltrim($this->yytext());
     if (strlen($test)) {
         $whitespace = substr($this->yytext(), 0, strpos($this->yytext(), $test));
     } else {
@@ -1803,7 +1834,11 @@ case 40:
     }
     if (strlen($test) && in_array($test{0}, array('-', '+', 'o', '1'))) {
         // check for simple lists
-        if ($res = $this->_checkList($whitespace, $test, INTERNALSIMPLELIST, INLINEINTERNALTAG)) {
+        $save = $this->saveState();
+        if ($this->debug) echo ">>checking next token\n";
+        $next = $this->yylex();
+        $this->restoreState($save);
+        if ($res = $this->_checkList($next, $whitespace, $test, INTERNALSIMPLELIST, INLINEINTERNALTAG)) {
             return $res;
         } else {
             break;
@@ -1867,7 +1902,7 @@ case 44:
 }
 case 45:
 {
-    $test = trim($this->yytext());
+    $test = ltrim($this->yytext());
     if (strlen($test)) {
         $whitespace = substr($this->yytext(), 0, strpos($this->yytext(), $test));
     } else {
@@ -1875,7 +1910,11 @@ case 45:
     }
     if (strlen($test) && in_array($test{0}, array('-', '+', 'o', '1'))) {
         // check for simple lists
-        if ($res = $this->_checkList($whitespace, $test, INTERNALSIMPLELIST, INLINEINTERNALTAG)) {
+        $save = $this->saveState();
+        if ($this->debug) echo ">>checking next token\n";
+        $next = $this->yylex();
+        $this->restoreState($save);
+        if ($res = $this->_checkList($next, $whitespace, $test, INTERNALSIMPLELIST, INLINEINTERNALTAG)) {
             return $res;
         } else {
             break;
