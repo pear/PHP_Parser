@@ -80,14 +80,11 @@ class Used {
    combination of more than one class!
   </para>
   <para>
-   The MsgServer class relies upon registration of "Listeners," classes that
-   contain a method named "handleMessage()" that take a single parameter, a
-   {@link MsgServer_Msg} class.  Listeners in turn register with
-   {@link catchMessage()} to respond to message types, defined by any string
-   name or integer.  Finally, any portion of code can send a message out to
-   registered listeners with the {@link sendMessage()} method, and most
-   significant, can receive information using the
-   {@link sendMessageGetAnswer()} method.
+   The MsgServer class relies upon registration of objects called listeners.
+   Listeners in turn register with {@link catchMessage()} to respond to message
+   types, defined by any string or integer.  Finally, any portion of code can
+   send a message out to registered listeners with the {@link sendMessage()} method,
+   and even send and receive information using the {@link sendMessageGetAnswer()} method.
   </para>
   <para>
    Now our example looks like:
@@ -96,32 +93,30 @@ class Used {
    <programlisting role="php">
     <![CDATA[
 class Used {
-    function handleMessage($msg)
+    function handleMessage($msgtype, $msg)
     {
-        switch ($msg->getType()) {
+        switch ($msgtype) {
             case 'phone' :
-                $msg->setData('555-1212');
+                return '555-1212';
             break;
             case 'email' :
-                $msg->setData('example@example.com');
+                return 'example@example.com';
             break;
         }
-        return $msg;
     }
 }
 
 class Abused {
-    function handleMessage($msg)
+    function handleMessage($msgtype, $msg)
     {
-        switch ($msg->getType()) {
+        switch ($msgtype) {
             case 'phone' :
-                $msg->setData('(303) 555-1212');
+                return '(303) 555-1212';
             break;
             case 'email' :
-                $msg->setData('example@example.com');
+                return 'example1@example.com';
             break;
         }
-        return $msg;
     }
 }
 
@@ -130,16 +125,15 @@ class MainClass {
     {
         // retrieve message server, or make new server 
         $server = &PHP_Parser_MsgServer::singleton();
-        $msg = new PHP_Parser_MsgServer_Msg;
-        $msg->setType('phone');
-        $ret = $server->sendMessageGetAnswer($msg);
+        $msgtype = 'phone';
+        $ret = $server->sendMessageGetAnswer($msgtype, false);
         if (!is_array($ret)) {
             echo 'No registered listeners catch the phone message';
             return;
         }
-        foreach ($ret as $id => $phone_number) {
+        foreach ($ret as $id => $contact) {
             echo 'Class Ided as "'.$id.'" returned Phone : ' 
-                 . $phone_number->getData()."\n";
+                 . $contact->getPhone()."\n";
         }
     }
 }
@@ -173,27 +167,26 @@ MainClass::test();
   </para>
   <para>
    So, to summarize, the MsgServer class solves the communication issues that
-   surround upgrading a package
+   surround upgrading a package:
    <itemizedlist>
     <listitem>
      <simpara>
-      anonymous interaction through a well-defined API keeps the need for
+      Anonymous interaction through a well-defined API keeps the need for
       redundant modifications to a minimum
      </simpara
     </listitem>
     <listitem>
      <simpara>
-      classes with new functionality can be swapped in and out without any
+      Classes with new functionality can be swapped in and out without any
       modification to the original code in a program
      </simpara
     </listitem>
     <listitem>
      <simpara>
-      more listeners can be added to a message type with no modification,
-      allowing unlimited scalability
-      completely new code can be swapped in.  For instance, a new CMS could
-      be installed and work right off the bat with existing code written for
-      the old CMS
+      More listeners can be added to a message type with no modification,
+      allowing unlimited scalability completely new code can be swapped in.
+      For instance, a new CMS could be installed and work right off the bat
+      with existing code written for the old CMS
      </simpara>
     <listitem>
    </itemizedlist>
