@@ -727,7 +727,7 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
                     'code' => PHP_PARSER_MSGSERVER_ERR_NONE_REGISTERED,
                 )
             ),
-        'teststopCatchingMessages7');
+        'testsendMessage1');
     }
     
     function testsendMessage2()
@@ -737,10 +737,18 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
         $this->assertSame(true, $res, 'registration of other failed');
         $res = $this->_msgserver->sendMessage(5, 5);
         $this->assertSame(true, $res, 'sendmessage should work');
-        $this->assertEquals('msgserver_notice', get_class($this->_caught), 'not notice');
-        $res = $this->_caught;
         $b = 'Message "5" has no registered' .
                 'listeners';
+        $this->assertErrors(
+            array(
+                array(
+                    'package' => 'PHP_Parser_MsgServer',
+                    'level' => 'notice',
+                    'message' => $b,
+                    'code' => PHP_PARSER_MSGSERVER_ERR_NO_CATCHERS,
+                )
+            ),
+        'testsendMessage2');
     }
     
     function testsendMessage3()
@@ -748,26 +756,38 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
         $a = new hasHandleMessageDefault;
         $res = $this->_msgserver->registerListener(6, $a);
         $this->assertSame(true, $res, 'registration of 6 failed');
+        $this->assertNoErrors('testsendMessage3', 'registration of 6 failed- errors');
         $res = $this->_msgserver->catchMessage(6, 7);
         $this->assertSame(true, $res, 'catchmessage of 7 failed');
+        $this->assertNoErrors('testsendMessage3', 'catchmessage of 7 failed- errors');
         $res = $this->_msgserver->sendMessage(5, 5);
         $this->assertSame(true, $res, 'sendmessage should work');
-        $this->assertEquals('msgserver_notice', get_class($this->_caught), 'not notice');
-        $res = $this->_caught;
         $b = 'No Listeners registered for ' .
                 'message type "5"';
+        $this->assertErrors(
+            array(
+                array(
+                    'package' => 'PHP_Parser_MsgServer',
+                    'level' => 'exception',
+                    'message' => $b,
+                    'code' => PHP_PARSER_MSGSERVER_ERR_NO_LISTENERS,
+                )
+            ),
+        'testsendMessage3');
     }
     
     function testsendMessage4()
     {
         $res = $this->_msgserver->registerListener(6, $this);
         $this->assertSame(true, $res, 'registration of 6 failed');
+        $this->assertNoErrors('testsendMessage4', 'registration of 6 failed- errors');
         $res = $this->_msgserver->catchMessage(6, 7, '_catch3');
         $this->assertSame(true, $res, 'catchmessage of 7 failed');
+        $this->assertNoErrors('testsendMessage4', 'catchmessage of 7 failed- errors');
         $this->_message = array();
         $res = $this->_msgserver->sendMessage(7, 'hello');
         $this->assertSame(true, $res, 'sendmessage should work');
-        $this->assertSame(false, $this->_caught, 'errors shouldn\'t be thrown '.(is_object($this->_caught)?$this->_caught->getMessage():''));
+        $this->assertNoErrors('testsendMessage4', 'sendmessage failed- errors');
         $this->assertEquals(array(array(7, 'hello')), $this->_message, 'message not heard');
     }
     
@@ -775,10 +795,18 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
     {
         $res = $this->_msgserver->sendMessageGetAnswer(5, 5);
         $this->assertEquals(array(), $res, 'sendmessage should work');
-        $this->assertEquals('msgserver_notice', get_class($this->_caught), 'not notice');
-        $res = $this->_caught;
         $b = 'No registered listeners for ' .
                 'any message, use registerListener() first';
+        $this->assertErrors(
+            array(
+                array(
+                    'package' => 'PHP_Parser_MsgServer',
+                    'level' => 'notice',
+                    'message' => $b,
+                    'code' => PHP_PARSER_MSGSERVER_ERR_NONE_REGISTERED,
+                )
+            ),
+        'testsendMessageGetAnswer1');
     }
     
     function testsendMessageGetAnswer2()
@@ -786,12 +814,21 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
         $a = new noHandleMessage;
         $res = $this->_msgserver->registerListener(6, $a);
         $this->assertSame(true, $res, 'registration of other failed');
+        $this->assertNoErrors('testsendMessageGetAnswer2', 'sendmessage failed- errors');
         $res = $this->_msgserver->sendMessageGetAnswer(5, 5);
         $this->assertEquals(array(), $res, 'sendmessage should work');
-        $this->assertEquals('msgserver_notice', get_class($this->_caught), 'not notice');
-        $res = $this->_caught;
         $b = 'Message "5" has no registered' .
                 'listeners';
+        $this->assertErrors(
+            array(
+                array(
+                    'package' => 'PHP_Parser_MsgServer',
+                    'level' => 'notice',
+                    'message' => $b,
+                    'code' => PHP_PARSER_MSGSERVER_ERR_NO_CATCHERS,
+                )
+            ),
+        'testsendMessageGetAnswer2');
     }
     
     function testsendMessageGetAnswer3()
@@ -799,26 +836,38 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
         $a = new hasHandleMessageDefault;
         $res = $this->_msgserver->registerListener(6, $a);
         $this->assertSame(true, $res, 'registration of 6 failed');
+        $this->assertNoErrors('testsendMessageGetAnswer3', 'registration of 6 failed- errors');
         $res = $this->_msgserver->catchMessage(6, 7);
         $this->assertSame(true, $res, 'catchmessage of 7 failed');
+        $this->assertNoErrors('testsendMessageGetAnswer3', 'catchmessage of 7 failed- errors');
         $res = $this->_msgserver->sendMessageGetAnswer(5, 5);
         $this->assertEquals(array(), $res, 'sendmessage should work');
-        $this->assertEquals('msgserver_notice', get_class($this->_caught), 'not notice');
-        $res = $this->_caught;
         $b = 'No Listeners registered for ' .
                 'message type "5"';
+        $this->assertErrors(
+            array(
+                array(
+                    'package' => 'PHP_Parser_MsgServer',
+                    'level' => 'notice',
+                    'message' => $b,
+                    'code' => PHP_PARSER_MSGSERVER_ERR_NO_LISTENERS,
+                )
+            ),
+        'testsendMessageGetAnswer3');
     }
     
     function testsendMessageGetAnswer4()
     {
         $res = $this->_msgserver->registerListener(6, $this);
         $this->assertSame(true, $res, 'registration of 6 failed');
+        $this->assertNoErrors('testsendMessageGetAnswer4', 'registration of 6 failed- errors');
         $res = $this->_msgserver->catchMessage(6, 7, '_catch3');
+        $this->assertNoErrors('testsendMessageGetAnswer4', 'catchmessage of 7 failed- errors');
         $this->assertSame(true, $res, 'catchmessage of 7 failed');
         $this->_message = array();
         $res = $this->_msgserver->sendMessageGetAnswer(7, 'hello');
         $this->assertEquals(array(), $res, 'sendmessage should work');
-        $this->assertSame(false, $this->_caught, 'errors shouldn\'t be thrown '.(is_object($this->_caught)?$this->_caught->getMessage():''));
+        $this->assertNoErrors('testsendMessageGetAnswer4', 'sendmessage failed- errors');
         $this->assertEquals(array(array(7, 'hello')), $this->_message, 'message not heard');
     }
     
@@ -826,12 +875,14 @@ class PHP_Parser_MsgServer_test extends PHPUnit_TestCase {
     {
         $res = $this->_msgserver->registerListener(6, $this);
         $this->assertSame(true, $res, 'registration of 6 failed');
+        $this->assertNoErrors('testsendMessageGetAnswer5', 'registration of 6 failed- errors');
         $res = $this->_msgserver->catchMessage(6, 7, '_catch4');
         $this->assertSame(true, $res, 'catchmessage of 7 failed');
+        $this->assertNoErrors('testsendMessageGetAnswer5', 'catchmessage of 7 failed- errors');
         $this->_message = array();
         $res = $this->_msgserver->sendMessageGetAnswer(7, 'hello');
         $this->assertEquals(array(6 => 'hi to you too'), $res, 'sendmessage should work');
-        $this->assertSame(false, $this->_caught, 'errors shouldn\'t be thrown '.(is_object($this->_caught)?$this->_caught->getMessage():''));
+        $this->assertNoErrors('testsendMessageGetAnswer5', 'sendmessage failed- errors');
         $this->assertEquals(array(array(7, 'hello')), $this->_message, 'message not heard');
     }
 }
