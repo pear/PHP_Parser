@@ -115,15 +115,15 @@ class PHP_Parser {
     */
   
     
-    function parse($string) {
+    function parse($string, $options = array(), $tokenizeroptions = array()) {
         if (!trim($string)) {
             return PEAR::raiseError('No thing to parse');
         }
     
         
-        $yyInput = new PHP_Parser_Tokenizer($string);
+        $yyInput = new PHP_Parser_Tokenizer($string, $tokenizeroptions);
         //xdebug_start_profiling();
-        $t = new PHP_Parser_Core;
+        $t = new PHP_Parser_Core($options);
         if (PEAR::isError($e = $t->yyparse($yyInput))) {
             return $e;
         }
@@ -133,6 +133,7 @@ class PHP_Parser {
                 'includes' => $t->includes,
                 'functions' => $t->functions,
                 'constants' => $t->constants,
+                'globals' => $t->globals
             );
           
     }
