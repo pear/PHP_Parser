@@ -162,7 +162,13 @@ class PHP_Parser {
     * @return   array| object PEAR_Error   should return an array of includes and classes.. will grow...
     * @access   public
     */
-    function staticParseFile($file, $options = array(), $tokenizeroptions = array(), $tokenizerClass = 'PHP_Parser_Tokenizer', $cacheDir=false)
+    function staticParseFile(
+                    $file, 
+                    $options = array(), 
+                    $tokenizeroptions = array(), 
+                    $tokenizerClass = 'PHP_Parser_Tokenizer', 
+                    $cacheDir=false
+                    )
     {
         if ($cacheDir === false) {
             return PHP_Parser::parse(file_get_contents($file), $options, $tokenizeroptions, $tokenizerClass);
@@ -219,14 +225,22 @@ class PHP_Parser {
     */
   
     
-    function parse($string, $options = array(), $tokenizeroptions = array(), $tokenizerClass = 'PHP_Parser_Tokenizer') {
+    function parse(
+            $string, 
+            $options = array(), 
+            $tokenizeroptions = array(), 
+            $tokenizerClass = 'PHP_Parser_Tokenizer') 
+    {
         if (!trim($string)) {
             return PEAR::raiseError('Nothing to parse');
         }
-    
         
-        $yyInput = new $tokenizerClass;
-        $yyInput->setOptions($string, $tokenizeroptions);
+        if (($tokenizerClass == 'PHP_Parser_Tokenizer') && !class_exists($tokenizerClass)) {
+            require_once 'PHP/Parser/Tokenizer.php';
+        }
+        
+        $yyInput = new $tokenizerClass($string, $tokenizeroptions);
+        //$yyInput->setOptions($string, $tokenizeroptions);
         //xdebug_start_profiling();
         $t = new PHP_Parser_Core($options);
         if (PEAR::isError($e = $t->yyparse($yyInput))) {
