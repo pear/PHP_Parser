@@ -19,8 +19,10 @@
    | native PHP version:  Greg Beaver <cellog@users.sourceforge.net>      |
    | native PHP version:  Alan Knowles <alan@akbkhome.com>                |
    +----------------------------------------------------------------------+
+   Last synchronized with zend_language_parser.y on Feb 26, 2004
 */
 
+define('PHP_PARSER_STRUCTURE_ERROR_PARSE', 1);
 
 //
 // This does nothing on it's own - refer to PHP_Parser
@@ -28,7 +30,7 @@
 //
  
 
-class PHP_Parser_Core {
+class PHP_Parser_Structure {
 
     /**
      * Options, used to control how the parser collects
@@ -68,7 +70,6 @@ class PHP_Parser_Core {
      * @access private
      */
     var $_inGlobal = false;
-    
     /**
      * @see __construct
      */

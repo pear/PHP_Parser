@@ -19,6 +19,7 @@
    | native PHP version:  Greg Beaver <cellog@users.sourceforge.net>      |
    | native PHP version:  Alan Knowles <alan@akbkhome.com>                |
    +----------------------------------------------------------------------+
+   Last synchronized with zend_language_parser.y on Feb 26, 2004
 */
 
 define('PHP_PARSER_EXTENDABLE_ERROR_PARSE', 1);

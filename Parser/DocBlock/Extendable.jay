@@ -1,0 +1,770 @@
+%{
+?><?php
+define('PHP_PARSER_DOCBLOCK_DEFAULTEXTENDABLE_ERROR_PARSE', 1);
+
+/**
+ * Default phpDocumentor DocBlock Parser
+ * @package PHP_Parser
+ */
+class PHP_Parser_DocBlock_DefaultExtendable {
+
+    /**
+     * Options, used to control how the parser collects
+     * and distributes the data it finds.
+     *
+     * Currently, options are grouped into two categories:
+     * - containers for data
+     * - publishing of data
+     *
+     * Default action is to return arrays of parsed data
+     * for use by other applications.  The first set of
+     * options, container options, provide a means to
+     * tell the parser to encapsulate data in objects
+     * instead of in arrays.  The option tells the parser which
+     * class to instantiate for each documentable element.  The
+     * default value of false will prompt the usage of arrays
+     * instead.
+     *
+     * The second set of options provide for intermediary
+     * publishing of data while parsing, to allow other
+     * classes to hook into functionality if they desire
+     * @access protected
+     * @var array
+     */
+    var $_options = array();
+    
+    /**
+     * The global message server
+     * @var MsgServer
+     */
+    var $_server;
+    
+    /**
+     * Tags from parsing
+     * @tutorial tags.pkg
+     * @var array
+     */
+    var $tags = array();
+    
+    /**
+     * Long description
+     * @var array
+     */
+    var $paragraphs = array();
+    
+    /**
+     * Summary of documentation
+     * @var array
+     */
+    var $summary = array();
+    
+    /**
+     * Compatibility with PHP 4
+     * @param array
+     */
+    function PHP_Parser_DocBlock_Default($options = array())
+    {
+        //$this->_server = &MsgServer::getServer();
+        $this->_options['publishConstMessage'] =
+        $this->_options['parseInternal'] =
+        false;
+        $this->_options['tagParserMap'] = array();
+        $this->_options['inlineTagParserMap'] = array();
+        $this->_options['docblockClass'] =
+        $this->_options['completeTagClass'] =
+        $this->_options['codeClass'] =
+        $this->_options['preClass'] =
+        $this->_options['boldClass'] =
+        $this->_options['italicClass'] =
+        $this->_options['varClass'] =
+        $this->_options['kbdClass'] =
+        $this->_options['sampClass'] =
+        $this->_options['listClass'] =
+        $this->_options['listitemClass'] =
+        $this->_options['tagsContainerClass'] =
+        false;
+        $this->_options = array_merge($this->_options, $options);
+        if (!class_exists($this->_options['tagsContainerClass'])) {
+            $this->_options['tagsContainerClass'] = false;
+        }
+        if (!class_exists($this->_options['listClass'])) {
+            $this->_options['listClass'] = false;
+        }
+        if (!class_exists($this->_options['listitemClass'])) { // until we can instanceof a classname
+            $this->_options['listitemClass'] = false;
+        }
+        if (!class_exists($this->_options['codeClass'])) { // until we can instanceof a classname
+            $this->_options['codeClass'] = false;
+        }
+        if (!class_exists($this->_options['completeTagClass'])) { // until we can instanceof a classname
+            $this->_options['completeTagClass'] = false;
+        }
+        if (!class_exists($this->_options['docblockClass'])) { // until we can instanceof a classname
+            $this->_options['codeClass'] = false;
+        }
+        if (!class_exists($this->_options['preClass'])) { // until we can instanceof a classname
+            $this->_options['preClass'] = false;
+        }
+        if (!class_exists($this->_options['boldClass'])) { // until we can instanceof a classname
+            $this->_options['boldClass'] = false;
+        }
+        if (!class_exists($this->_options['italicClass'])) { // until we can instanceof a classname
+            $this->_options['italicClass'] = false;
+        }
+        if (!class_exists($this->_options['varClass'])) { // until we can instanceof a classname
+            $this->_options['varClass'] = false;
+        }
+        if (!class_exists($this->_options['kbdClass'])) { // until we can instanceof a classname
+            $this->_options['kbdClass'] = false;
+        }
+        if (!class_exists($this->_options['sampClass'])) { // until we can instanceof a classname
+            $this->_options['sampClass'] = false;
+        }
+        if (is_array($this->_options['tagParserMap'])) {
+            $map = $this->_options['tagParserMap'];
+            foreach($map as $tag => $handler) {
+                if (!is_a($handler, 'PHP_Parser_DocBlock_TagParser')) {
+                    unset($this->_options['tagParserMap'][$tag]);
+                }
+            }
+        }
+        if (is_array($this->_options['inlineTagParserMap'])) {
+            $map = $this->_options['inlineTagParserMap'];
+            foreach($map as $tag => $handler) {
+                if (!is_a($handler, 'PHP_Parser_DocBlock_InlineTagParser')) {
+                    unset($this->_options['inlineTagParserMap'][$tag]);
+                }
+            }
+        }
+    }
+
+    /**
+     * global variable name of parser arrays
+     * should match the build options  
+     *
+     * @var string
+     * @access public 
+     */
+    var $yyGlobalName = '_PHP_PARSER_DOCBLOCK_DEFAULTEXTENDABLE';
+
+    /**
+     * (syntax) error message.
+     * Can be overwritten to control message format.
+     * @param message text to be displayed.
+     * @param expected vector of acceptable tokens, if available.
+     */
+    function raiseError ($message, $code, $params)
+    {     
+        if (isset($params['expected'])) {
+            $p = $params['expected'];
+            $m = "$message, expecting ";
+            if (count($p) - 1) {
+                $last = array_pop($p);
+                array_push($p, 'or ' . $last);
+            }
+            $m .= implode(', ', $p);
+        } else {
+            $m = $message;
+        }
+        return PHP_Parser_Stack::staticPush('PHP_Parser_Docblock_DefaultExtendable',
+            PHP_PARSER_DOCBLOCK_DEFAULTEXTENDABLE_ERROR_PARSE,
+            'error', $params,
+            $m);  
+    }
+    
+    function _newList($item, $lt)
+    {
+        $l = $this->_options['listClass'];
+        $i = $this->_options['listitemClass'];
+        if ($l && $i) {
+            $list = new $l();
+            $list->setType($lt);
+            $list->addItem(new $i($item));
+        } else {
+            $list = array(
+                        'type' => $lt,
+                        'list' =>
+                        array('items' => array($item)));
+        }
+        return $list;
+    }
+    
+    function _addList($list, $item)
+    {
+        if (is_array($list)) {
+            $list['items'][] = $item;
+        } else {
+            $i = $this->_options['listitemClass'];
+            $list->addItem(new $i($item));
+        }
+        return $list;
+    }
+    
+    /**
+     * @param array $options
+     * @param:array string $comment DocBlock to parse
+     * @param:array integer $line line number
+     * @param:array array $token T_DOC_COMMENT token
+     * @param:array PhpDocumentor_DocBlock_Lexer $lex DocBlock lexer
+     * @param:array boolean $nosummary if true, then the description will not
+     *                      be separated into summary/long description
+     * @param:array boolean $preformatted if true, then the documentation
+     *                      has already had the comment stuff stripped
+     */
+    function parse($options)
+    {
+        if (count($options) < 4) {
+            return false;
+        }
+        $comment = $options['comment'];
+        $line = @$options['commentline'];
+        $token = @$options['commenttoken'];
+        $lex = $options['lexer'];
+        
+        $this->summary = $this->paragraphs = $this->tags = array();
+
+        $endlinenumber = $line + count(explode("\n", $comment));
+        $dtemplate = false;
+        if (!isset($options['tagdesc'])) {
+            if ($comment == '/**#@-*/') {
+                $parsed_docs = false;
+                $this->_server->sendMessage(PHPDOCUMENTOR_PARSED_DOCTEMPLATE_STOP, false);
+                return false;
+            }
+            if (strpos($comment,'/**#@+') === 0) {
+                $dtemplate = true;
+            }
+            $comment = $this->stripNonEssentials($comment);
+        }
+        $lex->setup($comment);
+        $result = $this->yyparse($lex);
+        if (PEAR::isError($result)) {
+            echo $result->getMessage()."\n";
+            return $result;
+        }
+        if (!isset($options['nosummary'])) {
+            $this->setSummary();
+        }
+        $docblock = $this->_options['docblockClass'];
+        if ($docblock) {
+            $parsed_docs = new $docblock($this);
+            $parsed_docs->setStartLine($line);
+            $parsed_docs->setEndLine($endlinenumber);
+        } else {
+            $parsed_docs =
+                array(
+                    'summary' => $this->summary,
+                    'documentation' => $this->paragraphs,
+                    'tags' => $this->tags,
+                    'startline' => $line,
+                    'endline' => $endlinenumber,
+                     );
+        }
+        if ($dtemplate) {
+            $this->_server->sendMessage(PHPDOCUMENTOR_PARSED_DOCTEMPLATE, $parsed_docs);
+        } else {
+            if (!isset($options['tagdesc'])) {
+                $this->_server->sendMessage(PHPDOCUMENTOR_PARSED_DOCBLOCK, $parsed_docs);
+            }
+            return $parsed_docs;
+        }
+    }
+    
+    /**
+     * Extract the summary from the description, and set it.
+     *
+     * This can be overridden in child classes to do other methods of
+     * summary extraction, such as the doxygen method of extracting
+     * a certain number of characters, or Javadoc's method of extracting
+     * to the first period
+     */
+    function setSummary()
+    {
+        if (!isset($this->paragraphs[0])) {
+            return;
+        }
+        $this->summary = $this->paragraphs[0];
+        $lineindex = 0;
+        $nlcount = 0;
+        $oldnlcount = 0;
+        $retsummary = $retdescription = array();
+        foreach($this->summary as $i => $item) {
+            $oldnlcount = $nlcount;
+            if (is_array($item)) {
+                // no way to calculate arrays since they can be nested
+                $retsummary = array_slice($this->summary, 0, $i);
+                $retdescription = array_slice($this->summary, $i);
+                $this->summary = $retsummary;
+                $this->paragraphs[0] = $retdescription;
+                return;
+            }
+            if (is_object($item)) {
+                if ((method_exists($item, 'hasmultiplecr') && $item->hasMultipleCR())
+                        || is_a($item, 'PhpDocumentor_DocBlock_List')) {
+                    $retsummary = array_slice($this->summary, 0, $i);
+                    $retdescription = array_slice($this->summary, $i);
+                    $this->summary = $retsummary;
+                    $this->paragraphs[0] = $retdescription;
+                    return;
+                }
+                // all other objects can't contain \n
+                continue;
+            }
+            if (count(explode("\n\n", $item)) - 1) {
+                // contains a double newline - this is it
+                $summary = array_shift($a = explode("\n\n", $item));
+                $description = join($a);
+                $retsummary[$i] = $summary;
+                break;
+            }
+            if (count($a = explode("\n", $item)) - 1) {
+                $nlcount += count($a) - 1;
+                // contains newlines
+                if ($nlcount > 3) {
+                    // we've found our summary in this block
+                    if ($oldnlcount == 2) {
+                        $retsummary = array_slice($this->summary, 0, $i);
+                        $retsummary[] = array_shift($a);
+                        $retdescription = array_merge(array(join($a, "\n")),
+                                                      array_slice($this->summary, $i + 1));
+                    }
+                    if ($oldnlcount == 3) {
+                        $retsummary = array_slice($this->summary, 0, $i - 1);
+                        $retdescription = array_slice($this->summary, $i - 1);
+                    }
+                    $this->summary = $retsummary;
+                    $this->paragraphs[0] = $retdescription;
+                    return;
+                }
+            }
+        }
+        if (isset($description)) {
+            for($j = 0; $j < $i; $j++) {
+                $retsummary[$j] = $this->summary[$i];
+            }
+            $retdescription = array($description);
+            for($j = $i; $j < count($this->summary); $j++) {
+                $retdescription[] = $this->summary[$i];
+            }
+            $this->summary = $retsummary;
+            $this->paragraphs[0] = $retdescription;
+            return;
+        }
+        
+        
+        unset($this->paragraphs[0]);
+        $this->paragraphs = array_values($this->paragraphs);
+    }
+    
+    function getSummary()
+    {
+        return $this->summary;
+    }
+    
+    function getDescription()
+    {
+        return $this->paragraphs;
+    }
+    
+    function getTags()
+    {
+        return $this->tags;
+    }
+    
+    /**
+     * Remove the /**, * and {@*} from the doc comment
+     *
+     * Also remove blank lines
+     * @param string
+     * @return array
+     */
+    function stripNonEssentials($comment)
+    {
+        $comment = str_replace("\r", '', trim($comment));
+        if (strpos($comment, '/**#@+') === 0)
+        { // docblock template definition
+            // strip /**#@+ and */
+            $comment = substr($comment,6).'*';
+            $comment = substr($comment,0,strlen($comment) - 2);
+        } else
+        {
+            // strip /** and */
+            $comment = substr($comment,2);
+            $comment = substr($comment,0,strlen($comment) - 2);
+        }
+        $lines = explode("\n", trim($comment));
+        $go = count($lines);
+        for($i=0; $i < $go; $i++)
+        {
+            if (substr(trim($lines[$i]),0,1) != '*') {
+                unset($lines[$i]);
+            } else {
+                $lines[$i] = substr(trim($lines[$i]),1); // remove leading "* "
+            }
+        }
+        // remove empty lines
+        return trim(join("\n", $lines));
+    }
+
+    function _parseTag($name, $contents)
+    {
+        if (is_array($this->_options['tagParserMap'])) {
+            if (isset($this->_options['tagParserMap']
+                  [str_replace('@', '', $name)])) {
+                // use custom tag parser
+                return $this->_options['tagParserMap'][str_replace('@', '',
+                  $name)]->parseTag(str_replace('@', '', $name), $contents);
+            } elseif (isset($this->_options['tagParserMap']['*'])) {
+                // use default tag parser
+                return $this->_options['tagParserMap']['*']->parseTag(
+                  str_replace('@', '', $name), $contents);
+            } else {
+                // no default handler
+                return array('tag' => str_replace('@', '', $name),
+                  'value' => $contents);
+            }
+        } else {
+            // no registered tag parsers
+            return array('tag' => str_replace('@', '', $name),
+              'value' => $contents);
+        }
+    }
+    
+    function _parseInlineTag($name, $contents)
+    {
+        if (is_array($this->_options['inlineTagParserMap'])) {
+            if (isset($this->_options['inlineTagParserMap'][$name])) {
+                // use custom inline tag parser
+                return $this->_options['inlineTagParserMap']
+                  [$name]->parseInlineTag($name, $contents);
+            } elseif (isset($this->_options['inlineTagParserMap']['*'])) {
+                // use default inline tag parser
+                return $this->_options['inlineTagParserMap']
+                  ['*']->parseInlineTag($name, $contents);
+            } else {
+                // no default handler
+                return array('inlinetag' => $name, 'value' => $contents);
+            }
+        } else {
+            // no registered inline tag parsers
+            return array('inlinetag' => $name, 'value' => $contents);
+        }
+    }
+%}
+
+%token T_BULLET 1
+%token T_NBULLET 2
+%token T_NDBULLET 3
+%token T_SIMPLELIST 4
+%token T_SIMPLELIST_NL 5
+%token T_SIMPLELIST_END 6
+%token T_WHITESPACE 7
+%token T_NESTED_WHITESPACE 8
+%token T_OPEN_P 9
+%token T_OPEN_LIST 10
+%token T_OPEN_LI 11
+%token T_OPEN_CODE 12
+%token T_OPEN_PRE 13
+%token T_OPEN_B 14
+%token T_OPEN_I 15
+%token T_OPEN_KBD 16
+%token T_OPEN_VAR 17
+%token T_OPEN_SAMP 18
+%token T_CLOSE_P 19
+%token T_CLOSE_LIST 20
+%token T_CLOSE_LI 21
+%token T_CLOSE_CODE 22
+%token T_CLOSE_PRE 23
+%token T_CLOSE_B 24
+%token T_CLOSE_I 25
+%token T_CLOSE_KBD 26
+%token T_CLOSE_VAR 27
+%token T_CLOSE_SAMP 28
+%token T_XML_TAG 29
+%token T_ESCAPED_TAG 30
+%token T_TEXT 31
+%token T_NL 32
+%token T_INLINE_ESC 33
+%token T_INTERNAL 34
+%token T_ENDINTERNAL 35
+%token T_DOUBLE_NL 36
+%token T_TAG 37
+%token T_INLINE_TAG_OPEN 38
+%token T_INLINE_TAG_CLOSE 39
+%token T_INLINE_TAG_NAME 40
+%token T_INLINE_TAG_CONTENTS 41
+%token EOF 258
+
+%left T_SIMPLELIST_NL T_NL T_CLOSE_P
+%nonassoc T_CLOSE_LI
+%nonassoc T_OPEN_LI
+%right T_BULLET T_WHITESPACE T_NBULLET T_NDBULLET
+%right T_OPEN_P T_OPEN_LIST T_OPEN_CODE T_OPEN_PRE T_OPEN_B T_OPEN_I T_OPEN_KBD T_OPEN_VAR T_OPEN_SAMP
+
+%start docblock
+
+%% /* Rules */
+
+docblock:
+    shortdesc longdesc
+    |   shortdesc longdesc tags
+    |   shortdesc_with_p longdesc_with_p tags
+    |   shortdesc
+    |   tags
+;
+
+shortdesc:
+    paragraph
+;
+
+longdesc:
+    T_DOUBLE_NL paragraphs
+;
+
+shortdesc_with_p:
+    paragraph_with_p
+;
+
+longdesc_with_p:
+    paragraphs_with_p
+;
+
+tags:
+    T_TAG
+    |   T_TAG T_TEXT paragraphs
+;
+
+paragraphs:
+    |   paragraph
+    |   paragraphs T_DOUBLE_NL paragraph
+;
+
+paragraph:
+    T_TEXT
+    |   htmltag
+    |   simplelist
+    |   inlinetag
+    |   internaltag
+    |   T_ESCAPED_TAG
+    |   T_CLOSE_P
+    |   T_INLINE_ESC
+    |   T_NL
+    |   paragraph T_TEXT
+    |   paragraph htmltag
+    |   paragraph simplelist
+    |   paragraph inlinetag
+    |   paragraph T_ESCAPED_TAG
+    |   paragraph T_OPEN_P
+    |   paragraph T_CLOSE_P
+    |   paragraph T_INLINE_ESC
+    |   paragraph T_NL
+    |   paragraph internaltag
+;
+
+htmltag:
+    T_XML_TAG
+    |   btag
+    |   codetag
+    |   samptag
+    |   kbdtag
+    |   vartag
+    |   htmllist
+;
+
+btag:
+    T_OPEN_B paragraphs T_CLOSE_B
+;
+
+codetag:
+    T_OPEN_CODE paragraphs T_CLOSE_CODE
+;
+
+samptag:
+    T_OPEN_SAMP paragraphs T_CLOSE_SAMP
+;
+
+kbdtag:
+    T_OPEN_KBD paragraphs T_CLOSE_KBD
+;
+
+vartag:
+    T_OPEN_VAR paragraphs T_CLOSE_VAR
+;
+
+htmllist:
+    T_OPEN_LIST listitems T_CLOSE_LIST
+;
+
+listitems:
+    listitem
+    |   listitems listitem
+;
+
+listitem:
+    T_OPEN_LI paragraphs T_CLOSE_LI
+;
+
+simplelist:
+    bullet simplelist_contents simplelistend
+    |   simplelist bullet simplelist_contents simplelistend
+;
+
+
+bullet:
+    T_BULLET
+    |   T_NBULLET
+    |   T_NDBULLET
+    |   T_WHITESPACE bullet
+;
+
+nested_bullet:
+    T_NESTED_WHITESPACE T_BULLET
+    |   T_NESTED_WHITESPACE T_NBULLET
+    |   T_NESTED_WHITESPACE T_NDBULLET
+;
+
+simplelistend:
+    T_SIMPLELIST_NL
+    |   T_SIMPLELIST_END
+    |   EOF
+;
+
+
+simplelist_contents:
+    T_SIMPLELIST
+    |   T_ESCAPED_TAG
+    |   inlinetag
+    |   T_INLINE_ESC
+    |   htmltag
+    |   nested_simplelist
+    |   simplelist_contents T_SIMPLELIST
+    |   simplelist_contents T_ESCAPED_TAG
+    |   simplelist_contents inlinetag
+    |   simplelist_contents T_INLINE_ESC
+    |   simplelist_contents htmltag
+    |   simplelist_contents nested_simplelist
+;
+
+nested_simplelist:
+    nested_bullet simplelist_contents simplelistend
+;
+
+
+inlinetag:
+    T_INLINE_TAG_OPEN T_INLINE_TAG_NAME T_INLINE_TAG_CONTENTS T_INLINE_TAG_CLOSE
+    |   T_INLINE_TAG_OPEN T_INLINE_TAG_NAME T_INLINE_TAG_CLOSE
+;
+
+internaltag:
+    T_INTERNAL paragraphs T_ENDINTERNAL
+;
+
+paragraphs_with_p:
+    paragraph_with_p
+    |   paragraphs_with_p paragraph_with_p
+;
+
+paragraph_with_p:
+    T_OPEN_P text_expr_with_p T_CLOSE_P
+    |   T_OPEN_P text_expr_with_p T_CLOSE_P T_WHITESPACE
+    |   T_OPEN_P text_expr_with_p
+;
+
+text_expr_with_p:
+    T_TEXT
+    |   htmltag_with_p
+    |   simplelist_with_p
+    |   inlinetag
+    |   internaltag_with_p
+    |   T_ESCAPED_TAG
+    |   text_expr_with_p T_TEXT
+    |   text_expr_with_p htmltag_with_p
+    |   text_expr_with_p simplelist_with_p
+    |   text_expr_with_p inlinetag
+    |   text_expr_with_p internaltag_with_p
+    |   text_expr_with_p T_ESCAPED_TAG
+;
+
+htmltag_with_p:
+    T_XML_TAG
+    |   btag_with_p
+    |   codetag_with_p
+    |   samptag_with_p
+    |   kbdtag_with_p
+    |   vartag_with_p
+    |   htmllist_with_p
+;
+
+btag_with_p:
+    T_OPEN_B text_expr_with_p T_CLOSE_B
+;
+
+codetag_with_p:
+    T_OPEN_CODE text_expr_with_p T_CLOSE_CODE
+;
+
+samptag_with_p:
+    T_OPEN_SAMP text_expr_with_p T_CLOSE_SAMP
+;
+
+kbdtag_with_p:
+    T_OPEN_KBD text_expr_with_p T_CLOSE_KBD
+;
+
+vartag_with_p:
+    T_OPEN_VAR text_expr_with_p T_CLOSE_VAR
+;
+
+htmllist_with_p:
+    T_OPEN_LIST listitems_with_p T_CLOSE_LIST
+;
+
+listitems_with_p:
+    listitem_with_p
+    |   listitems_with_p listitem_with_p
+;
+
+listitem_with_p:
+    T_OPEN_LI text_expr_with_p T_CLOSE_LI
+;
+
+simplelist_with_p:
+    bullet simplelist_contents_with_p simplelistend_with_p
+    |   simplelist_with_p bullet simplelist_contents_with_p simplelistend_with_p
+;
+
+simplelistend_with_p:
+    T_SIMPLELIST_NL
+    |   T_SIMPLELIST_END
+    |   EOF
+;
+
+
+simplelist_contents_with_p:
+    T_SIMPLELIST
+    |   T_ESCAPED_TAG
+    |   inlinetag
+    |   T_INLINE_ESC
+    |   T_DOUBLE_NL
+    |   htmltag_with_p
+    |   nested_simplelist_with_p
+    |   simplelist_contents_with_p T_SIMPLELIST
+    |   simplelist_contents_with_p T_ESCAPED_TAG
+    |   simplelist_contents_with_p inlinetag
+    |   simplelist_contents_with_p T_INLINE_ESC
+    |   simplelist_contents_with_p T_DOUBLE_NL
+    |   simplelist_contents_with_p htmltag_with_p
+    |   simplelist_contents_with_p nested_simplelist_with_p
+;
+
+nested_simplelist_with_p:
+    nested_bullet simplelist_contents_with_p simplelistend_with_p
+;
+
+internaltag_with_p:
+    T_INTERNAL paragraphs_with_p T_ENDINTERNAL
+;
+
+%%
+    /**#@-*/
+}

@@ -30,7 +30,13 @@
 */
  
 require_once 'System.php';
-     
+// this will be used if the package is approved in PEAR 
+//require_once 'Error/Stack.php';
+require_once 'PHP/Parser/Stack.php';
+
+define('PHP_PARSER_ERROR_NODRIVER', 1);
+define('PHP_PARSER_ERROR_NOTINITIALIZED', 2);
+define('PHP_PARSER_ERROR_NOINPUT', 3);
 
 class PHP_Parser {
     var $_parser;
@@ -66,11 +72,16 @@ class PHP_Parser {
             $this->_parser = $parser;
             return false;
         }
-        if ($this->isIncludeable('PHP/Parser/' . $parser . '.php')) {
-            include_once 'PHP/Parser/' . $parser . '.php';
-        }
         if (!class_exists($parser)) {
-            return $this->raiseError('no parser driver found');
+            if ($this->isIncludeable('PHP/Parser/' . $parser . '.php')) {
+                include_once 'PHP/Parser/' . $parser . '.php';
+            }
+            if (!class_exists('PHP_Parser_' . $parser)) {
+                return $this->raiseError("no parser driver \"$parser\" found",
+                    PHP_PARSER_ERROR_NODRIVER, array('driver' => $parser,
+                    'type' => 'parse'));
+            }
+            $parser = "PHP_Parser_$parser";
         }
         $this->_parser = new $parser;
         return false;
@@ -86,20 +97,40 @@ class PHP_Parser {
             $this->_tokenizer = $tokenizer;
             return false;
         }
-        if ($this->isIncludeable('PHP/Parser/Tokenizer' . $tokenizer . '.php')) {
-            include_once 'PHP/Parser/Tokenizer/' . $tokenizer . '.php';
-        }
         if (!class_exists($tokenizer)) {
-            return $this->raiseError('no tokenizer driver found');
+            if ($this->isIncludeable('PHP/Parser/Tokenizer/' . $tokenizer . '.php')) {
+                include_once 'PHP/Parser/Tokenizer/' . $tokenizer . '.php';
+            }
+            if (!class_exists('PHP_Parser_Tokenizer_' . $tokenizer)) {
+                return $this->raiseError("no tokenizer driver \"$tokenizer\" found",
+                    PHP_PARSER_ERROR_NODRIVER, array('driver' => $tokenizer,
+                    'type' => 'tokenize'));
+            }
+            $tokenizer = "PHP_Parser_Tokenizer_$tokenizer";
         }
         $this->_tokenizer = new $tokenizer;
         return false;
     }
     
-    function raiseError($msg, $code)
+    /**
+     * @param string input to parse
+     * @param array options for the tokenizer
+     * @return PEAR_Error|false
+     */
+    function setTokenizerOptions($php, $options = array())
     {
-        require_once 'PEAR.php';
-        return PEAR::raiseError($msg, $code);
+        if (is_object($this->_tokenizer)) {
+            $this->_tokenizer->setOptions($php, $options);
+            return false;
+        }
+        return $this->raiseError("tokenizer must be initialized before setTokenizerOptions",
+            PHP_PARSER_ERROR_NOTINITIALIZED);
+    }
+    
+    function raiseError($msg, $code, $params = array())
+    {
+        return PHP_Parser_Stack::staticPush('PHP_Parser', $code,
+            'exception', $params, $msg);
     }
     
     /**
@@ -132,7 +163,7 @@ class PHP_Parser {
     * @return   array| object PEAR_Error   should return an array of includes and classes.. will grow...
     * @access   public
     */
-    function parseFile($file, $options = array(), $tokenizeroptions = array(), $tokenizerClass = 'PHP_Parser_Tokenizer', $cacheDir=false)
+    function staticParseFile($file, $options = array(), $tokenizeroptions = array(), $tokenizerClass = 'PHP_Parser_Tokenizer', $cacheDir=false)
     {
         if ($cacheDir === false) {
             return PHP_Parser::parse(file_get_contents($file), $options, $tokenizeroptions, $tokenizerClass);
@@ -195,7 +226,8 @@ class PHP_Parser {
         }
     
         
-        $yyInput = new $tokenizerClass($string, $tokenizeroptions);
+        $yyInput = new $tokenizerClass;
+        $yyInput->setOptions($string, $tokenizeroptions);
         //xdebug_start_profiling();
         $t = new PHP_Parser_Core($options);
         if (PEAR::isError($e = $t->yyparse($yyInput))) {
@@ -210,6 +242,24 @@ class PHP_Parser {
                 'globals' => $t->globals
             );
           
+    }
+    
+    function parseString($php, $tokenoptions = array())
+    {
+        if (!strlen(trim($php))) {
+            return $this->raiseError("Nothing to parse in parseString",
+                PHP_PARSER_ERROR_NOINPUT);
+        }
+        $this->setTokenizerOptions($php, $tokenoptions);
+        $this->_parser->yyparse($this->_tokenizer);
+        return array(
+                'classes'  => $this->_parser->classes,
+                'interfaces'  => $this->_parser->interfaces,
+                'includes' => $this->_parser->includes,
+                'functions' => $this->_parser->functions,
+                'constants' => $this->_parser->constants,
+                'globals' => $this->_parser->globals
+            );
     }
 }     
  

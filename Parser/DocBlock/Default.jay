@@ -1,0 +1,1255 @@
+%{
+?><?php
+define('PHP_PARSER_DOCBLOCK_DEFAULT_ERROR_PARSE', 1);
+
+/**
+ * Default phpDocumentor DocBlock Parser
+ * @package PHP_Parser
+ */
+class PHP_Parser_DocBlock_Default {
+
+    /**
+     * Options, used to control how the parser collects
+     * and distributes the data it finds.
+     *
+     * Currently, options are grouped into two categories:
+     * - containers for data
+     * - publishing of data
+     *
+     * Default action is to return arrays of parsed data
+     * for use by other applications.  The first set of
+     * options, container options, provide a means to
+     * tell the parser to encapsulate data in objects
+     * instead of in arrays.  The option tells the parser which
+     * class to instantiate for each documentable element.  The
+     * default value of false will prompt the usage of arrays
+     * instead.
+     *
+     * The second set of options provide for intermediary
+     * publishing of data while parsing, to allow other
+     * classes to hook into functionality if they desire
+     * @access protected
+     * @var array
+     */
+    var $_options = array();
+    
+    /**
+     * The global message server
+     * @var MsgServer
+     */
+    var $_server;
+    
+    /**
+     * Tags from parsing
+     * @tutorial tags.pkg
+     * @var array
+     */
+    var $tags = array();
+    
+    /**
+     * Long description
+     * @var array
+     */
+    var $paragraphs = array();
+    
+    /**
+     * Summary of documentation
+     * @var array
+     */
+    var $summary = array();
+    
+    /**
+     * Compatibility with PHP 4
+     * @param array
+     */
+    function PHP_Parser_DocBlock_Default($options = array())
+    {
+        //$this->_server = &MsgServer::getServer();
+        $this->_options['publishConstMessage'] =
+        $this->_options['parseInternal'] =
+        false;
+        $this->_options['tagParserMap'] = array();
+        $this->_options['inlineTagParserMap'] = array();
+        $this->_options['docblockClass'] =
+        $this->_options['completeTagClass'] =
+        $this->_options['codeClass'] =
+        $this->_options['preClass'] =
+        $this->_options['boldClass'] =
+        $this->_options['italicClass'] =
+        $this->_options['varClass'] =
+        $this->_options['kbdClass'] =
+        $this->_options['sampClass'] =
+        $this->_options['listClass'] =
+        $this->_options['listitemClass'] =
+        $this->_options['tagsContainerClass'] =
+        false;
+        $this->_options = array_merge($this->_options, $options);
+        if (!class_exists($this->_options['tagsContainerClass'])) {
+            $this->_options['tagsContainerClass'] = false;
+        }
+        if (!class_exists($this->_options['listClass'])) {
+            $this->_options['listClass'] = false;
+        }
+        if (!class_exists($this->_options['listitemClass'])) { // until we can instanceof a classname
+            $this->_options['listitemClass'] = false;
+        }
+        if (!class_exists($this->_options['codeClass'])) { // until we can instanceof a classname
+            $this->_options['codeClass'] = false;
+        }
+        if (!class_exists($this->_options['completeTagClass'])) { // until we can instanceof a classname
+            $this->_options['completeTagClass'] = false;
+        }
+        if (!class_exists($this->_options['docblockClass'])) { // until we can instanceof a classname
+            $this->_options['codeClass'] = false;
+        }
+        if (!class_exists($this->_options['preClass'])) { // until we can instanceof a classname
+            $this->_options['preClass'] = false;
+        }
+        if (!class_exists($this->_options['boldClass'])) { // until we can instanceof a classname
+            $this->_options['boldClass'] = false;
+        }
+        if (!class_exists($this->_options['italicClass'])) { // until we can instanceof a classname
+            $this->_options['italicClass'] = false;
+        }
+        if (!class_exists($this->_options['varClass'])) { // until we can instanceof a classname
+            $this->_options['varClass'] = false;
+        }
+        if (!class_exists($this->_options['kbdClass'])) { // until we can instanceof a classname
+            $this->_options['kbdClass'] = false;
+        }
+        if (!class_exists($this->_options['sampClass'])) { // until we can instanceof a classname
+            $this->_options['sampClass'] = false;
+        }
+        if (is_array($this->_options['tagParserMap'])) {
+            $map = $this->_options['tagParserMap'];
+            foreach($map as $tag => $handler) {
+                if (!is_a($handler, 'PHP_Parser_DocBlock_TagParser')) {
+                    unset($this->_options['tagParserMap'][$tag]);
+                }
+            }
+        }
+        if (is_array($this->_options['inlineTagParserMap'])) {
+            $map = $this->_options['inlineTagParserMap'];
+            foreach($map as $tag => $handler) {
+                if (!is_a($handler, 'PHP_Parser_DocBlock_InlineTagParser')) {
+                    unset($this->_options['inlineTagParserMap'][$tag]);
+                }
+            }
+        }
+    }
+
+    /**
+     * global variable name of parser arrays
+     * should match the build options  
+     *
+     * @var string
+     * @access public 
+     */
+    var $yyGlobalName = '_PHP_PARSER_DOCBLOCK_DEFAULT';
+
+    /**
+     * (syntax) error message.
+     * Can be overwritten to control message format.
+     * @param message text to be displayed.
+     * @param expected vector of acceptable tokens, if available.
+     */
+    function raiseError ($message, $code, $params)
+    {     
+        if (isset($params['expected'])) {
+            $p = $params['expected'];
+            $m = "$message, expecting ";
+            if (count($p) - 1) {
+                $last = array_pop($p);
+                array_push($p, 'or ' . $last);
+            }
+            $m .= implode(', ', $p);
+        } else {
+            $m = $message;
+        }
+        return PHP_Parser_Stack::staticPush('PHP_Parser_Docblock_Default',
+            PHP_PARSER_DOCBLOCK_DEFAULT_ERROR_PARSE,
+            'error', $params,
+            $m);  
+    }
+    
+    function _newList($item, $lt)
+    {
+        $l = $this->_options['listClass'];
+        $i = $this->_options['listitemClass'];
+        if ($l && $i) {
+            $list = new $l();
+            $list->setType($lt);
+            $list->addItem(new $i($item));
+        } else {
+            $list = array(
+                        'type' => $lt,
+                        'list' =>
+                        array('items' => array($item)));
+        }
+        return $list;
+    }
+    
+    function _addList($list, $item)
+    {
+        if (is_array($list)) {
+            $list['items'][] = $item;
+        } else {
+            $i = $this->_options['listitemClass'];
+            $list->addItem(new $i($item));
+        }
+        return $list;
+    }
+    
+    /**
+     * @param array $options
+     * @param:array string $comment DocBlock to parse
+     * @param:array integer $line line number
+     * @param:array array $token T_DOC_COMMENT token
+     * @param:array PhpDocumentor_DocBlock_Lexer $lex DocBlock lexer
+     * @param:array boolean $nosummary if true, then the description will not
+     *                      be separated into summary/long description
+     * @param:array boolean $preformatted if true, then the documentation
+     *                      has already had the comment stuff stripped
+     */
+    function parse($options)
+    {
+        if (count($options) < 4) {
+            return false;
+        }
+        $comment = $options['comment'];
+        $line = @$options['commentline'];
+        $token = @$options['commenttoken'];
+        $lex = $options['lexer'];
+        
+        $this->summary = $this->paragraphs = $this->tags = array();
+
+        $endlinenumber = $line + count(explode("\n", $comment));
+        $dtemplate = false;
+        if (!isset($options['tagdesc'])) {
+            if ($comment == '/**#@-*/') {
+                $parsed_docs = false;
+                $this->_server->sendMessage(PHPDOCUMENTOR_PARSED_DOCTEMPLATE_STOP, false);
+                return false;
+            }
+            if (strpos($comment,'/**#@+') === 0) {
+                $dtemplate = true;
+            }
+            $comment = $this->stripNonEssentials($comment);
+        }
+        $lex->setup($comment);
+        $result = $this->yyparse($lex);
+        if (PEAR::isError($result)) {
+            echo $result->getMessage()."\n";
+            return $result;
+        }
+        if (!isset($options['nosummary'])) {
+            $this->setSummary();
+        }
+        $docblock = $this->_options['docblockClass'];
+        if ($docblock) {
+            $parsed_docs = new $docblock($this);
+            $parsed_docs->setStartLine($line);
+            $parsed_docs->setEndLine($endlinenumber);
+        } else {
+            $parsed_docs =
+                array(
+                    'summary' => $this->summary,
+                    'documentation' => $this->paragraphs,
+                    'tags' => $this->tags,
+                    'startline' => $line,
+                    'endline' => $endlinenumber,
+                     );
+        }
+        if ($dtemplate) {
+            $this->_server->sendMessage(PHPDOCUMENTOR_PARSED_DOCTEMPLATE, $parsed_docs);
+        } else {
+            if (!isset($options['tagdesc'])) {
+                $this->_server->sendMessage(PHPDOCUMENTOR_PARSED_DOCBLOCK, $parsed_docs);
+            }
+            return $parsed_docs;
+        }
+    }
+    
+    function getSummary()
+    {
+        return $this->summary;
+    }
+    
+    function getDescription()
+    {
+        return $this->paragraphs;
+    }
+    
+    function getTags()
+    {
+        return $this->tags;
+    }
+    
+    /**
+     * Remove the /**, * from the doc comment
+     *
+     * Also remove blank lines
+     * @param string
+     * @return array
+     */
+    function stripNonEssentials($comment)
+    {
+        $comment = str_replace("\r", '', trim($comment));
+        if (strpos($comment, '/**#@+') === 0)
+        { // docblock template definition
+            // strip /**#@+ and */
+            $comment = substr($comment,6).'*';
+            $comment = substr($comment,0,strlen($comment) - 2);
+        } else
+        {
+            // strip /** and */
+            $comment = substr($comment,2);
+            $comment = substr($comment,0,strlen($comment) - 2);
+        }
+        $lines = explode("\n", trim($comment));
+        $go = count($lines);
+        for($i=0; $i < $go; $i++)
+        {
+            if (substr(trim($lines[$i]),0,1) != '*') {
+                unset($lines[$i]);
+            } else {
+                $lines[$i] = substr(trim($lines[$i]),1); // remove leading "* "
+            }
+        }
+        // remove empty lines
+        return trim(join("\n", $lines));
+    }
+
+    function _parseTag($name, $contents)
+    {
+        if (is_array($this->_options['tagParserMap'])) {
+            if (isset($this->_options['tagParserMap']
+                  [str_replace('@', '', $name)])) {
+                // use custom tag parser
+                return $this->_options['tagParserMap'][str_replace('@', '',
+                  $name)]->parseTag(str_replace('@', '', $name), $contents);
+            } elseif (isset($this->_options['tagParserMap']['*'])) {
+                // use default tag parser
+                return $this->_options['tagParserMap']['*']->parseTag(
+                  str_replace('@', '', $name), $contents);
+            } else {
+                // no default handler
+                return array('tag' => str_replace('@', '', $name),
+                  'value' => $contents);
+            }
+        } else {
+            // no registered tag parsers
+            return array('tag' => str_replace('@', '', $name),
+              'value' => $contents);
+        }
+    }
+    
+    function _parseInlineTag($name, $contents)
+    {
+        if (is_array($this->_options['inlineTagParserMap'])) {
+            if (isset($this->_options['inlineTagParserMap'][$name])) {
+                // use custom inline tag parser
+                return $this->_options['inlineTagParserMap']
+                  [$name]->parseInlineTag($name, $contents);
+            } elseif (isset($this->_options['inlineTagParserMap']['*'])) {
+                // use default inline tag parser
+                return $this->_options['inlineTagParserMap']
+                  ['*']->parseInlineTag($name, $contents);
+            } else {
+                // no default handler
+                return array('inlinetag' => $name, 'value' => $contents);
+            }
+        } else {
+            // no registered inline tag parsers
+            return array('inlinetag' => $name, 'value' => $contents);
+        }
+    }
+%}
+
+%token T_BULLET 1
+%token T_NBULLET 2
+%token T_NDBULLET 3
+%token T_SIMPLELIST 4
+%token T_SIMPLELIST_NL 5
+%token T_SIMPLELIST_END 6
+%token T_WHITESPACE 7
+%token T_NESTED_WHITESPACE 8
+%token T_OPEN_P 9
+%token T_OPEN_LIST 10
+%token T_OPEN_LI 11
+%token T_OPEN_CODE 12
+%token T_OPEN_PRE 13
+%token T_OPEN_B 14
+%token T_OPEN_I 15
+%token T_OPEN_KBD 16
+%token T_OPEN_VAR 17
+%token T_OPEN_SAMP 18
+%token T_CLOSE_P 19
+%token T_CLOSE_LIST 20
+%token T_CLOSE_LI 21
+%token T_CLOSE_CODE 22
+%token T_CLOSE_PRE 23
+%token T_CLOSE_B 24
+%token T_CLOSE_I 25
+%token T_CLOSE_KBD 26
+%token T_CLOSE_VAR 27
+%token T_CLOSE_SAMP 28
+%token T_XML_TAG 29
+%token T_ESCAPED_TAG 30
+%token T_TEXT 31
+%token T_NL 32
+%token T_INLINE_ESC 33
+%token T_INTERNAL 34
+%token T_ENDINTERNAL 35
+%token T_DOUBLE_NL 36
+%token T_TAG 37
+%token T_INLINE_TAG_OPEN 38
+%token T_INLINE_TAG_CLOSE 39
+%token T_INLINE_TAG_NAME 40
+%token T_INLINE_TAG_CONTENTS 41
+%token EOF 258
+
+%left T_SIMPLELIST_NL T_NL T_CLOSE_P
+%nonassoc T_CLOSE_LI
+%nonassoc T_OPEN_LI
+%right T_BULLET T_WHITESPACE T_NBULLET T_NDBULLET
+%right T_OPEN_P T_OPEN_LIST T_OPEN_CODE T_OPEN_PRE T_OPEN_B T_OPEN_I T_OPEN_KBD T_OPEN_VAR T_OPEN_SAMP
+
+%start docblock
+
+%% /* Rules */
+
+docblock:
+    paragraph
+        {
+            $this->paragraphs = array($1);
+        }
+    |   paragraph tags
+        {
+            $this->paragraphs = $1;
+            $this->tags = $2;
+        }
+    |   paragraph text tags
+        {
+            array_unshift($2, $1);
+            $this->paragraphs = $2;
+            $this->tags = $3;
+        }
+    |   paragraph text
+        {
+            array_unshift($2, $1);
+            $this->paragraphs = $2;
+        }
+    |   paragraphs_with_p tags
+        {
+            $this->paragraphs = $1;
+            $this->tags = $2;
+        }
+    |   tags
+        {
+            $this->tags = $1;
+        }
+;
+
+
+text:
+    T_DOUBLE_NL paragraphs
+    {
+        $$ = $2;
+    }
+;
+
+tags:
+    T_TAG
+        {
+            $this->tags[] = $this->_parseTag($1, array());
+        }
+    |   T_TAG T_TEXT
+        {
+            $this->tags[] = $this->_parseTag($1, $2);
+        }
+    |   T_TAG T_TEXT paragraphs
+        {
+            if (is_string($3[0])) {
+                $3[0] = $2 . $3[0];
+            }
+            $this->tags[] = $this->_parseTag($1, $3);
+        }
+;
+
+paragraphs:
+    |   paragraph
+        {
+            $$ = array($1);
+        }
+    |   paragraphs T_DOUBLE_NL paragraph
+        {
+            $$ = $1;
+            $$[] = $3;
+        }
+;
+
+paragraphs_with_p:
+    paragraph_with_p
+        {
+            $$ = array($1);
+        }
+    |   paragraphs_with_p paragraph_with_p
+        {
+            $$ = $1;
+            $$[] = $2;
+        }
+;
+
+paragraph:
+    T_TEXT
+        {
+            $$ = array($1);
+        }
+    |   htmltag
+        {
+            $$ = array($1);
+        }
+    |   simplelist
+        {
+            $$ = array($1);
+        }
+    |   inlinetag
+        {
+            $$ = array($1);
+        }
+    |   internaltag
+        {
+            $$ = array($1);
+        }
+    |   T_ESCAPED_TAG
+        {
+            $$ = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $1);
+        }
+    |   T_CLOSE_P
+        {
+            $$ = array($1);
+        }
+    |   T_INLINE_ESC
+        {
+            if ($1 == '{@}') {
+                $$ = array('{@');
+            } elseif ($1 == '{@*}') {
+                $$ = array('*/');
+            } else {
+                $$ = array('');
+            }
+        }
+    |   T_NL
+        {
+            $$ = array($1);
+        }
+    |   paragraph T_TEXT
+        {
+            $$ = $1;
+            $index = count($$) - 1;
+            if (is_string($$[$index])) {
+                $$[$index] .= $2;
+            } else {
+                $$[] = $2;
+            }
+        }
+    |   paragraph htmltag
+        {
+            $$ = $1;
+            $$[] = $2;
+        }
+    |   paragraph simplelist
+        {
+            $$ = $1;
+            $$[] = $2;
+        }
+    |   paragraph inlinetag
+        {
+            $$ = $1;
+            $$[] = $2;
+        }
+    |   paragraph T_ESCAPED_TAG
+        {
+            $$ = $1;
+            $index = count($$) - 1;
+            if (is_string($$[$index])) {
+                $$[$index] .= str_replace(array('<<', '>>', '/'), array('<', '>', ''), $2);
+            } else {
+                $$[] = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $2);
+            }
+        }
+    |   paragraph T_OPEN_P
+        {
+            $$ = $1;
+            $index = count($$) - 1;
+            if (is_string($$[$index])) {
+                $$[$index] .= $2;
+            } else {
+                $$[] = $2;
+            }
+        }
+    |   paragraph T_CLOSE_P
+        {
+            $$ = $1;
+            $index = count($$) - 1;
+            if (is_string($$[$index])) {
+                $$[$index] .= $2;
+            } else {
+                $$[] = $2;
+            }
+        }
+    |   paragraph T_INLINE_ESC
+        {
+            if ($2 == '{@}') {
+                $temp = '{@';
+            } elseif ($2 == '{@*}') {
+                $temp = '*/';
+            } else {
+                $temp = '';
+            }
+            $$ = $1;
+            $index = count($$) - 1;
+            if (is_string($$[$index])) {
+                $$[$index] .= $temp;
+            } else {
+                $$[] = $temp;
+            }
+        }
+    |   paragraph T_NL
+        {
+            $$ = $1;
+            $index = count($$) - 1;
+            if (is_string($$[$index])) {
+                $$[$index] .= $2;
+            } else {
+                $$[] = $2;
+            }
+        }
+    |   paragraph internaltag
+        {
+            $$ = $1;
+            $$[] = $2;
+        }
+;
+
+text_expr_with_p:
+    T_TEXT
+        {
+            $$ = array($1);
+        }
+    |   htmltag_with_p
+        {
+            $$ = array($1);
+        }
+    |   simplelist_with_p
+        {
+            $$ = array($1);
+        }
+    |   inlinetag
+        {
+            $$ = array($1);
+        }
+    |   internaltag_with_p
+        {
+            $$ = array($1);
+        }
+    |   T_ESCAPED_TAG
+        {
+            $$ = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $1);
+        }
+    |   T_INLINE_ESC
+        {
+            if ($1 == '{@}') {
+                $$ = array('{@');
+            } elseif ($1 == '{@*}') {
+                $$ = array('*/');
+            } else {
+                $$ = array('');
+            }
+        }
+    |   T_DOUBLE_NL
+        {
+            $$ = array($1);
+        }
+    |   text_expr_with_p T_TEXT
+        {
+            $$ = $1;
+            $index = count($$) - 1;
+            if (is_string($$[$index])) {
+                $$[$index] .= $2;
+            } else {
+                $$[] = $2;
+            }
+        }
+    |   text_expr_with_p htmltag_with_p
+         {
+            $$ = $1;
+            $$[] = $2;
+         }
+    |   text_expr_with_p simplelist_with_p
+        {
+            $$ = $1;
+            $$[] = $2;
+        }
+    |   text_expr_with_p inlinetag
+        {
+            $$ = $1;
+            $$[] = $2;
+        }
+    |   text_expr_with_p internaltag_with_p
+        {
+            $$ = $1;
+            $$[] = $2;
+        }
+    |   text_expr_with_p T_ESCAPED_TAG
+        {
+            $$ = $1;
+            $index = count($$) - 1;
+            if (is_string($$[$index])) {
+                $$[$index] .= str_replace(array('<<', '>>', '/'), array('<', '>', ''), $2);
+            } else {
+                $$[] = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $2);
+            }
+        }
+    |   text_expr_with_p T_INLINE_ESC
+        {
+            if ($2 == '{@}') {
+                $t = array('{@');
+            } elseif ($2 == '{@*}') {
+                $t = array('*/');
+            } else {
+                $t = array('');
+            }
+            $index = count($$) - 1;
+            if (is_string($$[$index])) {
+                $$[$index] .= $t;
+            } else {
+                $$[] = $t;
+            }
+        }
+    |   text_expr_with_p T_DOUBLE_NL
+        {
+            $$ = $1;
+            $index = count($$) - 1;
+            if (is_string($$[$index])) {
+                $$[$index] .= $2;
+            } else {
+                $$[] = $2;
+            }
+        }
+;
+
+paragraph_with_p:
+    T_OPEN_P text_expr_with_p T_CLOSE_P
+        {
+            $$ = $2;
+        }
+    |   T_OPEN_P text_expr_with_p T_CLOSE_P T_WHITESPACE
+        {
+            $$ = $2;
+        }
+    |   T_OPEN_P text_expr_with_p
+        {
+            $$ = $2;
+        }
+;
+
+htmltag:
+    T_XML_TAG
+        {
+            $tag = $this->_options['completeTagClass'];
+            if ($tag) {
+                $$ = array(new $tag($1));
+            } else {
+                $$ = array(array('completetag' => $1));
+            }
+        }
+    |   btag
+    |   codetag
+    |   samptag
+    |   kbdtag
+    |   vartag
+    |   htmllist
+;
+
+htmltag_with_p:
+    T_XML_TAG
+        {
+            $tag = $this->_options['completeTagClass'];
+            if ($tag) {
+                $$ = array(new $tag($1));
+            } else {
+                $$ = array(array('completetag' => $1));
+            }
+        }
+    |   btag_with_p
+    |   codetag_with_p
+    |   samptag_with_p
+    |   kbdtag_with_p
+    |   vartag_with_p
+    |   htmllist_with_p
+;
+
+btag:
+    T_OPEN_B paragraphs T_CLOSE_B
+        {
+            $tag = $this->_options['boldClass'];
+            if ($tag) {
+                $$ = new $tag($2);
+            } else {
+                $$ = array('strong' => $2);
+            }
+        }
+;
+
+btag_with_p:
+    T_OPEN_B text_expr_with_p T_CLOSE_B
+        {
+            $tag = $this->_options['boldClass'];
+            if ($tag) {
+                $$ = new $tag($2);
+            } else {
+                $$ = array('strong' => $2);
+            }
+        }
+;
+
+codetag:
+    T_OPEN_CODE paragraphs T_CLOSE_CODE
+        {
+            $tag = $this->_options['codeClass'];
+            if ($tag) {
+                $$ = new $tag($2);
+            } else {
+                $$ = array('code' => $2);
+            }
+        }
+;
+
+codetag_with_p:
+    T_OPEN_CODE text_expr_with_p T_CLOSE_CODE
+        {
+            $tag = $this->_options['codeClass'];
+            if ($tag) {
+                $$ = new $tag($2);
+            } else {
+                $$ = array('code' => $2);
+            }
+        }
+;
+
+samptag:
+    T_OPEN_SAMP paragraphs T_CLOSE_SAMP
+        {
+            $tag = $this->_options['sampClass'];
+            if ($tag) {
+                $$ = new $tag($2);
+            } else {
+                $$ = array('samp' =>  $2);
+            }
+        }
+;
+
+samptag_with_p:
+    T_OPEN_SAMP text_expr_with_p T_CLOSE_SAMP
+        {
+            $tag = $this->_options['sampClass'];
+            if ($tag) {
+                $$ = new $tag($2);
+            } else {
+                $$ = array('samp' =>  $2);
+            }
+        }
+;
+
+kbdtag:
+    T_OPEN_KBD paragraphs T_CLOSE_KBD
+        {
+            $tag = $this->_options['kbdClass'];
+            if ($tag) {
+                $$ = new $tag($2);
+            } else {
+                $$ = array('kbd' =>  $2);
+            }
+        }
+;
+
+kbdtag_with_p:
+    T_OPEN_KBD text_expr_with_p T_CLOSE_KBD
+        {
+            $tag = $this->_options['kbdClass'];
+            if ($tag) {
+                $$ = new $tag($2);
+            } else {
+                $$ = array('kbd' =>  $2);
+            }
+        }
+;
+
+vartag:
+    T_OPEN_VAR paragraphs T_CLOSE_VAR
+        {
+            $tag = $this->_options['varClass'];
+            if ($tag) {
+                $$ = new $tag($2);
+            } else {
+                $$ = array('var' =>  $2);
+            }
+        }
+;
+
+vartag_with_p:
+    T_OPEN_VAR text_expr_with_p T_CLOSE_VAR
+        {
+            $tag = $this->_options['varClass'];
+            if ($tag) {
+                $$ = new $tag($2);
+            } else {
+                $$ = array('var' =>  $2);
+            }
+        }
+;
+
+htmllist:
+    T_OPEN_LIST listitems T_CLOSE_LIST
+        {
+            $list = $this->_options['listClass'];
+            if ($list) {
+                $$ = new $list(2);
+            } else {
+                $$ = array('list' => $2);
+            }
+        }
+;
+
+htmllist_with_p:
+    T_OPEN_LIST listitems_with_p T_CLOSE_LIST
+        {
+            $list = $this->_options['listClass'];
+            if ($list) {
+                $$ = new $list(2);
+            } else {
+                $$ = array('list' => $2);
+            }
+        }
+;
+
+listitems:
+    listitem
+        {
+            $$ = array($1);
+        }
+    |   listitems listitem
+        {
+            $$ = $1;
+            $$[] = $2;
+        }
+;
+
+listitems_with_p:
+    listitem_with_p
+        {
+            $$ = array($1);
+        }
+    |   listitems_with_p listitem_with_p
+        {
+            $$ = $1;
+            $$[] = $2;
+        }
+;
+
+listitem:
+    T_OPEN_LI paragraphs T_CLOSE_LI
+        {
+            $$ = $2;
+        }
+;
+
+listitem_with_p:
+    T_OPEN_LI text_expr_with_p T_CLOSE_LI
+        {
+            $$ = $2;
+        }
+;
+
+simplelist:
+    bullet simplelist_contents simplelistend
+        {
+            $$ = array('list' => $2, 'type' => $1);
+        }
+    |   simplelist bullet simplelist_contents simplelistend
+        {
+            $$ = $1;
+            $$[] = $3;
+        }
+;
+
+simplelist_with_p:
+    bullet simplelist_contents_with_p simplelistend
+        {
+            $$ = array('list' => $2, 'type' => $1);
+        }
+    |   simplelist_with_p bullet simplelist_contents_with_p simplelistend
+        {
+            $$ = $1;
+            $$[] = $3;
+        }
+;
+
+bullet:
+    T_BULLET
+        {
+            $$ = 'unordered';
+        }
+    |   T_NBULLET
+        {
+            $$ = 'ordered';
+        }
+    |   T_NDBULLET
+        {
+            $$ = 'ordered';
+        }
+    |   T_WHITESPACE bullet
+;
+
+nested_bullet:
+    T_NESTED_WHITESPACE T_BULLET
+        {
+            $$ = 'unordered';
+        }
+    |   T_NESTED_WHITESPACE T_NBULLET
+        {
+            $$ = 'ordered';
+        }
+    |   T_NESTED_WHITESPACE T_NDBULLET
+        {
+            $$ = 'ordered';
+        }
+;
+
+simplelistend:
+    T_SIMPLELIST_NL
+    |   T_SIMPLELIST_END
+    |   EOF
+;
+
+
+simplelist_contents:
+    T_SIMPLELIST
+        {
+            $$ = array($1);
+        }
+    |   T_ESCAPED_TAG
+        {
+            $$ = array(str_replace(array('<<', '>>', '/'), array('<', '>', ''), $1));
+        }
+    |   inlinetag
+        {
+            $$ = array($1);
+        }
+    |   T_INLINE_ESC
+        {
+            if ($1 == '{@}') {
+                $$ = array('{@');
+            } elseif ($1 == '{@*}') {
+                $$ = array('*/');
+            } else {
+                $$ = array('');
+            }
+        }
+    |   htmltag
+        {
+            $$ = array($1);
+        }
+    |   nested_simplelist
+        {
+            $$ = array($1);
+        }
+    |   simplelist_contents T_SIMPLELIST
+        {
+            $$ = $1;
+            $$[] = $2;
+        }
+    |   simplelist_contents T_ESCAPED_TAG
+        {
+            $$ = $1;
+            if (is_string($$[$index])) {
+                $$[$index] .= str_replace(array('<<', '>>', '/'), array('<', '>', ''), $2);
+            } else {
+                $$[] = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $2);
+            }
+        }
+    |   simplelist_contents inlinetag
+        {
+            $$ = $1;
+            $$[] = $2;
+        }
+    |   simplelist_contents T_INLINE_ESC
+        {
+            if ($2 == '{@}') {
+                $t = array('{@');
+            } elseif ($2 == '{@*}') {
+                $t = array('*/');
+            } else {
+                $t = array('');
+            }
+            $$ = $1;
+            if (is_string($$[$index])) {
+                $$[$index] .= $t;
+            } else {
+                $$[] = $t;
+            }
+        }
+    |   simplelist_contents htmltag
+        {
+            $$ = $1;
+            $$[] = $2;
+        }
+    |   simplelist_contents nested_simplelist
+        {
+            $$ = $1;
+            $$[] = $2;
+        }
+;
+
+simplelist_contents_with_p:
+    T_SIMPLELIST
+    |   T_ESCAPED_TAG
+        {
+            $$ = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $1);
+        }
+    |   inlinetag
+        {
+            $$ = array($1);
+        }
+    |   T_INLINE_ESC
+        {
+            if ($1 == '{@}') {
+                $$ = array('{@');
+            } elseif ($1 == '{@*}') {
+                $$ = array('*/');
+            } else {
+                $$ = array('');
+            }
+        }
+    |   T_DOUBLE_NL
+        {
+            $$ = array($1);
+        }
+    |   htmltag_with_p
+        {
+            $$ = array($1);
+        }
+    |   nested_simplelist_with_p
+        {
+            $$ = array($1);
+        }
+    |   simplelist_contents_with_p T_SIMPLELIST
+        {
+            $$ = $1;
+            $$[] = $2;
+        }
+    |   simplelist_contents_with_p T_ESCAPED_TAG
+        {
+            $$ = $1;
+            $index = count($$) - 1;
+            if (is_string($$[$index])) {
+                $$[$index] .= str_replace(array('<<', '>>', '/'), array('<', '>', ''), $2);
+            } else {
+                $$[] = str_replace(array('<<', '>>', '/'), array('<', '>', ''), $2);
+            }
+        }
+    |   simplelist_contents_with_p inlinetag
+        {
+            $$ = $1;
+            $$[] = $2;
+        }
+    |   simplelist_contents_with_p T_INLINE_ESC
+        {
+            if ($2 == '{@}') {
+                $t = array('{@');
+            } elseif ($2 == '{@*}') {
+                $t = array('*/');
+            } else {
+                $t = array('');
+            }
+            $$ = $1;
+            $index = count($$) - 1;
+            if (is_string($$[$index])) {
+                $$[$index] .= $t;
+            } else {
+                $$[] = $t;
+            }
+        }
+    |   simplelist_contents_with_p T_DOUBLE_NL
+        {
+            $$ = $1;
+            $index = count($$) - 1;
+            if (is_string($$[$index])) {
+                $$[$index] .= $2;
+            } else {
+                $$[] = $2;
+            }
+        }
+    |   simplelist_contents_with_p htmltag_with_p
+        {
+            $$ = $1;
+            $$[] = $2;
+        }
+    |   simplelist_contents_with_p nested_simplelist_with_p
+        {
+            $$ = $1;
+            $$[] = $2;
+        }
+;
+
+nested_simplelist:
+    nested_bullet simplelist_contents simplelistend
+        {
+            $$ = array('list' => $2, 'type' => $1);
+        }
+;
+
+nested_simplelist_with_p:
+    nested_bullet simplelist_contents_with_p simplelistend
+        {
+            $$ = array('list' => $2, 'type' => $1);
+        }
+;
+
+inlinetag:
+    T_INLINE_TAG_OPEN T_INLINE_TAG_NAME T_INLINE_TAG_CONTENTS T_INLINE_TAG_CLOSE
+        {
+            $$ = $this->_parseInlineTag($2, $3);
+        }
+    |   T_INLINE_TAG_OPEN T_INLINE_TAG_NAME T_INLINE_TAG_CLOSE
+        {
+            $$ = $this->_parseInlineTag($2, array());
+        }
+;
+
+internaltag:
+    T_INTERNAL paragraphs T_ENDINTERNAL
+        {
+            if ($this->_options['parseInternal']) {
+                $$ = $2;
+            } else {
+                $$ = '';
+            }
+        }
+;
+
+internaltag_with_p:
+    T_INTERNAL paragraphs_with_p T_ENDINTERNAL
+        {
+            if ($this->_options['parseInternal']) {
+                $$ = $2;
+            } else {
+                $$ = '';
+            }
+        }
+;
+%%
+    /**#@-*/
+}
