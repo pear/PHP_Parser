@@ -271,9 +271,11 @@ class PHP_Parser {
                 PHP_PARSER_ERROR_NOINPUT);
         }
         $this->setTokenizerOptions($php, $tokenoptions);
-        $this->_parser->yyparse($this->_tokenizer);
+        $err = $this->_parser->yyparse($this->_tokenizer);
         // some parser do not set stuff like this..
-        
+        if ($err) {
+            return $err;
+        }
         if (!isset($this->_parser->classes)) {
             return;
         }
