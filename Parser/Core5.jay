@@ -50,14 +50,14 @@ class PHP_Parser_Core {
      * The second set of options provide for intermediary
      * publishing of data while parsing, to allow other
      * classes to hook into functionality if they desire
-     * @access private
+     * @var array
      */
-    var $_options = array();
+    private $_options = array();
     
     /**
-     * @access private
+     * @var boolean
      */
-    var $_get_class = false;
+    private $_get_class = false;
     
     /**
      * Set up options for parsing
@@ -144,14 +144,14 @@ class PHP_Parser_Core {
      * @access public 
      */
 
-    var $classes = array();
+    public $classes = array();
     /**
      * array of includes
      *
      * @var array
      * @access public 
      */
-    var $includes = array();
+    public $includes = array();
 
     /**
      * array of functions
@@ -159,7 +159,7 @@ class PHP_Parser_Core {
      * @var array
      * @access public 
      */
-    var $functions = array();
+    public $functions = array();
 
     /**
      * array of global variables
@@ -167,7 +167,7 @@ class PHP_Parser_Core {
      * @var array
      * @access public 
      */
-    var $globals = array();
+    public $globals = array();
 
     /**
      * array of super-global variables used in
@@ -176,14 +176,14 @@ class PHP_Parser_Core {
      * @var array
      * @access public 
      */
-    var $filesuperglobals = array();
+    public $filesuperglobals = array();
     
     /**
      * File Summary documentation (page-level DocBlock in phpDocumentor)
      * @var string
      * @access public
      */
-    var $documentation;
+    public $documentation;
 
     /**
      * array of global constants
@@ -191,7 +191,7 @@ class PHP_Parser_Core {
      * @var array
      * @access public 
      */
-    var $constants = array();
+    public $constants = array();
 
     /**
      * global variable name of parser arrays
@@ -200,13 +200,13 @@ class PHP_Parser_Core {
      * @var string
      * @access public 
      */
-    var $yyGlobalName = '_PHP_PARSER';
+    private $yyGlobalName = '_PHP_PARSER';
 
     /**
      * Global Variable helper routine
-     * @access private
+     * @param string global variable name
      */
-    function _initGlobal($name)
+    private function _initGlobal($name)
     {
         if ($this->yyLex->globalSearch($name)) {
             $lc = $this->yyLex->getLastComment();
@@ -227,9 +227,10 @@ class PHP_Parser_Core {
 
     /**
      * Global Variable helper routine
-     * @access private
+     * @param string global variable name
+     * @param string global variable initial value
      */
-    function _processGlobal($name, $value)
+    private function _processGlobal($name, $value)
     {
         if (isset($this->globals[$name])) {
             // found a global variable we are documenting
