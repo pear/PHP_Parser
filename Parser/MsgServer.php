@@ -90,7 +90,7 @@ class PHP_Parser_MsgServer
      *    neither an integer or string
      * @throws PHP_PARSER_MSGSERVER_ERR_NOT_REGISTERED object referenced
      *    by the unique ID has not registered as a listener
-     * @return true|PHP_PARSER_MSGSERVER_Error
+     * @return true|exception
      */
     function _unregisterAll($unique_id = false)
     {
@@ -137,7 +137,7 @@ class PHP_Parser_MsgServer
     /**
      * Unregister a single Message Listener
      * @param string|int unique identifier of class to unregister
-     * @return true|PHP_PARSER_MSGSERVER_Error
+     * @return true|exception
      */
     function unRegisterId($unique_id)
     {
@@ -149,7 +149,7 @@ class PHP_Parser_MsgServer
      * @param array array of class identifiers to unregister
      * @throws PHP_PARSER_MSGSERVER_ERR_INVALID_INPUT unique ID is
      *    neither a string nor an integer
-     * @return true|PHP_PARSER_MSGSERVER_Error
+     * @return true|exception
      */
     function unRegisterIds($unique_ids)
     {
@@ -175,16 +175,14 @@ class PHP_Parser_MsgServer
     /**
      * Register a new Message Listener
      *
-     * A Message Listener is any class that has a method named handleMessage()
-     * which accepts a {@link PHP_PARSER_MSGSERVER_Msg} class as a single parameter, and
-     * optionally returns a MsgserverMsg return message
+     * A Message Listener is any object.  To catch particular messages, use {@link catchMessage()}
      * @param string|int unique identifier for this class
      * @param object any object that implements the handleMessage() method
      * @throws PHP_PARSER_MSGSERVER_ERR_INVALID_INPUT if either the
      *    unique ID isn't a string/integer or $obj isn't an object
      * @throws PHP_PARSER_MSGSERVER_ERR_UNIQUEID_ALREADY_REGISTERED if
      *    the unique ID has already been assigned to another object
-     * @return true|PHP_PARSER_MSGSERVER_Error
+     * @return true|exception
      */
     function registerListener($unique_id, &$obj)
     {
@@ -227,7 +225,7 @@ class PHP_Parser_MsgServer
      * or to ensure that an ID to be used is indeed unique.
      * @param integer|string identifier to look up
      * @return boolean true if ID is registered
-     * @throws PHP_PARSER_MSGSERVER_Exception->PHP_PARSER_MSGSERVER_ERR_BAD_UNIQUE_ID if the Unique ID
+     * @throws PHP_PARSER_MSGSERVER_ERR_BAD_UNIQUE_ID if the Unique ID
      *    is neither a string nor an array
      */
     function listenerRegistered($unique_id)
@@ -249,8 +247,8 @@ class PHP_Parser_MsgServer
      * This method may be used to eliminate notices from {@link sendMessage()}
      * 
      * @param integer|string message type to look up
-     * @return boolean true if listeners are listening for this message type
-     * @throws PHP_PARSER_MSGSERVER_Exception->PHP_PARSER_MSGSERVER_ERR_INVALID_INPUT if the Message
+     * @return boolean|exception true if listeners are listening for this message type
+     * @throws PHP_PARSER_MSGSERVER_ERR_INVALID_INPUT if the Message
      *    type is neither a string nor an array
      */
     function messageRegistered($message_type)
@@ -271,7 +269,7 @@ class PHP_Parser_MsgServer
     /**
      * Remove all Listening to a message type
      * @param int|string message type to stop listening for
-     * @return true|array
+     * @return true|exception
      * @throws PHP_PARSER_MSGSERVER_ERR_INVALID_INPUT if the Message
      *      type is neither a string nor an integer
      * @throws PHP_PARSER_MSGSERVER_ERR_NO_LISTENERS if there isn't
@@ -313,7 +311,7 @@ class PHP_Parser_MsgServer
      *      registered listeners for this Message Type
      * @throws PHP_PARSER_MSGSERVER_ERR_NOT_LISTENING if any of the
      *      unique IDs passed are not listening to this message
-     * @return true|array
+     * @return true|exception
      */
     function stopCatchingMessages($message_type, $unique_ids)
     {
@@ -381,7 +379,7 @@ class PHP_Parser_MsgServer
      * @throws PHP_PARSER_MSGSERVER_ERR_HANDLER_DOESNT_EXIST if the
      *      Error handler specified by $handle_method isn't a method of the
      *      class
-     * @return true|array
+     * @return true|exception
      */
     function catchMessage($unique_id, $message_type, $handle_method = false)
     {
@@ -440,7 +438,7 @@ class PHP_Parser_MsgServer
      * {@link sendMessageGetAnswer()}
      * @param string|integer message type, used to find listeners
      * @param mixed message to pass to listening objects
-     * @return true|array
+     * @return true|exception
      * @throws PHP_PARSER_MSGSERVER_ERR_NO_CATCHERS if there are no
      *      registered listeners for any message
      * @throws PHP_PARSER_MSGSERVER_ERR_NONE_REGISTERED if there are no
@@ -489,9 +487,10 @@ class PHP_Parser_MsgServer
     /**
      * @param string|integer message type, used to find listeners
      * @param mixed message to pass to listening objects
-     * @return bool|array returns either true to indicate lack of any
+     * @return bool|array|exception returns either true to indicate lack of any
      *         listeners, false to indicate invalid parameters, or an array
-     *         of {@link Msg}s returned from listening objects
+     *         of data returned from listening objects.  It is up to the sender to
+     *         process returned data.
      */
     function sendMessageGetAnswer($messagetype, $message)
     {
