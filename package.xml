@@ -49,7 +49,7 @@ hooks into parsing to catch information.</description>
     <state>alpha</state>
     <notes>Initial alpha release to find bugs</notes>
     <deps>
-      <dep type="php" rel="ge" version="5.0.0b1"></dep>
+      <dep type="php" rel="ge" version="4.3.2"></dep>
     </deps>
     <provides type="class" name="PHP_Parser_Core" />
     <provides type="function" name="PHP_Parser_Core::handleMessage" />
