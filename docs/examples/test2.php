@@ -3,11 +3,12 @@
 
 require_once 'PHP/Parser.php';
 
-// this uses the very simple parser. (Core.jay)
-// you can use this as a base to write your own Parser
+//this uses gregs more advanced parser
+//pulls out more detailed information from the file.
 
-$p = PHP_Parser::factory();
+$p = PHP_Parser::factory('Structure','Structure');
 print_r($p->parseString(file_get_contents(__FILE__)));
+
 
 
 class test { 
@@ -15,5 +16,3 @@ class test {
        echo "hello world";
     }
 }
-
-
