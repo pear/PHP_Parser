@@ -18,6 +18,7 @@
 //
 // $Id$
 //
+require_once 'PEAR/ErrorStack.php';
 define('PHP_Parser_DocBlock_DefaultLexer_ERROR', 1);
 /* the tokenizer states */
 define('YYINITIAL',0);
@@ -465,17 +466,17 @@ class PHP_Parser_DocBlock_DefaultLexer
 
     var $yy_state_dtrans = array  ( 
         0,
-        70,
-        71,
+        60,
+        61,
         15,
+        63,
+        66,
         73,
         76,
-        83,
-        86,
-        89,
-        90,
-        91,
-        111
+        79,
+        80,
+        81,
+        100
     );
 
 
@@ -560,16 +561,20 @@ class PHP_Parser_DocBlock_DefaultLexer
 
     var $yy_error_string = array(
         "Error: Internal error.\n",
-        "Error: Unmatched input.\n"
+        "Error: Unmatched input - \""
         );
 
 
     function yy_error ($code,$fatal)
     {
         if (method_exists($this,'raiseError')) { 
-        $this->fatal = $fatal;
- 	    return $this->raiseError($code, $this->yy_error_string[$code], $fatal); 
- 	}
+	        $this->_fatal = $fatal;
+            $msg = $this->yy_error_string[$code];
+            if ($code == 1) {
+                $msg .= $this->yy_buffer[$this->yy_buffer_start] . "\"";
+            }
+ 		    return $this->raiseError($msg, $code, $fatal); 
+ 		}
         echo $this->yy_error_string[$code];
         if ($fatal) {
             exit;
@@ -620,28 +625,28 @@ class PHP_Parser_DocBlock_DefaultLexer
         /* 39 */   YY_NO_ANCHOR,
         /* 40 */   YY_NO_ANCHOR,
         /* 41 */   YY_NO_ANCHOR,
-        /* 42 */   YY_NO_ANCHOR,
-        /* 43 */   YY_NOT_ACCEPT,
+        /* 42 */   YY_NOT_ACCEPT,
+        /* 43 */   YY_NO_ANCHOR,
         /* 44 */   YY_NO_ANCHOR,
         /* 45 */   YY_NO_ANCHOR,
-        /* 46 */   YY_NO_ANCHOR,
+        /* 46 */   YY_NOT_ACCEPT,
         /* 47 */   YY_NO_ANCHOR,
-        /* 48 */   YY_NO_ANCHOR,
+        /* 48 */   YY_NOT_ACCEPT,
         /* 49 */   YY_NO_ANCHOR,
-        /* 50 */   YY_NO_ANCHOR,
+        /* 50 */   YY_NOT_ACCEPT,
         /* 51 */   YY_NO_ANCHOR,
         /* 52 */   YY_NOT_ACCEPT,
-        /* 53 */   YY_NO_ANCHOR,
-        /* 54 */   YY_NO_ANCHOR,
+        /* 53 */   YY_NOT_ACCEPT,
+        /* 54 */   YY_NOT_ACCEPT,
         /* 55 */   YY_NOT_ACCEPT,
-        /* 56 */   YY_NO_ANCHOR,
-        /* 57 */   YY_NO_ANCHOR,
+        /* 56 */   YY_NOT_ACCEPT,
+        /* 57 */   YY_NOT_ACCEPT,
         /* 58 */   YY_NOT_ACCEPT,
-        /* 59 */   YY_NO_ANCHOR,
+        /* 59 */   YY_NOT_ACCEPT,
         /* 60 */   YY_NOT_ACCEPT,
-        /* 61 */   YY_NO_ANCHOR,
+        /* 61 */   YY_NOT_ACCEPT,
         /* 62 */   YY_NOT_ACCEPT,
-        /* 63 */   YY_NO_ANCHOR,
+        /* 63 */   YY_NOT_ACCEPT,
         /* 64 */   YY_NOT_ACCEPT,
         /* 65 */   YY_NOT_ACCEPT,
         /* 66 */   YY_NOT_ACCEPT,
@@ -673,33 +678,19 @@ class PHP_Parser_DocBlock_DefaultLexer
         /* 92 */   YY_NOT_ACCEPT,
         /* 93 */   YY_NOT_ACCEPT,
         /* 94 */   YY_NOT_ACCEPT,
-        /* 95 */   YY_NOT_ACCEPT,
+        /* 95 */   YY_NO_ANCHOR,
         /* 96 */   YY_NOT_ACCEPT,
-        /* 97 */   YY_NOT_ACCEPT,
+        /* 97 */   YY_NO_ANCHOR,
         /* 98 */   YY_NOT_ACCEPT,
         /* 99 */   YY_NOT_ACCEPT,
         /* 100 */   YY_NOT_ACCEPT,
         /* 101 */   YY_NOT_ACCEPT,
         /* 102 */   YY_NOT_ACCEPT,
-        /* 103 */   YY_NOT_ACCEPT,
-        /* 104 */   YY_NOT_ACCEPT,
+        /* 103 */   YY_NO_ANCHOR,
+        /* 104 */   YY_NO_ANCHOR,
         /* 105 */   YY_NO_ANCHOR,
         /* 106 */   YY_NO_ANCHOR,
-        /* 107 */   YY_NOT_ACCEPT,
-        /* 108 */   YY_NO_ANCHOR,
-        /* 109 */   YY_NOT_ACCEPT,
-        /* 110 */   YY_NOT_ACCEPT,
-        /* 111 */   YY_NOT_ACCEPT,
-        /* 112 */   YY_NO_ANCHOR,
-        /* 113 */   YY_NOT_ACCEPT,
-        /* 114 */   YY_NO_ANCHOR,
-        /* 115 */   YY_NOT_ACCEPT,
-        /* 116 */   YY_NO_ANCHOR,
-        /* 117 */   YY_NO_ANCHOR,
-        /* 118 */   YY_NO_ANCHOR,
-        /* 119 */   YY_NO_ANCHOR,
-        /* 120 */   YY_NO_ANCHOR,
-        /* 121 */   YY_NO_ANCHOR
+        /* 107 */   YY_NO_ANCHOR
         );
 
 
@@ -746,17 +737,15 @@ class PHP_Parser_DocBlock_DefaultLexer
         1, 10, 7, 11, 12, 13, 14, 15,
         16, 17, 1, 18, 18, 1, 1, 7,
         17, 19, 1, 1, 1, 1, 20, 21,
-        22, 1, 23, 6, 24, 7, 16, 16,
-        16, 16, 25, 26, 27, 28, 29, 30,
-        31, 32, 33, 34, 35, 36, 37, 38,
-        39, 40, 41, 42, 43, 44, 45, 46,
-        47, 48, 49, 50, 51, 52, 17, 53,
-        54, 55, 56, 57, 58, 59, 60, 61,
-        14, 62, 63, 64, 65, 66, 67, 68,
-        69, 70, 71, 72, 73, 74, 75, 76,
-        77, 78, 79, 80, 81, 82, 83, 84,
-        85, 86, 87, 88, 89, 90, 91, 92,
-        93, 94 
+        22, 1, 6, 23, 7, 24, 25, 26,
+        27, 28, 29, 30, 31, 32, 33, 34,
+        35, 36, 37, 38, 39, 40, 41, 42,
+        43, 44, 45, 28, 17, 46, 47, 48,
+        49, 50, 51, 52, 53, 54, 14, 55,
+        56, 57, 58, 59, 60, 61, 62, 63,
+        64, 65, 66, 67, 68, 69, 70, 71,
+        72, 73, 74, 75, 76, 77, 78, 79,
+        80, 81, 82, 83 
         );
 
 
@@ -775,11 +764,11 @@ class PHP_Parser_DocBlock_DefaultLexer
             -1 ),
         array( -1, -1, 3, 31, 3, 3, 3, 3,
             3, 3, 3, 3, 3, 3, 3, 3,
-            3, 43, 3, 3, 3, 3, 3, 3,
+            3, 42, 3, 3, 3, 3, 3, 3,
             3 ),
-        array( -1, 5, 31, 107, 113, 52, 52, 52,
-            52, 33, 31, 52, 52, 52, 45, 31,
-            31, 43, 31, 52, 52, 52, 52, 52,
+        array( -1, 5, 31, 96, 101, 46, 46, 46,
+            46, 33, 31, 46, 46, 46, 44, 31,
+            31, 42, 31, 46, 46, 46, 46, 46,
             31 ),
         array( -1, 5, -1, -1, -1, -1, -1, -1,
             -1, 5, -1, -1, -1, -1, -1, -1,
@@ -791,7 +780,7 @@ class PHP_Parser_DocBlock_DefaultLexer
             -1 ),
         array( -1, -1, 31, 31, 31, 31, 31, 31,
             31, 31, 31, 31, 31, 31, 31, 31,
-            31, 43, 31, 31, 31, 31, 31, 31,
+            31, 42, 31, 31, 31, 31, 31, 31,
             31 ),
         array( -1, -1, -1, -1, -1, 13, 13, 13,
             13, -1, -1, 13, 13, 13, -1, -1,
@@ -801,9 +790,9 @@ class PHP_Parser_DocBlock_DefaultLexer
             39, 39, 39, 39, 39, 39, 39, 39,
             39, 39, 39, 39, 39, 39, 39, 39,
             39 ),
-        array( -1, -1, 74, 31, 17, 17, 17, 17,
+        array( -1, -1, 64, 31, 17, 17, 17, 17,
             17, 17, 17, 17, 17, 17, 17, 17,
-            17, 43, 17, 17, 17, 17, 17, 17,
+            17, 42, 17, 17, 17, 17, 17, 17,
             17 ),
         array( -1, 19, -1, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
@@ -813,7 +802,7 @@ class PHP_Parser_DocBlock_DefaultLexer
             20, 20, 20, 20, 20, 20, 20, 20,
             20, -1, 20, 20, 20, 20, 20, 20,
             20 ),
-        array( -1, -1, 85, -1, 21, 21, 21, 21,
+        array( -1, -1, 75, -1, 21, 21, 21, 21,
             21, 21, 21, 21, 21, 21, 21, 21,
             21, -1, 21, 21, 21, 21, 21, 21,
             21 ),
@@ -822,10 +811,10 @@ class PHP_Parser_DocBlock_DefaultLexer
             -1, -1, -1, 22, 22, 22, 22, 22,
             -1 ),
         array( -1, 23, -1, -1, -1, -1, -1, -1,
-            -1, 87, -1, -1, -1, -1, -1, 88,
+            -1, 77, -1, -1, -1, -1, -1, 78,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1 ),
-        array( -1, -1, 24, 24, 24, 24, 24, 24,
+        array( -1, -1, 24, -1, 24, 24, 24, 24,
             24, 24, 24, 24, 24, 24, 24, 24,
             24, -1, 24, 24, 24, 24, 24, 24,
             24 ),
@@ -839,7 +828,7 @@ class PHP_Parser_DocBlock_DefaultLexer
             28 ),
         array( -1, 5, 31, 31, 31, 31, 31, 31,
             31, 33, 31, 31, 31, 31, 31, 31,
-            31, 43, 31, 31, 31, 31, 31, 31,
+            31, 42, 31, 31, 31, 31, 31, 31,
             31 ),
         array( -1, -1, -1, -1, -1, 13, 13, 13,
             13, -1, -1, 13, 13, 13, -1, -1,
@@ -849,92 +838,68 @@ class PHP_Parser_DocBlock_DefaultLexer
             39, 39, 39, 39, 39, 39, 39, 39,
             39, 39, 39, 39, 39, 39, 39, 39,
             39 ),
-        array( -1, -1, 75, -1, 40, 40, 40, 40,
+        array( -1, -1, 65, -1, 40, 40, 40, 40,
             40, 40, 40, 40, 40, 40, 40, 40,
             40, -1, 40, 40, 40, 40, 40, 40,
             40 ),
-        array( -1, 60, 24, 24, 57, 42, 42, 42,
-            42, 59, 46, 42, 42, 42, 24, 24,
-            24, -1, 24, 42, 42, 42, 42, 42,
-            24 ),
         array( -1, 40, 18, 17, 17, 17, 17, 17,
             17, 17, 17, 17, 17, 17, 17, 17,
-            17, 50, 17, 17, 17, 17, 17, 17,
+            17, 45, 17, 17, 17, 17, 17, 17,
             17 ),
-        array( -1, 7, 75, -1, 40, 40, 40, 40,
+        array( -1, 7, 65, -1, 40, 40, 40, 40,
             40, 40, 40, 40, 40, 40, 40, 40,
             40, -1, 40, 40, 40, 40, 40, 40,
             40 ),
-        array( -1, 109, 24, 24, 116, 51, 51, 51,
-            51, 61, 63, 51, 51, 51, 24, 24,
-            24, -1, 24, 51, 51, 51, 51, 51,
-            24 ),
-        array( -1, 60, 31, 31, 62, 52, 52, 52,
-            52, 64, 8, 52, 52, 52, 31, 31,
-            31, 43, 31, 52, 52, 52, 52, 52,
+        array( -1, 52, 31, 31, 53, 46, 46, 46,
+            46, 54, 8, 46, 46, 46, 31, 31,
+            31, 42, 31, 46, 46, 46, 46, 46,
             31 ),
-        array( -1, -1, 31, 107, 113, 52, 52, 52,
-            52, 31, 31, 52, 52, 52, 31, 31,
-            31, 43, 31, 52, 52, 52, 52, 52,
+        array( -1, -1, 31, 96, 101, 46, 46, 46,
+            46, 31, 31, 46, 46, 46, 31, 31,
+            31, 42, 31, 46, 46, 46, 46, 46,
             31 ),
-        array( -1, -1, 24, 24, 24, 54, 54, 54,
-            54, 24, 47, 54, 54, 54, 24, 24,
-            24, -1, 24, 54, 54, 54, 54, 54,
-            24 ),
-        array( -1, 109, 31, 31, 115, 55, 55, 55,
-            55, 65, 66, 55, 55, 55, 31, 31,
-            31, 43, 31, 55, 55, 55, 55, 55,
+        array( -1, 98, 31, 31, 102, 48, 48, 48,
+            48, 55, 56, 48, 48, 48, 31, 31,
+            31, 42, 31, 48, 48, 48, 48, 48,
             31 ),
-        array( -1, -1, -1, 92, 110, -1, -1, -1,
+        array( -1, -1, -1, 69, 99, 70, 70, 70,
+            70, -1, -1, 70, 70, 70, -1, -1,
+            -1, -1, -1, 70, 70, 70, 70, 70,
+            -1 ),
+        array( -1, -1, 31, 31, 31, 50, 50, 50,
+            50, 31, 9, 50, 50, 50, 31, 31,
+            31, 42, 31, 50, 50, 50, 50, 50,
+            31 ),
+        array( -1, -1, -1, 82, 99, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1 ),
-        array( -1, -1, 24, 24, 24, 24, 24, 24,
-            24, 24, 48, 24, 24, 24, 24, 24,
-            24, -1, 24, 24, 24, 24, 24, 24,
-            24 ),
-        array( -1, -1, 31, 31, 31, 58, 58, 58,
-            58, 31, 9, 58, 58, 58, 31, 31,
-            31, 43, 31, 58, 58, 58, 58, 58,
-            31 ),
-        array( -1, 60, 24, 24, 57, 24, 24, 24,
-            24, 59, 24, 24, 24, 24, 24, 24,
-            24, -1, 24, 24, 24, 24, 24, 24,
-            24 ),
-        array( -1, 60, -1, -1, 67, -1, -1, -1,
-            -1, 60, -1, -1, -1, -1, -1, -1,
+        array( -1, 52, -1, -1, 57, -1, -1, -1,
+            -1, 52, -1, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1 ),
-        array( -1, 109, 24, 24, 116, 24, 24, 24,
-            24, 61, 24, 24, 24, 24, 24, 24,
-            24, -1, 24, 24, 24, 24, 24, 24,
-            24 ),
         array( -1, -1, 31, 31, 31, 31, 31, 31,
             31, 31, 10, 31, 31, 31, 31, 31,
-            31, 43, 31, 31, 31, 31, 31, 31,
+            31, 42, 31, 31, 31, 31, 31, 31,
             31 ),
-        array( -1, -1, 24, 24, 24, 24, 24, 24,
-            24, 24, 49, 24, 24, 24, 24, 24,
-            24, -1, 24, 24, 24, 24, 24, 24,
-            24 ),
-        array( -1, 60, 31, 31, 62, 31, 31, 31,
-            31, 64, 31, 31, 31, 31, 31, 31,
-            31, 43, 31, 31, 31, 31, 31, 31,
+        array( -1, 52, 31, 31, 53, 31, 31, 31,
+            31, 54, 31, 31, 31, 31, 31, 31,
+            31, 42, 31, 31, 31, 31, 31, 31,
             31 ),
-        array( -1, 109, 31, 31, 115, 31, 31, 31,
-            31, 65, 31, 31, 31, 31, 31, 31,
-            31, 43, 31, 31, 31, 31, 31, 31,
+        array( -1, 98, 31, 31, 102, 31, 31, 31,
+            31, 55, 31, 31, 31, 31, 31, 31,
+            31, 42, 31, 31, 31, 31, 31, 31,
             31 ),
         array( -1, -1, 31, 31, 31, 31, 31, 31,
             31, 31, 11, 31, 31, 31, 31, 31,
-            31, 43, 31, 31, 31, 31, 31, 31,
+            31, 42, 31, 31, 31, 31, 31, 31,
             31 ),
         array( -1, -1, -1, -1, -1, -1, -1, -1,
             -1, -1, 36, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1 ),
         array( -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, 69, -1, -1, -1, -1, -1,
+            -1, -1, 59, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1 ),
         array( -1, -1, -1, -1, -1, -1, -1, -1,
@@ -947,51 +912,47 @@ class PHP_Parser_DocBlock_DefaultLexer
             -1 ),
         array( 1, -1, 12, -1, -1, 13, 13, 13,
             13, -1, -1, 13, 13, 13, -1, -1,
-            -1, -1, 72, 121, 13, 13, 13, 13,
+            -1, -1, 62, 107, 13, 13, 13, 13,
             -1 ),
         array( -1, -1, 12, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1 ),
-        array( 1, 2, 44, 53, 17, 17, 17, 17,
+        array( 1, 2, 43, 47, 17, 17, 17, 17,
             17, 17, 17, 17, 17, 17, 17, 17,
             17, 32, 17, 17, 17, 17, 17, 17,
             17 ),
         array( -1, 40, 31, 17, 17, 17, 17, 17,
             17, 17, 17, 17, 17, 17, 17, 17,
-            17, 50, 17, 17, 17, 17, 17, 17,
+            17, 45, 17, 17, 17, 17, 17, 17,
             17 ),
         array( -1, 40, -1, 40, 40, 40, 40, 40,
             40, 40, 40, 40, 40, 40, 40, 40,
             40, 40, 40, 40, 40, 40, 40, 40,
             40 ),
-        array( 1, 19, 20, 77, 20, 20, 20, 20,
+        array( 1, 19, 20, 67, 20, 20, 20, 20,
             20, 20, 20, 20, 20, 20, 20, 20,
-            20, 78, 20, 20, 20, 20, 20, 20,
+            20, 68, 20, 20, 20, 20, 20, 20,
             20 ),
-        array( -1, -1, -1, 79, 110, 80, 80, 80,
-            80, -1, -1, 80, 80, 80, -1, -1,
-            -1, -1, -1, 80, 80, 80, 80, 80,
+        array( -1, -1, -1, -1, -1, 71, 71, 71,
+            71, -1, -1, 71, 71, 71, -1, -1,
+            -1, -1, -1, 71, 71, 71, 71, 71,
             -1 ),
-        array( -1, -1, -1, -1, -1, 81, 81, 81,
-            81, -1, -1, 81, 81, 81, -1, -1,
-            -1, -1, -1, 81, 81, 81, 81, 81,
+        array( -1, 52, -1, -1, 57, 70, 70, 70,
+            70, 52, 34, 70, 70, 70, -1, -1,
+            -1, -1, -1, 70, 70, 70, 70, 70,
             -1 ),
-        array( -1, 60, -1, -1, 67, 80, 80, 80,
-            80, 60, 34, 80, 80, 80, -1, -1,
-            -1, -1, -1, 80, 80, 80, 80, 80,
+        array( -1, 98, -1, -1, 58, 71, 71, 71,
+            71, 98, 59, 71, 71, 71, -1, -1,
+            -1, -1, -1, 71, 71, 71, 71, 71,
             -1 ),
-        array( -1, 109, -1, -1, 68, 81, 81, 81,
-            81, 109, 69, 81, 81, 81, -1, -1,
-            -1, -1, -1, 81, 81, 81, 81, 81,
+        array( -1, -1, -1, -1, -1, 72, 72, 72,
+            72, -1, 35, 72, 72, 72, -1, -1,
+            -1, -1, -1, 72, 72, 72, 72, 72,
             -1 ),
-        array( -1, -1, -1, -1, -1, 82, 82, 82,
-            82, -1, 35, 82, 82, 82, -1, -1,
-            -1, -1, -1, 82, 82, 82, 82, 82,
-            -1 ),
-        array( 1, 19, 84, 77, 21, 21, 21, 21,
+        array( 1, 19, 74, 67, 21, 21, 21, 21,
             21, 21, 21, 21, 21, 21, 21, 21,
-            21, 78, 21, 21, 21, 21, 21, 21,
+            21, 68, 21, 21, 21, 21, 21, 21,
             21 ),
         array( -1, 21, 41, 21, 21, 21, 21, 21,
             21, 21, 21, 21, 21, 21, 21, 21,
@@ -1001,15 +962,15 @@ class PHP_Parser_DocBlock_DefaultLexer
             21, 21, 21, 21, 21, 21, 21, 21,
             21, 21, 21, 21, 21, 21, 21, 21,
             21 ),
-        array( 1, 87, -1, -1, -1, -1, -1, -1,
+        array( 1, 77, -1, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1 ),
-        array( -1, 87, -1, -1, -1, -1, -1, -1,
-            -1, 87, -1, -1, -1, -1, -1, 88,
+        array( -1, 77, -1, -1, -1, -1, -1, -1,
+            -1, 77, -1, -1, -1, -1, -1, 78,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1 ),
-        array( 1, 23, 24, 106, 24, 24, 24, 24,
+        array( 1, 23, 24, 49, 24, 24, 24, 24,
             24, 24, 24, 24, 24, 24, 24, 24,
             24, 25, 24, 24, 24, 24, 24, 24,
             24 ),
@@ -1017,56 +978,56 @@ class PHP_Parser_DocBlock_DefaultLexer
             26, 26, 26, 26, 26, 26, 26, 26,
             -1, 26, 26, 26, 26, 26, 26, 26,
             26 ),
-        array( 1, 27, 28, 56, 28, 28, 28, 28,
+        array( 1, 27, 28, 51, 28, 28, 28, 28,
             28, 28, 28, 28, 28, 28, 28, 28,
             28, 32, 28, 28, 28, 28, 28, 28,
             28 ),
-        array( -1, -1, -1, -1, 93, -1, -1, -1,
+        array( -1, -1, -1, -1, 83, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1 ),
-        array( -1, -1, -1, -1, -1, 94, -1, -1,
+        array( -1, -1, -1, -1, -1, 84, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1 ),
-        array( -1, -1, -1, -1, -1, -1, 95, -1,
+        array( -1, -1, -1, -1, -1, -1, 85, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1 ),
-        array( -1, -1, -1, -1, -1, -1, -1, 96,
+        array( -1, -1, -1, -1, -1, -1, -1, 86,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1 ),
         array( -1, -1, -1, -1, -1, -1, -1, -1,
-            97, -1, -1, -1, -1, -1, -1, -1,
+            87, -1, -1, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1 ),
-        array( -1, 97, -1, -1, -1, -1, -1, -1,
-            -1, 97, 98, -1, -1, -1, -1, -1,
+        array( -1, 87, -1, -1, -1, -1, -1, -1,
+            -1, 87, 88, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1 ),
         array( -1, -1, -1, -1, -1, -1, -1, -1,
             -1, -1, 29, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1 ),
-        array( -1, -1, -1, -1, 100, -1, -1, -1,
+        array( -1, -1, -1, -1, 90, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1 ),
         array( -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, 101, -1, -1, -1, -1,
+            -1, -1, -1, 91, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1 ),
         array( -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, 102, -1, -1, -1,
+            -1, -1, -1, -1, 92, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1 ),
         array( -1, -1, -1, -1, -1, -1, -1, -1,
-            103, -1, -1, -1, -1, -1, -1, -1,
+            93, -1, -1, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1 ),
-        array( -1, 103, -1, -1, -1, -1, -1, -1,
-            -1, 103, 104, -1, -1, -1, -1, -1,
+        array( -1, 93, -1, -1, -1, -1, -1, -1,
+            -1, 93, 94, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1 ),
         array( -1, -1, -1, -1, -1, -1, -1, -1,
@@ -1077,69 +1038,53 @@ class PHP_Parser_DocBlock_DefaultLexer
             13, -1, -1, 13, 13, 13, -1, -1,
             -1, -1, -1, 13, 13, 13, 38, 13,
             -1 ),
-        array( -1, -1, 24, 112, 114, 42, 42, 42,
-            42, 24, 24, 42, 42, 42, 24, 24,
-            24, -1, 24, 42, 42, 42, 42, 42,
-            24 ),
-        array( -1, -1, 31, 31, 31, 55, 55, 55,
-            55, 31, 31, 55, 55, 55, 31, 31,
-            31, 43, 31, 55, 55, 55, 55, 55,
+        array( -1, -1, 31, 31, 31, 48, 48, 48,
+            48, 31, 31, 48, 48, 48, 31, 31,
+            31, 42, 31, 48, 48, 48, 48, 48,
             31 ),
-        array( -1, -1, -1, 99, 110, -1, -1, -1,
+        array( -1, -1, -1, 89, 99, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1 ),
-        array( -1, 109, -1, -1, 68, -1, -1, -1,
-            -1, 109, -1, -1, -1, -1, -1, -1,
+        array( -1, 98, -1, -1, 58, -1, -1, -1,
+            -1, 98, -1, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1,
             -1 ),
-        array( -1, -1, -1, -1, -1, 82, 82, 82,
-            82, -1, -1, 82, 82, 82, -1, -1,
-            -1, -1, -1, 82, 82, 82, 82, 82,
+        array( -1, -1, -1, -1, -1, 72, 72, 72,
+            72, -1, -1, 72, 72, 72, -1, -1,
+            -1, -1, -1, 72, 72, 72, 72, 72,
             -1 ),
-        array( 1, 27, 28, 108, 28, 28, 28, 28,
+        array( 1, 27, 28, 97, 28, 28, 28, 28,
             28, 28, 28, 28, 28, 28, 28, 28,
             28, 32, 28, 28, 28, 28, 28, 28,
             28 ),
-        array( -1, -1, 24, 24, 24, 51, 51, 51,
-            51, 24, 24, 51, 51, 51, 24, 24,
-            24, -1, 24, 51, 51, 51, 51, 51,
-            24 ),
-        array( -1, -1, 31, 31, 31, 58, 58, 58,
-            58, 31, 31, 58, 58, 58, 31, 31,
-            31, 43, 31, 58, 58, 58, 58, 58,
+        array( -1, -1, 31, 31, 31, 50, 50, 50,
+            50, 31, 31, 50, 50, 50, 31, 31,
+            31, 42, 31, 50, 50, 50, 50, 50,
             31 ),
-        array( -1, -1, 24, 24, 24, 54, 54, 54,
-            54, 24, 24, 54, 54, 54, 24, 24,
-            24, -1, 24, 54, 54, 54, 54, 54,
-            24 ),
         array( -1, -1, 31, 31, 31, 31, 31, 31,
-            31, 31, 66, 31, 31, 31, 31, 31,
-            31, 43, 31, 31, 31, 31, 31, 31,
+            31, 31, 56, 31, 31, 31, 31, 31,
+            31, 42, 31, 31, 31, 31, 31, 31,
             31 ),
-        array( -1, -1, 24, 24, 24, 24, 24, 24,
-            24, 24, 63, 24, 24, 24, 24, 24,
-            24, -1, 24, 24, 24, 24, 24, 24,
-            24 ),
         array( -1, -1, -1, -1, -1, 13, 13, 13,
             13, -1, -1, 13, 13, 13, -1, -1,
-            -1, -1, -1, 13, 105, 13, 13, 13,
+            -1, -1, -1, 13, 95, 13, 13, 13,
             -1 ),
         array( -1, -1, -1, -1, -1, 13, 13, 13,
-            13, -1, -1, 13, 117, 13, -1, -1,
+            13, -1, -1, 13, 103, 13, -1, -1,
             -1, -1, -1, 13, 13, 13, 13, 13,
             -1 ),
         array( -1, -1, -1, -1, -1, 13, 13, 13,
-            118, -1, -1, 13, 13, 13, -1, -1,
+            104, -1, -1, 13, 13, 13, -1, -1,
             -1, -1, -1, 13, 13, 13, 13, 13,
             -1 ),
         array( -1, -1, -1, -1, -1, 13, 13, 13,
             13, -1, -1, 13, 13, 13, -1, -1,
-            -1, -1, -1, 13, 13, 119, 13, 13,
+            -1, -1, -1, 13, 13, 105, 13, 13,
             -1 ),
         array( -1, -1, -1, -1, -1, 13, 13, 13,
             13, -1, -1, 13, 13, 13, -1, -1,
-            -1, -1, -1, 13, 120, 13, 13, 13,
+            -1, -1, -1, 13, 106, 13, 13, 13,
             -1 )
         );
 
@@ -1190,7 +1135,7 @@ class PHP_Parser_DocBlock_DefaultLexer
                     }
                     $this->yy_to_mark();
                     if ($yy_last_accept_state < 0) {
-                        if ($yy_last_accept_state < 122) {
+                        if ($yy_last_accept_state < 108) {
                             $this->yy_error(YY_E_INTERNAL, false);
                             if ($this->_fatal) {
                                 return;
@@ -1264,11 +1209,15 @@ case 3:
             if ($this->yy_buffer_start == 0) {
                 // this only happens if there is no description
                 $this->yybegin(INTAG);
-                $tag = array_shift(preg_split('/\s+/',$this->yytext()));
-                $this->yy_buffer_end = $this->yy_buffer_index = strlen($tag);
-                if ($this->debug) echo "new tag start [".trim($this->yytext())."]\n";
                 $this->_atNewLine = false;
-                return array(PHP_PARSER_DOCLEX_TAG, trim($this->yytext()));
+                if (strlen($whitespace)) {
+                    if ($this->debug) echo "new tag start [".trim($test)."]\n";
+                } else {
+                    $tag = array_shift(preg_split('/[\s]+/', $this->yytext()));
+                    $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start + strlen($tag);
+                    if ($this->debug) echo "new tag start [".trim($tag)."]\n";
+                }
+                return array(PHP_PARSER_DOCLEX_TAG, trim($tag));
             }
             $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start - 1;
             break;
@@ -1830,152 +1779,17 @@ case 41:
         break;
     }
 }
-case 42:
-{
-    $test = trim($this->yytext());
-    if (strlen($test)) {
-        $whitespace = substr($this->yytext(), 0, strpos($this->yytext(), $test));
-    } else {
-        $whitespace = false;
-    }
-    if (strlen($test) && in_array($test{0}, array('-', '+', 'o', '1'))) {
-        // check for simple lists
-        if (strlen($test) > 2 &&
-            ($test{0} != '1' && ($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-            ($test{0} == '1' && (($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-                                 ($test{1} == '.') &&
-                                 ($test{2} == ' ' && preg_match("/[^\s]/", $test{3})))))) {
-            // found one
-            if ($test{1} == '.') {
-                $this->_lastNum = 0;
-                $this->_listType = LIST_NUMBERED_DOT;
-            } else {
-                $this->_lastNum = 0;
-                if ($test{0} == '1') {
-                    $this->_listType = LIST_NUMBERED;
-                } else {
-                    $this->_listType = LIST_UNORDERED;
-                    $this->_listBullet = $test{0};
-                }
-            }
-            if ($whitespace && strlen($whitespace)) {
-                $index = $this->yy_buffer_end - $this->yylength() + strlen($whitespace);
-                $this->yy_buffer_index = $index;
-                $this->yy_mark_end();
-                if ($this->debug) echo "found whitespace[$whitespace]\n";
-                $this->_listOriginal = $this->yy_lexical_state;
-                $this->_original = SIMPLELIST;
-                $this->yybegin(SIMPLELIST);
-                $this->_atBullet = true;
-                array_push($this->_listLevel, strlen($whitespace));
-                return array(PHP_PARSER_DOCLEX_WHITESPACE, $whitespace);
-            } else {
-                array_push($this->_listLevel, 0);
-            }
-            break;
-        } else {
-            if ($this->debug) echo "normal text [".$this->yytext()."]\n";
-            return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-        }
-    } else {
-        if ($this->debug) echo "normal text [".$this->yytext()."]\n";
-        return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-    }
-}
-case 44:
+case 43:
 {
     if ($this->debug) echo "everything else[" .$this->yytext()."]\n";
     return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
 }
-case 45:
+case 44:
 {
     if ($this->debug) echo "1 normal desc text [".$this->yytext()."]\n";
     return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
 }
-case 46:
-{
-    if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
-        $this->yybegin($this->_listOriginal);
-    }
-    $tagname = strtolower(str_replace(array('<','>'),array('',''), $this->yytext()));
-    if (isset($this->_tagMap['open'][$tagname])) {
-        if ($this->debug) echo "open $tagname tag [".$this->yytext()."]\n";
-        if ($tagname == 'code') {
-            $this->_codeOriginal = $this->yy_lexical_state;
-            $this->yybegin(INCODE);
-        }
-        if ($tagname == 'pre') {
-            $this->_codeOriginal = $this->yy_lexical_state;
-            $this->yybegin(INPRE);
-        }
-        return array($this->_tagMap['open'][$tagname], $this->yytext());
-    } elseif ($this->yy_lexical_state == YYINITIAL || $this->yy_lexical_state == INLINEINTERNALTAG
-                || $this->yy_lexical_state == INTAG) {
-        if ($this->debug) echo "normal desc text [".$this->yytext()."]\n";
-        return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-    } elseif ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST) {
-        if ($this->debug) echo "2 simple list stuff [".$this->yytext()."]\n";
-        return array(PHP_PARSER_DOCLEX_SIMPLELIST, $this->yytext());
-    }
-}
-case 47:
-{
-    if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
-        $this->yybegin($this->_listOriginal);
-    }
-    $tagname = str_replace(array('</','>'), array('',''), $this->yytext());
-    if ($this->yy_lexical_state == INCODE) {
-        if ($tagname != 'code') {
-            if ($this->debug) echo '<code> stuff ['.$this->yytext()."]\n";
-            return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-        } else {
-            $this->yybegin($this->_codeOriginal);
-        }
-    }
-    if ($this->yy_lexical_state == INPRE) {
-        if ($tagname != 'pre') {
-            if ($this->debug) echo '<pre> stuff ['.$this->yytext()."]\n";
-            return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-        } else {
-            $this->yybegin($this->_codeOriginal);
-        }
-    }
-    if (isset($this->_tagMap['close'][$tagname])) {
-        if ($tagname == 'p' && ($this->yy_lexical_state == SIMPLELIST
-                                || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
-            if ($this->debug) echo "shunting list to original state, returning dummy\n";
-            $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
-            $this->yybegin($this->_listOriginal);
-            return array(PHP_PARSER_DOCLEX_SIMPLELIST_END, '');
-        }
-        if ($this->debug) echo "close $tagname tag [".$this->yytext()."]\n";
-        return array($this->_tagMap['close'][$tagname], $this->yytext());
-    } elseif ($this->yy_lexical_state == YYINITIAL || $this->yy_lexical_state == INLINEINTERNALTAG ||
-                $this->yy_lexical_state == INTAG) {
-        if ($this->debug) echo "normal desc text [".$this->yytext()."]\n";
-        return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-    } elseif ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST) {
-        if ($this->debug) echo "3 simple list stuff [".$this->yytext()."]\n";
-        return array(PHP_PARSER_DOCLEX_SIMPLELIST, $this->yytext());
-    }
-}
-case 48:
-{
-    if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
-        $this->yybegin($this->_listOriginal);
-    }
-    if ($this->debug) echo "complete tag [".$this->yytext()."]\n";
-    return array(PHP_PARSER_DOCLEX_XML_TAG, $this->yytext());
-}
-case 49:
-{
-    if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
-        $this->yybegin($this->_listOriginal);
-    }
-    if ($this->debug) echo "escaped tag [".$this->yytext()."]\n";
-    return array(PHP_PARSER_DOCLEX_ESCAPED_TAG, $this->yytext());
-}
-case 50:
+case 45:
 {
     $test = trim($this->yytext());
     if (strlen($test)) {
@@ -2036,327 +1850,46 @@ case 50:
         return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
     }
 }
+case 47:
+{
+    if ($this->debug) echo "everything else[" .$this->yytext()."]\n";
+    return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
+}
+case 49:
+{
+    if ($this->debug) echo "everything else[" .$this->yytext()."]\n";
+    return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
+}
 case 51:
 {
-    $test = trim($this->yytext());
-    if (strlen($test)) {
-        $whitespace = substr($this->yytext(), 0, strpos($this->yytext(), $test));
-    } else {
-        $whitespace = false;
-    }
-    if (strlen($test) && in_array($test{0}, array('-', '+', 'o', '1'))) {
-        // check for simple lists
-        if (strlen($test) > 2 &&
-            ($test{0} != '1' && ($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-            ($test{0} == '1' && (($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-                                 ($test{1} == '.') &&
-                                 ($test{2} == ' ' && preg_match("/[^\s]/", $test{3})))))) {
-            // found one
-            if ($test{1} == '.') {
-                $this->_lastNum = 0;
-                $this->_listType = LIST_NUMBERED_DOT;
-            } else {
-                $this->_lastNum = 0;
-                if ($test{0} == '1') {
-                    $this->_listType = LIST_NUMBERED;
-                } else {
-                    $this->_listType = LIST_UNORDERED;
-                    $this->_listBullet = $test{0};
-                }
-            }
-            if ($whitespace && strlen($whitespace)) {
-                $index = $this->yy_buffer_end - $this->yylength() + strlen($whitespace);
-                $this->yy_buffer_index = $index;
-                $this->yy_mark_end();
-                if ($this->debug) echo "found whitespace[$whitespace]\n";
-                $this->_listOriginal = $this->yy_lexical_state;
-                $this->_original = SIMPLELIST;
-                $this->yybegin(SIMPLELIST);
-                $this->_atBullet = true;
-                array_push($this->_listLevel, strlen($whitespace));
-                return array(PHP_PARSER_DOCLEX_WHITESPACE, $whitespace);
-            } else {
-                array_push($this->_listLevel, 0);
-            }
-            break;
-        } else {
-            if ($this->debug) echo "normal text [".$this->yytext()."]\n";
-            return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-        }
-    } else {
-        if ($this->debug) echo "normal text [".$this->yytext()."]\n";
-        return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-    }
+    if ($this->debug) echo "everything else[" .$this->yytext()."]\n";
+    return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
 }
-case 53:
+case 95:
+{
+    if ($this->debug) echo "inline tag open [{@]\n";
+    $this->_tagName = $this->yytext();
+    $this->yybegin(INLINETAGNAME);
+    return array(PHP_PARSER_DOCLEX_INLINE_TAG_OPEN, "{@");
+}
+case 97:
 {
     if ($this->debug) echo "everything else[" .$this->yytext()."]\n";
     return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
 }
-case 54:
+case 103:
 {
-    $test = trim($this->yytext());
-    if (strlen($test)) {
-        $whitespace = substr($this->yytext(), 0, strpos($this->yytext(), $test));
-    } else {
-        $whitespace = false;
-    }
-    if (strlen($test) && in_array($test{0}, array('-', '+', 'o', '1'))) {
-        // check for simple lists
-        if (strlen($test) > 2 &&
-            ($test{0} != '1' && ($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-            ($test{0} == '1' && (($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-                                 ($test{1} == '.') &&
-                                 ($test{2} == ' ' && preg_match("/[^\s]/", $test{3})))))) {
-            // found one
-            if ($test{1} == '.') {
-                $this->_lastNum = 0;
-                $this->_listType = LIST_NUMBERED_DOT;
-            } else {
-                $this->_lastNum = 0;
-                if ($test{0} == '1') {
-                    $this->_listType = LIST_NUMBERED;
-                } else {
-                    $this->_listType = LIST_UNORDERED;
-                    $this->_listBullet = $test{0};
-                }
-            }
-            if ($whitespace && strlen($whitespace)) {
-                $index = $this->yy_buffer_end - $this->yylength() + strlen($whitespace);
-                $this->yy_buffer_index = $index;
-                $this->yy_mark_end();
-                if ($this->debug) echo "found whitespace[$whitespace]\n";
-                $this->_listOriginal = $this->yy_lexical_state;
-                $this->_original = SIMPLELIST;
-                $this->yybegin(SIMPLELIST);
-                $this->_atBullet = true;
-                array_push($this->_listLevel, strlen($whitespace));
-                return array(PHP_PARSER_DOCLEX_WHITESPACE, $whitespace);
-            } else {
-                array_push($this->_listLevel, 0);
-            }
-            break;
-        } else {
-            if ($this->debug) echo "normal text [".$this->yytext()."]\n";
-            return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-        }
-    } else {
-        if ($this->debug) echo "normal text [".$this->yytext()."]\n";
-        return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-    }
+    if ($this->debug) echo "inline tag open [{@]\n";
+    $this->_tagName = $this->yytext();
+    $this->yybegin(INLINETAGNAME);
+    return array(PHP_PARSER_DOCLEX_INLINE_TAG_OPEN, "{@");
 }
-case 56:
+case 104:
 {
-    if ($this->debug) echo "everything else[" .$this->yytext()."]\n";
-    return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-}
-case 57:
-{
-    $test = trim($this->yytext());
-    if (strlen($test)) {
-        $whitespace = substr($this->yytext(), 0, strpos($this->yytext(), $test));
-    } else {
-        $whitespace = false;
-    }
-    if (strlen($test) && in_array($test{0}, array('-', '+', 'o', '1'))) {
-        // check for simple lists
-        if (strlen($test) > 2 &&
-            ($test{0} != '1' && ($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-            ($test{0} == '1' && (($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-                                 ($test{1} == '.') &&
-                                 ($test{2} == ' ' && preg_match("/[^\s]/", $test{3})))))) {
-            // found one
-            if ($test{1} == '.') {
-                $this->_lastNum = 0;
-                $this->_listType = LIST_NUMBERED_DOT;
-            } else {
-                $this->_lastNum = 0;
-                if ($test{0} == '1') {
-                    $this->_listType = LIST_NUMBERED;
-                } else {
-                    $this->_listType = LIST_UNORDERED;
-                    $this->_listBullet = $test{0};
-                }
-            }
-            if ($whitespace && strlen($whitespace)) {
-                $index = $this->yy_buffer_end - $this->yylength() + strlen($whitespace);
-                $this->yy_buffer_index = $index;
-                $this->yy_mark_end();
-                if ($this->debug) echo "found whitespace[$whitespace]\n";
-                $this->_listOriginal = $this->yy_lexical_state;
-                $this->_original = SIMPLELIST;
-                $this->yybegin(SIMPLELIST);
-                $this->_atBullet = true;
-                array_push($this->_listLevel, strlen($whitespace));
-                return array(PHP_PARSER_DOCLEX_WHITESPACE, $whitespace);
-            } else {
-                array_push($this->_listLevel, 0);
-            }
-            break;
-        } else {
-            if ($this->debug) echo "normal text [".$this->yytext()."]\n";
-            return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-        }
-    } else {
-        if ($this->debug) echo "normal text [".$this->yytext()."]\n";
-        return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-    }
-}
-case 59:
-{
-    $test = trim($this->yytext());
-    if (strlen($test)) {
-        $whitespace = substr($this->yytext(), 0, strpos($this->yytext(), $test));
-    } else {
-        $whitespace = false;
-    }
-    if (strlen($test) && in_array($test{0}, array('-', '+', 'o', '1'))) {
-        // check for simple lists
-        if (strlen($test) > 2 &&
-            ($test{0} != '1' && ($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-            ($test{0} == '1' && (($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-                                 ($test{1} == '.') &&
-                                 ($test{2} == ' ' && preg_match("/[^\s]/", $test{3})))))) {
-            // found one
-            if ($test{1} == '.') {
-                $this->_lastNum = 0;
-                $this->_listType = LIST_NUMBERED_DOT;
-            } else {
-                $this->_lastNum = 0;
-                if ($test{0} == '1') {
-                    $this->_listType = LIST_NUMBERED;
-                } else {
-                    $this->_listType = LIST_UNORDERED;
-                    $this->_listBullet = $test{0};
-                }
-            }
-            if ($whitespace && strlen($whitespace)) {
-                $index = $this->yy_buffer_end - $this->yylength() + strlen($whitespace);
-                $this->yy_buffer_index = $index;
-                $this->yy_mark_end();
-                if ($this->debug) echo "found whitespace[$whitespace]\n";
-                $this->_listOriginal = $this->yy_lexical_state;
-                $this->_original = SIMPLELIST;
-                $this->yybegin(SIMPLELIST);
-                $this->_atBullet = true;
-                array_push($this->_listLevel, strlen($whitespace));
-                return array(PHP_PARSER_DOCLEX_WHITESPACE, $whitespace);
-            } else {
-                array_push($this->_listLevel, 0);
-            }
-            break;
-        } else {
-            if ($this->debug) echo "normal text [".$this->yytext()."]\n";
-            return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-        }
-    } else {
-        if ($this->debug) echo "normal text [".$this->yytext()."]\n";
-        return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-    }
-}
-case 61:
-{
-    $test = trim($this->yytext());
-    if (strlen($test)) {
-        $whitespace = substr($this->yytext(), 0, strpos($this->yytext(), $test));
-    } else {
-        $whitespace = false;
-    }
-    if (strlen($test) && in_array($test{0}, array('-', '+', 'o', '1'))) {
-        // check for simple lists
-        if (strlen($test) > 2 &&
-            ($test{0} != '1' && ($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-            ($test{0} == '1' && (($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-                                 ($test{1} == '.') &&
-                                 ($test{2} == ' ' && preg_match("/[^\s]/", $test{3})))))) {
-            // found one
-            if ($test{1} == '.') {
-                $this->_lastNum = 0;
-                $this->_listType = LIST_NUMBERED_DOT;
-            } else {
-                $this->_lastNum = 0;
-                if ($test{0} == '1') {
-                    $this->_listType = LIST_NUMBERED;
-                } else {
-                    $this->_listType = LIST_UNORDERED;
-                    $this->_listBullet = $test{0};
-                }
-            }
-            if ($whitespace && strlen($whitespace)) {
-                $index = $this->yy_buffer_end - $this->yylength() + strlen($whitespace);
-                $this->yy_buffer_index = $index;
-                $this->yy_mark_end();
-                if ($this->debug) echo "found whitespace[$whitespace]\n";
-                $this->_listOriginal = $this->yy_lexical_state;
-                $this->_original = SIMPLELIST;
-                $this->yybegin(SIMPLELIST);
-                $this->_atBullet = true;
-                array_push($this->_listLevel, strlen($whitespace));
-                return array(PHP_PARSER_DOCLEX_WHITESPACE, $whitespace);
-            } else {
-                array_push($this->_listLevel, 0);
-            }
-            break;
-        } else {
-            if ($this->debug) echo "normal text [".$this->yytext()."]\n";
-            return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-        }
-    } else {
-        if ($this->debug) echo "normal text [".$this->yytext()."]\n";
-        return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-    }
-}
-case 63:
-{
-    $test = trim($this->yytext());
-    if (strlen($test)) {
-        $whitespace = substr($this->yytext(), 0, strpos($this->yytext(), $test));
-    } else {
-        $whitespace = false;
-    }
-    if (strlen($test) && in_array($test{0}, array('-', '+', 'o', '1'))) {
-        // check for simple lists
-        if (strlen($test) > 2 &&
-            ($test{0} != '1' && ($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-            ($test{0} == '1' && (($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-                                 ($test{1} == '.') &&
-                                 ($test{2} == ' ' && preg_match("/[^\s]/", $test{3})))))) {
-            // found one
-            if ($test{1} == '.') {
-                $this->_lastNum = 0;
-                $this->_listType = LIST_NUMBERED_DOT;
-            } else {
-                $this->_lastNum = 0;
-                if ($test{0} == '1') {
-                    $this->_listType = LIST_NUMBERED;
-                } else {
-                    $this->_listType = LIST_UNORDERED;
-                    $this->_listBullet = $test{0};
-                }
-            }
-            if ($whitespace && strlen($whitespace)) {
-                $index = $this->yy_buffer_end - $this->yylength() + strlen($whitespace);
-                $this->yy_buffer_index = $index;
-                $this->yy_mark_end();
-                if ($this->debug) echo "found whitespace[$whitespace]\n";
-                $this->_listOriginal = $this->yy_lexical_state;
-                $this->_original = SIMPLELIST;
-                $this->yybegin(SIMPLELIST);
-                $this->_atBullet = true;
-                array_push($this->_listLevel, strlen($whitespace));
-                return array(PHP_PARSER_DOCLEX_WHITESPACE, $whitespace);
-            } else {
-                array_push($this->_listLevel, 0);
-            }
-            break;
-        } else {
-            if ($this->debug) echo "normal text [".$this->yytext()."]\n";
-            return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-        }
-    } else {
-        if ($this->debug) echo "normal text [".$this->yytext()."]\n";
-        return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-    }
+    if ($this->debug) echo "inline tag open [{@]\n";
+    $this->_tagName = $this->yytext();
+    $this->yybegin(INLINETAGNAME);
+    return array(PHP_PARSER_DOCLEX_INLINE_TAG_OPEN, "{@");
 }
 case 105:
 {
@@ -2367,246 +1900,12 @@ case 105:
 }
 case 106:
 {
-    $test = trim($this->yytext());
-    if (strlen($test)) {
-        $whitespace = substr($this->yytext(), 0, strpos($this->yytext(), $test));
-    } else {
-        $whitespace = false;
-    }
-    if (strlen($test) && in_array($test{0}, array('-', '+', 'o', '1'))) {
-        // check for simple lists
-        if (strlen($test) > 2 &&
-            ($test{0} != '1' && ($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-            ($test{0} == '1' && (($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-                                 ($test{1} == '.') &&
-                                 ($test{2} == ' ' && preg_match("/[^\s]/", $test{3})))))) {
-            // found one
-            if ($test{1} == '.') {
-                $this->_lastNum = 0;
-                $this->_listType = LIST_NUMBERED_DOT;
-            } else {
-                $this->_lastNum = 0;
-                if ($test{0} == '1') {
-                    $this->_listType = LIST_NUMBERED;
-                } else {
-                    $this->_listType = LIST_UNORDERED;
-                    $this->_listBullet = $test{0};
-                }
-            }
-            if ($whitespace && strlen($whitespace)) {
-                $index = $this->yy_buffer_end - $this->yylength() + strlen($whitespace);
-                $this->yy_buffer_index = $index;
-                $this->yy_mark_end();
-                if ($this->debug) echo "found whitespace[$whitespace]\n";
-                $this->_listOriginal = $this->yy_lexical_state;
-                $this->_original = SIMPLELIST;
-                $this->yybegin(SIMPLELIST);
-                $this->_atBullet = true;
-                array_push($this->_listLevel, strlen($whitespace));
-                return array(PHP_PARSER_DOCLEX_WHITESPACE, $whitespace);
-            } else {
-                array_push($this->_listLevel, 0);
-            }
-            break;
-        } else {
-            if ($this->debug) echo "normal text [".$this->yytext()."]\n";
-            return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-        }
-    } else {
-        if ($this->debug) echo "normal text [".$this->yytext()."]\n";
-        return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-    }
-}
-case 108:
-{
-    if ($this->debug) echo "everything else[" .$this->yytext()."]\n";
-    return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-}
-case 112:
-{
-    $test = trim($this->yytext());
-    if (strlen($test)) {
-        $whitespace = substr($this->yytext(), 0, strpos($this->yytext(), $test));
-    } else {
-        $whitespace = false;
-    }
-    if (strlen($test) && in_array($test{0}, array('-', '+', 'o', '1'))) {
-        // check for simple lists
-        if (strlen($test) > 2 &&
-            ($test{0} != '1' && ($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-            ($test{0} == '1' && (($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-                                 ($test{1} == '.') &&
-                                 ($test{2} == ' ' && preg_match("/[^\s]/", $test{3})))))) {
-            // found one
-            if ($test{1} == '.') {
-                $this->_lastNum = 0;
-                $this->_listType = LIST_NUMBERED_DOT;
-            } else {
-                $this->_lastNum = 0;
-                if ($test{0} == '1') {
-                    $this->_listType = LIST_NUMBERED;
-                } else {
-                    $this->_listType = LIST_UNORDERED;
-                    $this->_listBullet = $test{0};
-                }
-            }
-            if ($whitespace && strlen($whitespace)) {
-                $index = $this->yy_buffer_end - $this->yylength() + strlen($whitespace);
-                $this->yy_buffer_index = $index;
-                $this->yy_mark_end();
-                if ($this->debug) echo "found whitespace[$whitespace]\n";
-                $this->_listOriginal = $this->yy_lexical_state;
-                $this->_original = SIMPLELIST;
-                $this->yybegin(SIMPLELIST);
-                $this->_atBullet = true;
-                array_push($this->_listLevel, strlen($whitespace));
-                return array(PHP_PARSER_DOCLEX_WHITESPACE, $whitespace);
-            } else {
-                array_push($this->_listLevel, 0);
-            }
-            break;
-        } else {
-            if ($this->debug) echo "normal text [".$this->yytext()."]\n";
-            return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-        }
-    } else {
-        if ($this->debug) echo "normal text [".$this->yytext()."]\n";
-        return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-    }
-}
-case 114:
-{
-    $test = trim($this->yytext());
-    if (strlen($test)) {
-        $whitespace = substr($this->yytext(), 0, strpos($this->yytext(), $test));
-    } else {
-        $whitespace = false;
-    }
-    if (strlen($test) && in_array($test{0}, array('-', '+', 'o', '1'))) {
-        // check for simple lists
-        if (strlen($test) > 2 &&
-            ($test{0} != '1' && ($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-            ($test{0} == '1' && (($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-                                 ($test{1} == '.') &&
-                                 ($test{2} == ' ' && preg_match("/[^\s]/", $test{3})))))) {
-            // found one
-            if ($test{1} == '.') {
-                $this->_lastNum = 0;
-                $this->_listType = LIST_NUMBERED_DOT;
-            } else {
-                $this->_lastNum = 0;
-                if ($test{0} == '1') {
-                    $this->_listType = LIST_NUMBERED;
-                } else {
-                    $this->_listType = LIST_UNORDERED;
-                    $this->_listBullet = $test{0};
-                }
-            }
-            if ($whitespace && strlen($whitespace)) {
-                $index = $this->yy_buffer_end - $this->yylength() + strlen($whitespace);
-                $this->yy_buffer_index = $index;
-                $this->yy_mark_end();
-                if ($this->debug) echo "found whitespace[$whitespace]\n";
-                $this->_listOriginal = $this->yy_lexical_state;
-                $this->_original = SIMPLELIST;
-                $this->yybegin(SIMPLELIST);
-                $this->_atBullet = true;
-                array_push($this->_listLevel, strlen($whitespace));
-                return array(PHP_PARSER_DOCLEX_WHITESPACE, $whitespace);
-            } else {
-                array_push($this->_listLevel, 0);
-            }
-            break;
-        } else {
-            if ($this->debug) echo "normal text [".$this->yytext()."]\n";
-            return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-        }
-    } else {
-        if ($this->debug) echo "normal text [".$this->yytext()."]\n";
-        return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-    }
-}
-case 116:
-{
-    $test = trim($this->yytext());
-    if (strlen($test)) {
-        $whitespace = substr($this->yytext(), 0, strpos($this->yytext(), $test));
-    } else {
-        $whitespace = false;
-    }
-    if (strlen($test) && in_array($test{0}, array('-', '+', 'o', '1'))) {
-        // check for simple lists
-        if (strlen($test) > 2 &&
-            ($test{0} != '1' && ($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-            ($test{0} == '1' && (($test{1} == ' ' && preg_match("/[^\s]/", $test{2})) ||
-                                 ($test{1} == '.') &&
-                                 ($test{2} == ' ' && preg_match("/[^\s]/", $test{3})))))) {
-            // found one
-            if ($test{1} == '.') {
-                $this->_lastNum = 0;
-                $this->_listType = LIST_NUMBERED_DOT;
-            } else {
-                $this->_lastNum = 0;
-                if ($test{0} == '1') {
-                    $this->_listType = LIST_NUMBERED;
-                } else {
-                    $this->_listType = LIST_UNORDERED;
-                    $this->_listBullet = $test{0};
-                }
-            }
-            if ($whitespace && strlen($whitespace)) {
-                $index = $this->yy_buffer_end - $this->yylength() + strlen($whitespace);
-                $this->yy_buffer_index = $index;
-                $this->yy_mark_end();
-                if ($this->debug) echo "found whitespace[$whitespace]\n";
-                $this->_listOriginal = $this->yy_lexical_state;
-                $this->_original = SIMPLELIST;
-                $this->yybegin(SIMPLELIST);
-                $this->_atBullet = true;
-                array_push($this->_listLevel, strlen($whitespace));
-                return array(PHP_PARSER_DOCLEX_WHITESPACE, $whitespace);
-            } else {
-                array_push($this->_listLevel, 0);
-            }
-            break;
-        } else {
-            if ($this->debug) echo "normal text [".$this->yytext()."]\n";
-            return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-        }
-    } else {
-        if ($this->debug) echo "normal text [".$this->yytext()."]\n";
-        return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-    }
-}
-case 117:
-{
     if ($this->debug) echo "inline tag open [{@]\n";
     $this->_tagName = $this->yytext();
     $this->yybegin(INLINETAGNAME);
     return array(PHP_PARSER_DOCLEX_INLINE_TAG_OPEN, "{@");
 }
-case 118:
-{
-    if ($this->debug) echo "inline tag open [{@]\n";
-    $this->_tagName = $this->yytext();
-    $this->yybegin(INLINETAGNAME);
-    return array(PHP_PARSER_DOCLEX_INLINE_TAG_OPEN, "{@");
-}
-case 119:
-{
-    if ($this->debug) echo "inline tag open [{@]\n";
-    $this->_tagName = $this->yytext();
-    $this->yybegin(INLINETAGNAME);
-    return array(PHP_PARSER_DOCLEX_INLINE_TAG_OPEN, "{@");
-}
-case 120:
-{
-    if ($this->debug) echo "inline tag open [{@]\n";
-    $this->_tagName = $this->yytext();
-    $this->yybegin(INLINETAGNAME);
-    return array(PHP_PARSER_DOCLEX_INLINE_TAG_OPEN, "{@");
-}
-case 121:
+case 107:
 {
     if ($this->debug) echo "inline tag open [{@]\n";
     $this->_tagName = $this->yytext();

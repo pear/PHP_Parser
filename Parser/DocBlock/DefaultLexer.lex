@@ -19,6 +19,7 @@
 // $Id$
 //
 
+require_once 'PEAR/ErrorStack.php';
 define('PHP_Parser_DocBlock_DefaultLexer_ERROR', 1);
 
 /* the tokenizer states */
@@ -601,7 +602,7 @@ NOBRACKETS = [^}]*
     return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
 }
 
-<INTAG> [^\n{]+ {
+<INTAG> [^\n{<]+ {
     $test = trim($this->yytext());
     if (strlen($test)) {
         $whitespace = substr($this->yytext(), 0, strpos($this->yytext(), $test));
@@ -730,11 +731,15 @@ NOBRACKETS = [^}]*
             if ($this->yy_buffer_start == 0) {
                 // this only happens if there is no description
                 $this->yybegin(INTAG);
-                $tag = array_shift(preg_split('/\s+/',$this->yytext()));
-                $this->yy_buffer_end = $this->yy_buffer_index = strlen($tag);
-                if ($this->debug) echo "new tag start [".trim($this->yytext())."]\n";
                 $this->_atNewLine = false;
-                return array(PHP_PARSER_DOCLEX_TAG, trim($this->yytext()));
+                if (strlen($whitespace)) {
+                    if ($this->debug) echo "new tag start [".trim($test)."]\n";
+                } else {
+                    $tag = array_shift(preg_split('/[\s]+/', $this->yytext()));
+                    $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start + strlen($tag);
+                    if ($this->debug) echo "new tag start [".trim($tag)."]\n";
+                }
+                return array(PHP_PARSER_DOCLEX_TAG, trim($tag));
             }
             $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start - 1;
             break;
@@ -918,7 +923,7 @@ NOBRACKETS = [^}]*
     return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
 }
 
-<YYINITIAL, INLINEINTERNALTAG, INCODE, INPRE> . {
+<YYINITIAL, INLINEINTERNALTAG, INCODE, INPRE, INTAG> . {
     if ($this->debug) echo "everything else[" .$this->yytext()."]\n";
     return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
 }

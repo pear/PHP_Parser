@@ -164,6 +164,7 @@ class PHP_Parser_DocBlock_DefaultLexer_tag_test extends PHPUnit_TestCase
             array(
                 array(PHP_PARSER_DOCLEX_TAG, '@ignore'),
             ), $data, 'tags failed 1');
+        $this->assertNoErrors('test_tag', 'tags error 1');
 
         $this->lexer->setup('test not a tag @ignore');
         $data = array();
@@ -174,6 +175,7 @@ class PHP_Parser_DocBlock_DefaultLexer_tag_test extends PHPUnit_TestCase
             array(
                 array(PHP_PARSER_DOCLEX_TEXT, 'test not a tag @ignore'),
             ), $data, 'tags failed 2');
+        $this->assertNoErrors('test_tag', 'tags error 2');
 
         $this->lexer->setup('test not a tag
 @static');
@@ -186,6 +188,7 @@ class PHP_Parser_DocBlock_DefaultLexer_tag_test extends PHPUnit_TestCase
                 array(PHP_PARSER_DOCLEX_TEXT, "test not a tag\n"),
                 array(PHP_PARSER_DOCLEX_TAG, '@static'),
             ), $data, 'tags failed 3');
+        $this->assertNoErrors('test_tag', 'tags error 3');
 
         $this->lexer->setup('@author Greg Beaver <testing@example.com>');
         $data = array();
@@ -197,6 +200,7 @@ class PHP_Parser_DocBlock_DefaultLexer_tag_test extends PHPUnit_TestCase
                 array(PHP_PARSER_DOCLEX_TAG, '@author'),
                 array(PHP_PARSER_DOCLEX_TEXT, " Greg Beaver <testing@example.com>"),
             ), $data, 'tags failed 4');
+        $this->assertNoErrors('test_tag', 'tags error 4');
 
         $this->lexer->setup('@since my second @tag attempt');
         $data = array();
@@ -208,6 +212,7 @@ class PHP_Parser_DocBlock_DefaultLexer_tag_test extends PHPUnit_TestCase
                 array(PHP_PARSER_DOCLEX_TAG, '@since'),
                 array(PHP_PARSER_DOCLEX_TEXT, " my second @tag attempt"),
             ), $data, 'tags failed 5');
+        $this->assertNoErrors('test_tag', 'tags error 5');
     }
     
     function test_multipletags()
@@ -232,6 +237,7 @@ class PHP_Parser_DocBlock_DefaultLexer_tag_test extends PHPUnit_TestCase
                 array(PHP_PARSER_DOCLEX_TAG, '@since'),
                 array(PHP_PARSER_DOCLEX_TEXT, " my second @tag attempt"),
             ), $data, 'tags failed 5');
+        $this->assertNoErrors('test_tag', 'tags error');
     }
     
     function test_htmltag()
@@ -242,7 +248,7 @@ class PHP_Parser_DocBlock_DefaultLexer_tag_test extends PHPUnit_TestCase
         if (!$this->_methodExists('advance')) {
             return;
         }
-        $this->lexer->setup('@see me <b></p><pre></pre>');
+        $this->lexer->setup('@see me <b></p><pre></pre> < test bracket');
         $data = array();
         while ($a = $this->lexer->advance()) {
             $data[] = array($this->lexer->token, $this->lexer->value);
@@ -255,6 +261,7 @@ class PHP_Parser_DocBlock_DefaultLexer_tag_test extends PHPUnit_TestCase
                 array(PHP_PARSER_DOCLEX_CLOSE_P, '</p>'),
                 array(PHP_PARSER_DOCLEX_OPEN_PRE, '<pre>'),
                 array(PHP_PARSER_DOCLEX_CLOSE_PRE, '</pre>'),
+                array(PHP_PARSER_DOCLEX_TEXT, " < test bracket"),
             ), $data, 'tags failed 1');
         $this->lexer->setup('</b><samp></samp><kbd>');
         $data = array();
