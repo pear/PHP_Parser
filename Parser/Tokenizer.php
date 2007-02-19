@@ -19,11 +19,7 @@
 // $Id$
 //
 
-// global map array which is used if the tokenizer items are number
-// differently than the compiled 
-
-$GLOBALS['_PHP_PARSER_TOKENIZER']['map'] = null;
-
+require_once dirname(__FILE__) . '/Core.php';
 /**
 * The tokenizer wrapper for parser - implements the 'standard?' yylex interface
 *
@@ -93,7 +89,7 @@ class PHP_Parser_Tokenizer {
     */ 
     
     var $token;
-    
+
     /**
     * The value associated with a token - eg. for T_STRING it's the string 
     *
@@ -102,6 +98,16 @@ class PHP_Parser_Tokenizer {
     */ 
     
     var $value;
+
+    /**
+    * The value associated with a token plus preceding whitespace, if any
+    *
+    * This is only filled if whitespace attachment is turned on, for performance reasons
+    * @var string
+    * @access public
+    */ 
+    
+    var $valueWithWhitespace;
      
     /**
     * ID of the last Comment Token 
@@ -145,6 +151,8 @@ class PHP_Parser_Tokenizer {
      * @access private
      */
     var $_options;
+    private $_whitespace;
+    private $_trackingWhitespace = 0;
     
     /**
     * Constructor
@@ -157,22 +165,7 @@ class PHP_Parser_Tokenizer {
     *
     * @return   none
     * @access   public
-    */
-  
-    
-    function PHP_Parser_Tokenizer()
-    {
-        $a = func_get_args();
-        call_user_func_array(array(&$this, '__construct'), $a);
-    }
-    
-    
-    function setOptions() {
-        $a = func_get_args();
-        call_user_func_array(array(&$this, '__construct'), $a);
-    }
-    
-    
+    */    
     function __construct($data, $options = array()) 
     {
         $this->_options['documentationParser'] =
@@ -215,9 +208,6 @@ class PHP_Parser_Tokenizer {
                 }
             }
         }
-        if (!$data) {
-            return;
-        }
         $this->tokens = token_get_all($data);
         $this->N = count($this->tokens);
         for ($i=0;$i<$this->N;$i++) {
@@ -227,12 +217,23 @@ class PHP_Parser_Tokenizer {
         }
         $this->pos = -1;
         $this->line = 1;
-        if ($GLOBALS['_PHP_PARSER_TOKENIZER']['map'] == null) {
-            $this->buildMap();
-        }
-        
     }
-    
+
+    function haltLexing()
+    {
+        $this->pos = $this->N;
+    }
+
+    /**
+     * Return the whitespace (if any) that preceded the current token
+     *
+     * @return string
+     */
+    function getWhitespace()
+    {
+        return $this->_whitespace;
+    }
+
     /**
      * @param MsgServer_Msg
      */
@@ -251,7 +252,17 @@ class PHP_Parser_Tokenizer {
     {
         $this->_globalSearch = $var;
     }
-    
+
+    function trackWhitespace()
+    {
+        $this->_trackingWhitespace++;
+    }
+
+    function stopTrackingWhitespace()
+    {
+        $this->_trackingWhitespace--;
+    }
+
     /**
      * Compare global variable to search value, to see if we've
      * found a variable that must be documented
@@ -355,17 +366,15 @@ class PHP_Parser_Tokenizer {
             
             if ($this->debug) {
                 echo token_name($this->tokens[$this->pos][0]). '(' .
-                (isset($GLOBALS['_PHP_PARSER']['yyName'][$GLOBALS['_PHP_PARSER_TOKENIZER']['map'][$this->tokens[$this->pos][0]]]) ?
-                $GLOBALS['_PHP_PARSER']['yyName'][$GLOBALS['_PHP_PARSER_TOKENIZER']['map'][$this->tokens[$this->pos][0]]] :
-                $GLOBALS['_PHP_PARSER']['yyName'][$this->tokens[$this->pos][0]])
-                .')' ." : {$this->tokens[$this->pos][1]}\n";
+                                (PHP_Parser_Core::tokenName(PHP_Parser_Core::$transTable[$this->tokens[$this->pos[0]]])) .
+                                ')' ." : {$this->tokens[$this->pos][1]}\n";
             }
             static $T_DOC_COMMENT = false;
             
             if (!$T_DOC_COMMENT) {
                 $T_DOC_COMMENT = defined('T_DOC_COMMENT') ? constant('T_DOC_COMMENT') : 10000;
             }
-            
+
             switch ($this->tokens[$this->pos][0]) {
             
             
@@ -397,7 +406,11 @@ class PHP_Parser_Tokenizer {
                 // large 
                 case T_OPEN_TAG:
                 case T_INLINE_HTML:
+                case T_ENCAPSED_AND_WHITESPACE:
                 case T_WHITESPACE:
+                    if ($this->tokens[$this->pos][0] == T_WHITESPACE) {
+                        $this->_whitespace = $this->tokens[$this->pos][1];
+                    }
                     $this->line += substr_count ($this->tokens[$this->pos][1], "\n");
                     $this->pos++;
                     continue;
@@ -415,14 +428,9 @@ class PHP_Parser_Tokenizer {
                     
                     $this->token = $this->tokens[$this->pos][0];
                     $this->value = $this->tokens[$this->pos][1];
-                    
-                    // map token to something else if the tokenizer doesnt return the same numbers as the 
-                    // parser does not match the numbers defined in parser.jay..
-                    
-                    if ($GLOBALS['_PHP_PARSER_TOKENIZER']['map'] && isset($GLOBALS['_PHP_PARSER_TOKENIZER']['map'][$this->token])) {
-                        $this->token = $GLOBALS['_PHP_PARSER_TOKENIZER']['map'][$this->token];
-                    }
-                    
+                    $this->token = PHP_Parser_Core::$transTable[$this->token];
+                    $this->valueWithWhitespace = $this->_whitespace . $this->value;
+                    $this->_whitespace = '';
                     return true;
             }
         }
@@ -430,6 +438,15 @@ class PHP_Parser_Tokenizer {
         return false;
         
     }
+
+    function getValue()
+    {
+        if ($this->_trackingWhitespace) {
+            return $this->valueWithWhitespace;
+        }
+        return $this->value;
+    }
+
     /**
     * return something useful, when a parse error occurs.
     *
@@ -443,49 +460,5 @@ class PHP_Parser_Tokenizer {
         return "Error at line {$this->line}";
         
     }
-    /**
-    * build a map if the token arrays do not match.
-    *
-    *
-    * @return   none
-    * @access   public 
-    */
-    function buildMap() 
-    {
-        if ($GLOBALS['_PHP_PARSER_TOKENIZER']['map'] !== null) {
-            return;
-        }
-        //require_once 'PHP/Parser/Core.php';
-        $start = (token_name(257) == 'UNKNOWN') ? 258 : 257;
-        
-        $map = array();
-        $hash = @array_flip($GLOBALS['_PHP_PARSER']['yyName']);
-        for ($i=$start;$i< count($GLOBALS['_PHP_PARSER']['yyName']) + $start - 257;$i++) {
-            $lt = token_name($i);
-            if ($lt == 'T_OLD_FUNCTION') {
-                continue;
-            }
-            $lt = ($i - ($start - 257) == 350 && $lt == 'UNKNOWN') ? 'T_INTERFACE' : $lt;
-            $lt = ($i - ($start - 257) == 352 && $lt == 'UNKNOWN') ? 'T_IMPLEMENTS' : $lt;
-            if ($lt == 'UNKNOWN') {
-                break;
-            }
-            $lt = ($lt == 'T_ML_COMMENT') ? 'T_COMMENT' : $lt;
-            $lt = ($lt == 'T_DOUBLE_COLON') ?  'T_PAAMAYIM_NEKUDOTAYIM' : $lt;
-//            echo "$lt has hash? ".$hash[$lt]."\n";
-//            continue;
-            
-            //echo "compare $lt with {$tokens[$i]}\n";
-            if ($GLOBALS['_PHP_PARSER']['yyName'][$i] != $lt) {
-                $map[$i] = $hash[$lt];
-            }
-            
-        }
-//        exit;
-        //print_r($map);
-        // set the map to false if nothing in there.
-        $GLOBALS['_PHP_PARSER_TOKENIZER']['map'] = (count($map) ? $map : false);
-    }
-    
 }
 ?>
