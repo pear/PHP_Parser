@@ -35,6 +35,9 @@ define('PHP_PARSER_ERROR_NOTINITIALIZED', 2);
 define('PHP_PARSER_ERROR_NOINPUT', 3);
 
 class PHP_Parser {
+    const ERROR_NODRIVER = 1;
+    const ERROR_NOTINITIALIZED = 2;
+    const ERROR_NOINPUT = 3;
     var $_parser;
     var $_tokenizer;
 
@@ -43,24 +46,18 @@ class PHP_Parser {
      * @static
      * @return PHP_Parser
      */
-    function &factory($parser='Core', $tokenizer='')
+    function factory($parser='Core', $tokenizer='')
     {
         $ret = new PHP_Parser;
-        $a = $ret->setParser($parser);
-        // trick: a PEAR_Error evaluates to true, so we use false as success
-        if ($a) {
-            return $a;
-        }
-        $a = $ret->setTokenizer($tokenizer);
-        if ($a) {
-            return $a;
-        }
+        $ret->setParser($parser);
+        $ret->setTokenizer($tokenizer);
         return $ret;
     }
     
     /**
      * @param string|object
-     * @return PEAR_Error|false
+     * @return bool
+     * @throws PHP_Parser_Exception
      */
     function setParser($parser='Core')
     {
@@ -76,14 +73,14 @@ class PHP_Parser {
                 include_once 'PHP/Parser/' . $parser . '.php';
             }
             if (!class_exists('PHP_Parser_' . $parser)) {
-                return $this->raiseError("no parser driver \"$parser\" found",
-                    PHP_PARSER_ERROR_NODRIVER, array('driver' => $parser,
+                throw $this->raiseError("no parser driver \"$parser\" found",
+                    self::ERROR_NODRIVER, array('driver' => $parser,
                     'type' => 'parse'));
             }
             $parser = "PHP_Parser_$parser";
         }
         $this->_parser = new $parser;
-        return false;
+        return true;
     }
     
     /**
@@ -109,7 +106,7 @@ class PHP_Parser {
             }
             if (!class_exists('PHP_Parser_Tokenizer_' . $tokenizer)) {
                 return $this->raiseError("no tokenizer driver \"$tokenizer\" found",
-                    PHP_PARSER_ERROR_NODRIVER, array('driver' => $tokenizer,
+                    self::ERROR_NODRIVER, array('driver' => $tokenizer,
                     'type' => 'tokenize'));
             }
             $tokenizer = "PHP_Parser_Tokenizer_$tokenizer";

@@ -165,6 +165,8 @@ class PHP_Parser_DocBlock_DefaultLexer
     var $_nextToken = false;
     var $_getNestedList = false;
     var $_lastNum = false;
+    var $_tagLevel = 0;
+    var $_listTagLevel = array();
     function saveState()
     {
         $save = get_object_vars($this);
@@ -224,6 +226,7 @@ class PHP_Parser_DocBlock_DefaultLexer
             $this->valueWithWhitespace = $lex[1];
         } elseif ($this->yy_lexical_state == SIMPLELIST ||
             $this->yy_lexical_state == INTERNALSIMPLELIST) {
+            array_pop($this->_listTagLevel);
             array_pop($this->_listLevel);
             if (!count($this->_listLevel)) {
                 $this->yy_lexical_state = $this->_listOriginal;
@@ -394,11 +397,13 @@ class PHP_Parser_DocBlock_DefaultLexer
                                 $this->yy_mark_end();
                                 $this->_atBullet = true;
                                 array_push($this->_listLevel, strlen($whitespace));
+                                array_push($this->_listTagLevel, $this->_tagLevel);
                                 $this->_getNestedList = array(PHP_PARSER_DOCLEX_WHITESPACE, $whitespace);
                                 if ($this->debug) echo "found nested simplelist\n";
                                 return array(PHP_PARSER_DOCLEX_SIMPLELIST_START, '');
                             } else {
                                 array_push($this->_listLevel, 0);
+                                array_push($this->_listTagLevel, $this->_tagLevel);
                             }
                             $this->_break = true;
                             return;
@@ -414,6 +419,7 @@ class PHP_Parser_DocBlock_DefaultLexer
                 } else {
                     if ($this->debug) echo "going to parent list (_doList)\n";
                     array_pop($this->_listLevel);
+                    array_pop($this->_listTagLevel);
                     if (!count($this->_listLevel)) {
                         $this->yybegin($this->_listOriginal);
                         $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
@@ -442,7 +448,7 @@ class PHP_Parser_DocBlock_DefaultLexer
                 }
             }
             if ($this->debug) echo "1 simple list stuff [".$this->yytext()."]\n";
-            return array (PHP_PARSER_DOCLEX_SIMPLELIST, $this->yytext());
+            return array (PHP_PARSER_DOCLEX_TEXT, $this->yytext());
         }
     }
     function _checkList($next, $whitespace, $test, $newstate, $startingstate)
@@ -481,9 +487,11 @@ class PHP_Parser_DocBlock_DefaultLexer
                 $this->yybegin($newstate); //INTERNALSIMPLELIST);
                 $this->_atBullet = true;
                 array_push($this->_listLevel, strlen($whitespace));
+                array_push($this->_listTagLevel, $this->_tagLevel);
                 return array(PHP_PARSER_DOCLEX_WHITESPACE, $whitespace);
             } else {
                 array_push($this->_listLevel, 0);
+                array_push($this->_listTagLevel, $this->_tagLevel);
                 return false;
             }
         } else {
@@ -1281,8 +1289,10 @@ case 5:
 }
 case 6:
 {
-    if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
+    if (($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)
+          && ($this->_listTagLevel[count($this->_listTagLevel) - 1] == $this->_tagLevel) && $this->_atNewLine) {
         array_pop($this->_listLevel);
+        array_pop($this->_listTagLevel);
         if (!count($this->_listLevel)) {
             $this->yybegin($this->_listOriginal);
             $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
@@ -1307,8 +1317,10 @@ case 7:
 }
 case 8:
 {
-    if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
+    if (($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)
+          && ($this->_listTagLevel[count($this->_listTagLevel) - 1] == $this->_tagLevel) && $this->_atNewLine) {
         array_pop($this->_listLevel);
+        array_pop($this->_listTagLevel);
         if (!count($this->_listLevel)) {
             $this->yybegin($this->_listOriginal);
             $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
@@ -1336,13 +1348,15 @@ case 8:
         return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
     } elseif ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST) {
         if ($this->debug) echo "2 simple list stuff [".$this->yytext()."]\n";
-        return array(PHP_PARSER_DOCLEX_SIMPLELIST, $this->yytext());
+        return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
     }
 }
 case 9:
 {
-    if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
+    if (($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)
+          && ($this->_listTagLevel[count($this->_listTagLevel) - 1] == $this->_tagLevel) && $this->_atNewLine) {
         array_pop($this->_listLevel);
+        array_pop($this->_listTagLevel);
         if (!count($this->_listLevel)) {
             if ($this->debug) {
                 echo "end simple list in </tag>\n";
@@ -1391,13 +1405,15 @@ case 9:
         return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
     } elseif ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST) {
         if ($this->debug) echo "3 simple list stuff [".$this->yytext()."]\n";
-        return array(PHP_PARSER_DOCLEX_SIMPLELIST, $this->yytext());
+        return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
     }
 }
 case 10:
 {
-    if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
+    if (($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)
+          && ($this->_listTagLevel[count($this->_listTagLevel) - 1] == $this->_tagLevel) && $this->_atNewLine) {
         array_pop($this->_listLevel);
+        array_pop($this->_listTagLevel);
         if (!count($this->_listLevel)) {
             $this->yybegin($this->_listOriginal);
             $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
@@ -1412,8 +1428,10 @@ case 10:
 }
 case 11:
 {
-    if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
+    if (($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)
+          && ($this->_listTagLevel[count($this->_listTagLevel) - 1] == $this->_tagLevel) && $this->_atNewLine) {
         array_pop($this->_listLevel);
+        array_pop($this->_listTagLevel);
         if (!count($this->_listLevel)) {
             $this->yybegin($this->_listOriginal);
         } else {
@@ -1505,6 +1523,7 @@ case 18:
             $this->yybegin($this->_listOriginal);
         } else {
             array_pop($this->_listLevel);
+            array_pop($this->_listTagLevel);
             $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
             if ($this->debug) {
                 echo "end of simple list\n";
@@ -1571,6 +1590,7 @@ case 19:
             }
             $this->restoreState($save);
             array_pop($this->_listLevel);
+            array_pop($this->_listTagLevel);
             if (!count($this->_listLevel)) {
                 $this->yybegin($this->_listOriginal);
             } else {
@@ -1589,11 +1609,19 @@ case 19:
         }
     }
     $this->restoreState($save);
-    if ($this->debug) echo "simplelist newline\n";
-    return array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, $this->yytext());
+    if ($this->_tagLevel == $this->_listTagLevel[count($this->_listTagLevel) - 1]) {
+        if ($this->debug) echo "simplelist newline\n";
+        return array(PHP_PARSER_DOCLEX_SIMPLELIST_NL, $this->yytext());
+    } else {
+        if ($this->debug) echo "would be simplelist newline, is text\n";
+        return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
+    }
 }
 case 20:
 {
+    if ($this->_tagLevel != $this->_listTagLevel[count($this->_listTagLevel) - 1]) {
+        return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
+    }
     $res = $this->_doList();
     if ($this->_break) {
         $this->_break = false;
@@ -1603,6 +1631,9 @@ case 20:
 }
 case 21:
 {
+    if ($this->_tagLevel != $this->_listTagLevel[count($this->_listTagLevel) - 1]) {
+        return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
+    }
     $res = $this->_doList();
     if ($this->_break) {
         $this->_break = false;
@@ -1695,8 +1726,10 @@ case 33:
 }
 case 34:
 {
-    if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
+    if (($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)
+          && ($this->_listTagLevel[count($this->_listTagLevel) - 1] == $this->_tagLevel) && $this->_atNewLine) {
         array_pop($this->_listLevel);
+        array_pop($this->_listTagLevel);
         if (!count($this->_listLevel)) {
             $this->yybegin($this->_listOriginal);
             $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
@@ -1724,13 +1757,15 @@ case 34:
         return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
     } elseif ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST) {
         if ($this->debug) echo "2 simple list stuff [".$this->yytext()."]\n";
-        return array(PHP_PARSER_DOCLEX_SIMPLELIST, $this->yytext());
+        return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
     }
 }
 case 35:
 {
-    if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
+    if (($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)
+          && ($this->_listTagLevel[count($this->_listTagLevel) - 1] == $this->_tagLevel) && $this->_atNewLine) {
         array_pop($this->_listLevel);
+        array_pop($this->_listTagLevel);
         if (!count($this->_listLevel)) {
             if ($this->debug) {
                 echo "end simple list in </tag>\n";
@@ -1779,13 +1814,15 @@ case 35:
         return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
     } elseif ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST) {
         if ($this->debug) echo "3 simple list stuff [".$this->yytext()."]\n";
-        return array(PHP_PARSER_DOCLEX_SIMPLELIST, $this->yytext());
+        return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
     }
 }
 case 36:
 {
-    if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
+    if (($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)
+          && ($this->_listTagLevel[count($this->_listTagLevel) - 1] == $this->_tagLevel) && $this->_atNewLine) {
         array_pop($this->_listLevel);
+        array_pop($this->_listTagLevel);
         if (!count($this->_listLevel)) {
             $this->yybegin($this->_listOriginal);
             $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
@@ -1800,8 +1837,10 @@ case 36:
 }
 case 37:
 {
-    if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
+    if (($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)
+          && ($this->_listTagLevel[count($this->_listTagLevel) - 1] == $this->_tagLevel) && $this->_atNewLine) {
         array_pop($this->_listLevel);
+        array_pop($this->_listTagLevel);
         if (!count($this->_listLevel)) {
             $this->yybegin($this->_listOriginal);
         } else {
@@ -1863,6 +1902,7 @@ case 41:
             $this->yybegin($this->_listOriginal);
         } else {
             array_pop($this->_listLevel);
+            array_pop($this->_listTagLevel);
             $this->yy_buffer_end = $this->yy_buffer_index = $this->yy_buffer_start;
             if ($this->debug) {
                 echo "end of simple list\n";

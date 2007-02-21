@@ -35,6 +35,7 @@ define('INTAG',8);
 define('INLINETAGNAME',9);
 define('INCODE',10);
 define('INPRE',11);
+define('INHTMLTAG',12);
 
 define('LIST_NUMBERED',0);
 define('LIST_NUMBERED_DOT',1);
@@ -249,17 +250,6 @@ define ('YY_EOF' , 258);
                         $lex[1] .= $next[1];
                     }
                 } while ($next && $next[0] == PHP_PARSER_DOCLEX_TEXT);
-                $this->restoreState($save);
-            }
-            if ($lex[0] == PHP_PARSER_DOCLEX_SIMPLELIST) {
-                $save = $this->saveState();
-                do {
-                    $next = $this->yylex();
-                    if ($next[0] == PHP_PARSER_DOCLEX_SIMPLELIST) {
-                        $save = $this->saveState();
-                        $lex[1] .= $next[1];
-                    }
-                } while ($next && $next[0] == PHP_PARSER_DOCLEX_SIMPLELIST);
                 $this->restoreState($save);
             }
             $this->tokenWithWhitespace = $lex[0];
@@ -490,7 +480,7 @@ define ('YY_EOF' , 258);
                 }
             }
             if ($this->debug) echo "1 simple list stuff [".$this->yytext()."]\n";
-            return array (PHP_PARSER_DOCLEX_SIMPLELIST, $this->yytext());
+            return array (PHP_PARSER_DOCLEX_TEXT, $this->yytext());
         }
     }
     
@@ -556,8 +546,8 @@ NOBRACKETS = [^}]*
     return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
 }
 
-<INCODE, INPRE> [^<{]+ {
-        if ($this->debug) echo "normal code text [".$this->yytext()."]\n";
+<INCODE, INPRE, INHTMLTAG> [^<{]+ {
+        if ($this->debug) echo "normal html tag text [".$this->yytext()."]\n";
         return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
 }
 
@@ -571,7 +561,7 @@ NOBRACKETS = [^}]*
     return array(PHP_PARSER_DOCLEX_ESCAPED_TAG, $this->yytext());
 }
 
-<YYINITIAL, INLINEINTERNALTAG, SIMPLELIST, INTERNALSIMPLELIST, INTAG> <[a-zA-Z]+> {
+<YYINITIAL, INLINEINTERNALTAG, SIMPLELIST, INTERNALSIMPLELIST, INTAG, INHTMLTAG> <[a-zA-Z]+> {
     if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
         array_pop($this->_listLevel);
         if (!count($this->_listLevel)) {
@@ -589,23 +579,21 @@ NOBRACKETS = [^}]*
         if ($tagname == 'code') {
             $this->_codeOriginal = $this->yy_lexical_state;
             $this->yybegin(INCODE);
-        }
-        if ($tagname == 'pre') {
+        } elseif ($tagname == 'pre') {
             $this->_codeOriginal = $this->yy_lexical_state;
             $this->yybegin(INPRE);
+        } else {
+            array_push($this->_tagOriginal, $this->yy_lexical_state);
+            $this->yybegin(INHTMLTAG);
         }
         return array($this->_tagMap['open'][$tagname], $this->yytext());
-    } elseif ($this->yy_lexical_state == YYINITIAL || $this->yy_lexical_state == INLINEINTERNALTAG
-                || $this->yy_lexical_state == INTAG) {
+    } else {
         if ($this->debug) echo "normal desc text [".$this->yytext()."]\n";
         return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-    } elseif ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST) {
-        if ($this->debug) echo "2 simple list stuff [".$this->yytext()."]\n";
-        return array(PHP_PARSER_DOCLEX_SIMPLELIST, $this->yytext());
     }
 }
 
-<YYINITIAL, INLINEINTERNALTAG, SIMPLELIST, INTERNALSIMPLELIST, INTAG> (<<[a-zA-Z]+>>|<<[a-zA-Z]+[\ \t\b\012]*/>>) {
+<YYINITIAL, INLINEINTERNALTAG, SIMPLELIST, INTERNALSIMPLELIST, INTAG, INHTMLTAG> (<<[a-zA-Z]+>>|<<[a-zA-Z]+[\ \t\b\012]*/>>) {
     if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
         array_pop($this->_listLevel);
         if (!count($this->_listLevel)) {
@@ -645,14 +633,15 @@ NOBRACKETS = [^}]*
         } else {
             $this->yybegin($this->_codeOriginal);
         }
-    }
-    if ($this->yy_lexical_state == INPRE) {
+    } elseif ($this->yy_lexical_state == INPRE) {
         if ($tagname != 'pre') {
             if ($this->debug) echo '<pre> stuff ['.$this->yytext()."]\n";
             return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
         } else {
             $this->yybegin($this->_codeOriginal);
         }
+    } elseif ($this->yy_lexical_state == INHTMLTAG) {
+        $this->yybegin(array_pop($this->_tagOriginal));
     }
     if (isset($this->_tagMap['close'][$tagname])) {
         if ($tagname == 'p' && ($this->yy_lexical_state == SIMPLELIST
@@ -664,17 +653,13 @@ NOBRACKETS = [^}]*
         }
         if ($this->debug) echo "close $tagname tag [".$this->yytext()."]\n";
         return array($this->_tagMap['close'][$tagname], $this->yytext());
-    } elseif ($this->yy_lexical_state == YYINITIAL || $this->yy_lexical_state == INLINEINTERNALTAG ||
-                $this->yy_lexical_state == INTAG) {
+    } else {
         if ($this->debug) echo "normal desc text [".$this->yytext()."]\n";
         return array(PHP_PARSER_DOCLEX_TEXT, $this->yytext());
-    } elseif ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST) {
-        if ($this->debug) echo "3 simple list stuff [".$this->yytext()."]\n";
-        return array(PHP_PARSER_DOCLEX_SIMPLELIST, $this->yytext());
     }
 }
 
-<YYINITIAL, INLINEINTERNALTAG, SIMPLELIST, INTERNALSIMPLELIST, INTAG> <[a-zA-Z]+[\ \t\b\012]*/> {
+<YYINITIAL, INLINEINTERNALTAG, SIMPLELIST, INTERNALSIMPLELIST, INTAG, INHTMLTAG> <[a-zA-Z]+[\ \t\b\012]*/> {
     if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
         array_pop($this->_listLevel);
         if (!count($this->_listLevel)) {
@@ -863,7 +848,7 @@ NOBRACKETS = [^}]*
     return $res;
 }
 
-<YYINITIAL, INLINEINTERNALTAG, SIMPLELIST, INTERNALSIMPLELIST, INTAG, INCODE, INPRE> "{@" {
+<YYINITIAL, INLINEINTERNALTAG, SIMPLELIST, INTERNALSIMPLELIST, INTAG, INCODE, INPRE, INHTMLTAG> "{@" {
     if ($this->_atNewLine && ($this->yy_lexical_state == SIMPLELIST || $this->yy_lexical_state == INTERNALSIMPLELIST)) {
         array_pop($this->_listLevel);
         if (!count($this->_listLevel)) {

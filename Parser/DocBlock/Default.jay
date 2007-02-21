@@ -1233,7 +1233,7 @@ simplelist_contents_with_p:
 ;
 
 simplelist_line:
-    T_SIMPLELIST
+    T_TEXT
         {
             $$ = array($1);
         }
@@ -1263,7 +1263,7 @@ simplelist_line:
         {
             $$ = array($1);
         }
-    |   simplelist_line T_SIMPLELIST
+    |   simplelist_line T_TEXT
         {
             $$ = $1;
             $$[] = $2;
@@ -1286,13 +1286,14 @@ simplelist_line:
     |   simplelist_line T_INLINE_ESC
         {
             if ($2 == '{@}') {
-                $t = array('{@');
+                $t = '{@';
             } elseif ($2 == '{@*}') {
-                $t = array('*/');
+                $t = '*/';
             } else {
-                $t = array('');
+                $t = '';
             }
             $$ = $1;
+            $index = count($$) - 1;
             if (is_string($$[$index])) {
                 $$[$index] .= $t;
             } else {
@@ -1312,7 +1313,7 @@ simplelist_line:
 ;
 
 simplelist_line_with_p:
-    T_SIMPLELIST
+    T_TEXT
         {
             $$ = array($1);
         }
@@ -1342,7 +1343,7 @@ simplelist_line_with_p:
         {
             $$ = array($1);
         }
-    |   simplelist_line_with_p T_SIMPLELIST
+    |   simplelist_line_with_p T_TEXT
         {
             $$ = $1;
             $$[] = $2;
@@ -1365,11 +1366,11 @@ simplelist_line_with_p:
     |   simplelist_line_with_p T_INLINE_ESC
         {
             if ($2 == '{@}') {
-                $t = array('{@');
+                $t = '{@';
             } elseif ($2 == '{@*}') {
-                $t = array('*/');
+                $t = '*/';
             } else {
-                $t = array('');
+                $t = '';
             }
             $$ = $1;
             $index = count($$) - 1;
