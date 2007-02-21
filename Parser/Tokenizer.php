@@ -19,7 +19,7 @@
 // $Id$
 //
 
-require_once dirname(__FILE__) . '/Core.php';
+require_once 'PHP/Parser/Core.php';
 /**
 * The tokenizer wrapper for parser - implements the 'standard?' yylex interface
 *

@@ -350,7 +350,7 @@ implements_list(A) ::= T_IMPLEMENTS interface_list(B). {A = B;}
 interface_list(A) ::= fully_qualified_class_name(B). {A = new PHP_Parser_CoreyyToken('', array(B));}
 interface_list(A) ::= interface_list(list) COMMA fully_qualified_class_name(B). {
     A = list;
-    A[] = B;
+    A[] = array(B);
 }
 
 expr(A) ::= r_variable(B). {A = B;}
@@ -646,6 +646,7 @@ expr_without_variable(A) ::= scalar(B). {
     A = new PHP_Parser_CoreyyToken(B->string, B);
 }
 expr_without_variable(A) ::= expr_without_variable_t_array LPAREN array_pair_list(B) RPAREN. {
+    $this->lex->stopTrackingWhitespace();
     A = new PHP_Parser_CoreyyToken('array(' . B->string . ')', B);
 }
 expr_without_variable(A) ::= BACKQUOTE encaps_list(B) BACKQUOTE. {
@@ -967,13 +968,14 @@ class_statement(A) ::= class_constant_declaration(B) SEMI. {
     }
     A = new PHP_Parser_CoreyyToken('', $a);
 }
-class_statement(A) ::= method_modifiers(mod) T_FUNCTION is_reference T_STRING(B) LPAREN parameter_list(params) RPAREN method_body. {
+class_statement(A) ::= method_modifiers(mod) T_FUNCTION is_reference T_STRING(B) LPAREN parameter_list(params) RPAREN method_body(M). {
     A = new PHP_Parser_CoreyyToken('', array(
             array(
                 'type' => 'method',
                 'name' => B,
                 'parameters' => params->metadata,
                 'modifiers' => mod,
+                'info' => M->metadata
             )
         ));
 }

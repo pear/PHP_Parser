@@ -110,42 +110,42 @@ array(2) {
         ["declare"]=>
         string(2) "hi"
         ["default"]=>
-        string(2) " 1"
+        string(1) "1"
       }
       [11]=>
       array(2) {
         ["declare"]=>
         string(2) "hi"
         ["default"]=>
-        string(2) " 1"
+        string(1) "1"
       }
       [12]=>
       array(2) {
         ["declare"]=>
         string(3) "hit"
         ["default"]=>
-        string(2) " 2"
+        string(1) "2"
       }
       [13]=>
       array(2) {
         ["declare"]=>
-        string(4) " bye"
+        string(3) "bye"
         ["default"]=>
-        string(2) " 3"
+        string(1) "3"
       }
       [14]=>
       array(2) {
         ["declare"]=>
         string(3) "hit"
         ["default"]=>
-        string(2) " 2"
+        string(1) "2"
       }
       [15]=>
       array(2) {
         ["declare"]=>
-        string(4) " bye"
+        string(3) "bye"
         ["default"]=>
-        string(2) " 3"
+        string(1) "3"
       }
       [16]=>
       array(1) {
@@ -165,7 +165,7 @@ array(2) {
       [19]=>
       array(1) {
         ["throws"]=>
-        string(10) " Classname"
+        string(9) "Classname"
       }
       [20]=>
       array(5) {
@@ -174,7 +174,7 @@ array(2) {
         ["returnsref"]=>
         bool(false)
         ["name"]=>
-        string(7) " inside"
+        string(6) "inside"
         ["parameters"]=>
         array(0) {
         }
@@ -190,7 +190,7 @@ array(2) {
         array(0) {
         }
         ["name"]=>
-        string(7) " inside"
+        string(6) "inside"
         ["extends"]=>
         array(0) {
         }
@@ -206,7 +206,7 @@ array(2) {
         ["type"]=>
         string(9) "interface"
         ["name"]=>
-        string(7) " inside"
+        string(6) "inside"
         ["extends"]=>
         array(0) {
         }

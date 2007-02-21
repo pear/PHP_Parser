@@ -169,7 +169,7 @@ class PHP_Parser {
     * @return   array| object PEAR_Error   should return an array of includes and classes.. will grow...
     * @access   public
     */
-    function staticParseFile(
+    static function staticParseFile(
                     $file, 
                     $options = array(), 
                     $tokenizeroptions = array(), 
@@ -178,7 +178,7 @@ class PHP_Parser {
                     )
     {
         if ($cacheDir === false) {
-            return PHP_Parser::parse(file_get_contents($file), $options, $tokenizeroptions, $tokenizerClass);
+            return self::parse(file_get_contents($file), $options, $tokenizeroptions, $tokenizerClass);
         }
         if (!strlen($cacheDir)) {
             $cacheFile = dirname($file).'/.PHP_Parser/' . basename($file) . '.wddx';
@@ -232,14 +232,14 @@ class PHP_Parser {
     */
   
     
-    function parse(
+    static function parse(
             $string, 
             $options = array(), 
             $tokenizeroptions = array(), 
             $tokenizerClass = 'PHP_Parser_Tokenizer') 
     {
         if (!trim($string)) {
-            return PEAR::raiseError('Nothing to parse');
+            throw new Exception('Nothing to parse');
         }
         
         if (($tokenizerClass == 'PHP_Parser_Tokenizer') && !class_exists($tokenizerClass)) {
@@ -249,26 +249,19 @@ class PHP_Parser {
         $yyInput = new $tokenizerClass($string, $tokenizeroptions);
         //$yyInput->setOptions($string, $tokenizeroptions);
         //xdebug_start_profiling();
-        $t = new PHP_Parser_Core($options);
-        if (PEAR::isError($e = $t->yyparse($yyInput))) {
-            return $e;
+        $t = new PHP_Parser_Core($yyInput);
+        while ($yyInput->advance()) {
+            $t->doParse($yyInput->token, $yyInput->getValue(), $yyInput);
         }
+        $t->doParse(0, 0);
         
-        return array(
-                'classes'  => $t->classes,
-                'includes' => $t->includes,
-                'functions' => $t->functions,
-                'constants' => $t->constants,
-                'globals' => $t->globals
-            );
-          
+        return $t;
     }
     
     function parseString($php, $tokenoptions = array())
     {
-        if (!strlen(trim($php))) {
-            return $this->raiseError("Nothing to parse in parseString",
-                PHP_PARSER_ERROR_NOINPUT);
+        if (!trim($string)) {
+            throw new Exception('Nothing to parse');
         }
         $this->setTokenizerOptions($php, $tokenoptions);
         $err = $this->_parser->yyparse($this->_tokenizer);

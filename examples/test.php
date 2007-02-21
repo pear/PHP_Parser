@@ -43,10 +43,9 @@ class testClass {
 
 
 require_once 'PHP/Parser.php';
-$a = new    PHP_Parser_Core;
 $start = explode(' ',microtime());
 echo "\nloaded ".
-$r = PHP_Parser::parseFile($_SERVER['argv'][1]);
+$r = PHP_Parser::staticParseFile($_SERVER['argv'][1]);
 if (PEAR::isError($r)) {
     echo $r->getMessage(). "\n";
     exit;

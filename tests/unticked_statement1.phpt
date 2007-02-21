@@ -82,42 +82,42 @@ array(20) {
     ["declare"]=>
     string(2) "hi"
     ["default"]=>
-    string(2) " 1"
+    string(1) "1"
   }
   [11]=>
   array(2) {
     ["declare"]=>
     string(2) "hi"
     ["default"]=>
-    string(2) " 1"
+    string(1) "1"
   }
   [12]=>
   array(2) {
     ["declare"]=>
     string(3) "hit"
     ["default"]=>
-    string(2) " 2"
+    string(1) "2"
   }
   [13]=>
   array(2) {
     ["declare"]=>
-    string(4) " bye"
+    string(3) "bye"
     ["default"]=>
-    string(2) " 3"
+    string(1) "3"
   }
   [14]=>
   array(2) {
     ["declare"]=>
     string(3) "hit"
     ["default"]=>
-    string(2) " 2"
+    string(1) "2"
   }
   [15]=>
   array(2) {
     ["declare"]=>
-    string(4) " bye"
+    string(3) "bye"
     ["default"]=>
-    string(2) " 3"
+    string(1) "3"
   }
   [16]=>
   array(1) {
@@ -137,7 +137,7 @@ array(20) {
   [19]=>
   array(1) {
     ["throws"]=>
-    string(10) " Classname"
+    string(9) "Classname"
   }
 }
 ===DONE===
