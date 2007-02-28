@@ -11,14 +11,23 @@ while ($a->advance()) {
 }
 $b->doParse(0, 0);
 var_dump($b->data);
+var_dump($b->classes);
+var_dump($b->interfaces);
+var_dump($b->functions);
+var_dump($b->includes);
+var_dump($b->globals);
 ?>
 ===DONE===
 --EXPECT--
 array(1) {
   [0]=>
-  array(5) {
+  array(7) {
     ["type"]=>
     string(8) "function"
+    ["startline"]=>
+    int(2)
+    ["endline"]=>
+    int(17)
     ["returnsref"]=>
     bool(false)
     ["name"]=>
@@ -44,7 +53,7 @@ array(1) {
         ["static"]=>
         string(2) "$b"
         ["default"]=>
-        string(131) "array(
+        string(138) "array(
         array(
             1,
             2,
@@ -58,9 +67,73 @@ array(1) {
         ["uses"]=>
         string(5) "class"
         ["name"]=>
-        string(5) " Test"
+        string(4) "Test"
       }
     }
   }
+}
+array(0) {
+}
+array(0) {
+}
+array(1) {
+  ["test1"]=>
+  array(1) {
+    [0]=>
+    array(7) {
+      ["type"]=>
+      string(8) "function"
+      ["startline"]=>
+      int(2)
+      ["endline"]=>
+      int(17)
+      ["returnsref"]=>
+      bool(false)
+      ["name"]=>
+      string(5) "test1"
+      ["parameters"]=>
+      array(1) {
+        [0]=>
+        array(4) {
+          ["typehint"]=>
+          string(0) ""
+          ["param"]=>
+          string(2) "$a"
+          ["isreference"]=>
+          bool(false)
+          ["default"]=>
+          string(37) "array(1, 2 => 'hi', 'my' => array(4))"
+        }
+      }
+      ["info"]=>
+      array(2) {
+        [0]=>
+        array(2) {
+          ["static"]=>
+          string(2) "$b"
+          ["default"]=>
+          string(138) "array(
+        array(
+            1,
+            2,
+            3 => 'hello',
+            array('my' => 'goodness')
+        )
+    )"
+        }
+        [1]=>
+        array(2) {
+          ["uses"]=>
+          string(5) "class"
+          ["name"]=>
+          string(4) "Test"
+        }
+      }
+    }
+  }
+}
+array(0) {
+}
+array(0) {
 }
 ===DONE===

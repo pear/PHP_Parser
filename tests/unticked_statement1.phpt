@@ -11,6 +11,11 @@ while ($a->advance()) {
 }
 $b->doParse(0, 0);
 var_dump($b->data);
+var_dump($b->classes);
+var_dump($b->interfaces);
+var_dump($b->functions);
+var_dump($b->includes);
+var_dump($b->globals);
 ?>
 ===DONE===
 --EXPECT--
@@ -139,5 +144,15 @@ array(20) {
     ["throws"]=>
     string(9) "Classname"
   }
+}
+array(0) {
+}
+array(0) {
+}
+array(0) {
+}
+array(0) {
+}
+array(0) {
 }
 ===DONE===

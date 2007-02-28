@@ -12,16 +12,31 @@ while ($a->advance()) {
 }
 $b->doParse(0, 0);
 var_dump($b->data);
+var_dump($b->classes);
+var_dump($b->interfaces);
+var_dump($b->functions);
+var_dump($b->includes);
+var_dump($b->globals);
 ?>
 ===DONE===
 --EXPECT--
 Input $
 Reduce (2) [top_statement_list ::=].
-Shift 13
+Shift 14
 Stack: top_statement_list
 Reduce (0) [start ::= top_statement_list].
 Accept!
 Popping $
+array(0) {
+}
+array(0) {
+}
+array(0) {
+}
+array(0) {
+}
+array(0) {
+}
 array(0) {
 }
 ===DONE===

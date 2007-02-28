@@ -11,14 +11,23 @@ while ($a->advance()) {
 }
 $b->doParse(0, 0);
 var_dump($b->data);
+var_dump($b->classes);
+var_dump($b->interfaces);
+var_dump($b->functions);
+var_dump($b->includes);
+var_dump($b->globals);
 ?>
 ===DONE===
 --EXPECT--
 array(2) {
   [0]=>
-  array(5) {
+  array(7) {
     ["type"]=>
     string(8) "function"
+    ["startline"]=>
+    int(5)
+    ["endline"]=>
+    int(9)
     ["returnsref"]=>
     bool(false)
     ["name"]=>
@@ -31,9 +40,13 @@ array(2) {
     }
   }
   [1]=>
-  array(5) {
+  array(7) {
     ["type"]=>
     string(8) "function"
+    ["startline"]=>
+    int(9)
+    ["endline"]=>
+    int(228)
     ["returnsref"]=>
     bool(false)
     ["name"]=>
@@ -168,9 +181,13 @@ array(2) {
         string(9) "Classname"
       }
       [20]=>
-      array(5) {
+      array(7) {
         ["type"]=>
         string(8) "function"
+        ["startline"]=>
+        int(223)
+        ["endline"]=>
+        int(224)
         ["returnsref"]=>
         bool(false)
         ["name"]=>
@@ -183,9 +200,13 @@ array(2) {
         }
       }
       [21]=>
-      array(6) {
+      array(8) {
         ["type"]=>
         string(5) "class"
+        ["startline"]=>
+        int(224)
+        ["endline"]=>
+        int(225)
         ["modifiers"]=>
         array(0) {
         }
@@ -202,9 +223,13 @@ array(2) {
         }
       }
       [22]=>
-      array(4) {
+      array(6) {
         ["type"]=>
         string(9) "interface"
+        ["startline"]=>
+        int(225)
+        ["endline"]=>
+        int(226)
         ["name"]=>
         string(6) "inside"
         ["extends"]=>
@@ -216,5 +241,307 @@ array(2) {
       }
     }
   }
+}
+array(1) {
+  ["inside"]=>
+  array(1) {
+    [0]=>
+    array(8) {
+      ["type"]=>
+      string(5) "class"
+      ["startline"]=>
+      int(224)
+      ["endline"]=>
+      int(225)
+      ["modifiers"]=>
+      array(0) {
+      }
+      ["name"]=>
+      string(6) "inside"
+      ["extends"]=>
+      array(0) {
+      }
+      ["implements"]=>
+      array(0) {
+      }
+      ["info"]=>
+      array(0) {
+      }
+    }
+  }
+}
+array(1) {
+  ["inside"]=>
+  array(1) {
+    [0]=>
+    array(6) {
+      ["type"]=>
+      string(9) "interface"
+      ["startline"]=>
+      int(225)
+      ["endline"]=>
+      int(226)
+      ["name"]=>
+      string(6) "inside"
+      ["extends"]=>
+      array(0) {
+      }
+      ["info"]=>
+      array(0) {
+      }
+    }
+  }
+}
+array(2) {
+  ["test"]=>
+  array(2) {
+    [0]=>
+    array(7) {
+      ["type"]=>
+      string(8) "function"
+      ["startline"]=>
+      int(5)
+      ["endline"]=>
+      int(9)
+      ["returnsref"]=>
+      bool(false)
+      ["name"]=>
+      string(4) "test"
+      ["parameters"]=>
+      array(0) {
+      }
+      ["info"]=>
+      array(0) {
+      }
+    }
+    [1]=>
+    array(7) {
+      ["type"]=>
+      string(8) "function"
+      ["startline"]=>
+      int(9)
+      ["endline"]=>
+      int(228)
+      ["returnsref"]=>
+      bool(false)
+      ["name"]=>
+      string(4) "test"
+      ["parameters"]=>
+      array(0) {
+      }
+      ["info"]=>
+      array(23) {
+        [0]=>
+        array(1) {
+          ["global"]=>
+          string(2) "$a"
+        }
+        [1]=>
+        array(1) {
+          ["global"]=>
+          string(2) "$a"
+        }
+        [2]=>
+        array(2) {
+          ["static"]=>
+          string(2) "$a"
+          ["default"]=>
+          NULL
+        }
+        [3]=>
+        array(2) {
+          ["static"]=>
+          string(2) "$a"
+          ["default"]=>
+          string(1) "1"
+        }
+        [4]=>
+        array(2) {
+          ["static"]=>
+          string(2) "$a"
+          ["default"]=>
+          NULL
+        }
+        [5]=>
+        array(2) {
+          ["static"]=>
+          string(2) "$b"
+          ["default"]=>
+          string(1) "1"
+        }
+        [6]=>
+        array(2) {
+          ["static"]=>
+          string(2) "$a"
+          ["default"]=>
+          NULL
+        }
+        [7]=>
+        array(2) {
+          ["static"]=>
+          string(2) "$b"
+          ["default"]=>
+          NULL
+        }
+        [8]=>
+        array(1) {
+          ["uses"]=>
+          string(4) "'hi'"
+        }
+        [9]=>
+        array(1) {
+          ["uses"]=>
+          string(6) "('hi')"
+        }
+        [10]=>
+        array(2) {
+          ["declare"]=>
+          string(2) "hi"
+          ["default"]=>
+          string(1) "1"
+        }
+        [11]=>
+        array(2) {
+          ["declare"]=>
+          string(2) "hi"
+          ["default"]=>
+          string(1) "1"
+        }
+        [12]=>
+        array(2) {
+          ["declare"]=>
+          string(3) "hit"
+          ["default"]=>
+          string(1) "2"
+        }
+        [13]=>
+        array(2) {
+          ["declare"]=>
+          string(3) "bye"
+          ["default"]=>
+          string(1) "3"
+        }
+        [14]=>
+        array(2) {
+          ["declare"]=>
+          string(3) "hit"
+          ["default"]=>
+          string(1) "2"
+        }
+        [15]=>
+        array(2) {
+          ["declare"]=>
+          string(3) "bye"
+          ["default"]=>
+          string(1) "3"
+        }
+        [16]=>
+        array(1) {
+          ["catches"]=>
+          string(4) "Blah"
+        }
+        [17]=>
+        array(1) {
+          ["catches"]=>
+          string(4) "Blah"
+        }
+        [18]=>
+        array(1) {
+          ["catches"]=>
+          string(3) "Foo"
+        }
+        [19]=>
+        array(1) {
+          ["throws"]=>
+          string(9) "Classname"
+        }
+        [20]=>
+        array(7) {
+          ["type"]=>
+          string(8) "function"
+          ["startline"]=>
+          int(223)
+          ["endline"]=>
+          int(224)
+          ["returnsref"]=>
+          bool(false)
+          ["name"]=>
+          string(6) "inside"
+          ["parameters"]=>
+          array(0) {
+          }
+          ["info"]=>
+          array(0) {
+          }
+        }
+        [21]=>
+        array(8) {
+          ["type"]=>
+          string(5) "class"
+          ["startline"]=>
+          int(224)
+          ["endline"]=>
+          int(225)
+          ["modifiers"]=>
+          array(0) {
+          }
+          ["name"]=>
+          string(6) "inside"
+          ["extends"]=>
+          array(0) {
+          }
+          ["implements"]=>
+          array(0) {
+          }
+          ["info"]=>
+          array(0) {
+          }
+        }
+        [22]=>
+        array(6) {
+          ["type"]=>
+          string(9) "interface"
+          ["startline"]=>
+          int(225)
+          ["endline"]=>
+          int(226)
+          ["name"]=>
+          string(6) "inside"
+          ["extends"]=>
+          array(0) {
+          }
+          ["info"]=>
+          array(0) {
+          }
+        }
+      }
+    }
+  }
+  ["inside"]=>
+  array(1) {
+    [0]=>
+    array(7) {
+      ["type"]=>
+      string(8) "function"
+      ["startline"]=>
+      int(223)
+      ["endline"]=>
+      int(224)
+      ["returnsref"]=>
+      bool(false)
+      ["name"]=>
+      string(6) "inside"
+      ["parameters"]=>
+      array(0) {
+      }
+      ["info"]=>
+      array(0) {
+      }
+    }
+  }
+}
+array(0) {
+}
+array(0) {
 }
 ===DONE===
