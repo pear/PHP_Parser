@@ -1,2 +1,0 @@
-/usr/src/phpJay/phpJay -dcv -g _PHP_PARSER_DOCBLOCK_DEFAULT < /cygdrive/c/devel/PHP_Parser/skeleton.php "C:/devel/PHP_Parser/Parser/DocBlock/Default.jay" > /cygdrive/c/devel/PHP_Parser/Parser/DocBlock/Default.php ;
-/usr/src/phpJay/phpJay -dcv -g _PHP_PARSER_DOCBLOCK_DEFAULTEXTENDABLE < /cygdrive/c/devel/PHP_Parser/skeleton.php "C:/devel/PHP_Parser/Parser/DocBlock/Extendable.jay" > /cygdrive/c/devel/PHP_Parser/Parser/DocBlock/DefaultExtendable.php ;
