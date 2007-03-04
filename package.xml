@@ -82,6 +82,9 @@ hooks into parsing to catch information.
     <file baseinstalldir="PHP" name="test.php" role="doc" />
    </dir> <!-- /examples -->
    <dir baseinstalldir="PHP" name="Parser">
+    <dir baseinstalldir="PHP" name="Docblock">
+     <file name="Parser.php" role="php" />
+    </dir> <!-- /Parser/Docblock -->
     <file name="Core.y" role="data" />
     <file name="Core.php" role="php" />
     <file name="Tokenizer.php" role="php" />

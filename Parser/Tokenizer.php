@@ -153,6 +153,7 @@ class PHP_Parser_Tokenizer {
     var $_options;
     private $_whitespace;
     private $_trackingWhitespace = 0;
+    private $_docParser;
     
     /**
     * Constructor
@@ -166,48 +167,9 @@ class PHP_Parser_Tokenizer {
     * @return   none
     * @access   public
     */    
-    function __construct($data, $options = array()) 
+    function __construct($data, $docparser = false) 
     {
-        $this->_options['documentationParser'] =
-        $this->_options['documentationLexer'] =
-        $this->_options['publishAllDocumentation'] =
-        $this->_options['documentationContainer'] =
-        $this->_options['publisher'] =
-        $this->_options['publishMethod'] =
-        $this->_options['publishMessageClass'] =
-        $this->_options['publishDocumentation'] =
-        $this->_options['publishDocumentationMessage'] =
-        false;
-        $this->_options = array_merge($this->_options, $options);
-        if (!class_exists($this->_options['documentationContainer'])) {
-            $this->_options['documentationContainer'] = false;
-        }
-        if (!is_object($this->_options['documentationParser'])) {
-            $this->_options['documentationParser'] = false;
-            $this->_options['documentationLexer'] = false;
-        } else {
-            $this->_options['documentationParser'] = &$options['documentationParser'];
-            $this->_options['documentationLexer'] = &$options['documentationLexer'];
-            // make sure it's an exact match
-        }
-        if (!is_object($this->_options['publisher'])) {
-            $this->_options['publisher'] = false;
-            $this->_options['publishAllDocumentation'] = false;
-        } else {
-            if (!method_exists($this->_options['publisher'], $this->_options['publishMethod'])) {
-                $this->_options['publishMethod'] = false;
-                if (!method_exists($this->_options['publisher'], 'publish')) {
-                    $this->_options['publisher'] = false;
-                    $this->_options['publishAllDocumentation'] = false;
-                } else {
-                    $this->_options['publishMethod'] = 'publish';
-                }
-            } else {
-                if (!class_exists($this->_options['publishMessageClass'])) {
-                    $this->_options['publishMessageClass'] = false;
-                }
-            }
-        }
+        $this->_docParser = $docparser;
         $this->tokens = token_get_all($data);
         $this->N = count($this->tokens);
         for ($i=0;$i<$this->N;$i++) {
@@ -310,37 +272,14 @@ class PHP_Parser_Tokenizer {
     function _handleDocumentation()
     {
         $this->lastComment = $this->tokens[$this->pos][1];
+        $this->lastCommentToken = $this->tokens[$this->pos][0];
         $this->lastCommentLine = $this->line;
-        $this->lastCommentToken = $this->pos;
-        if ($this->_options['documentationParser']) {
-            $parser = &$this->_options['documentationParser'];
-            $err = $parser->parse(array('comment' => $this->lastComment,
-                                        'commentline' => $this->lastCommentLine,
-                                        'commenttoken' => $this->lastCommentToken,
-                                        'lexer' => $this->_options['documentationLexer'],
-                                                      ));
-            if (PEAR::isError($err)) {
-                $this->lastComment = false;
-                $this->lastCommentLine = -1;
-                $this->lastCommentToken = -1;
-            } else {
-                $this->lastComment = $err;
-            }
-        }
-        if ($this->_options['publishAllDocumentation']) {
-            $publish = $this->_options['publishMethod'];
-            $message = 'documentation';
-            if ($this->_options['publishDocumentationMessage']) {
-                $message = $this->_options['publishDocumentationMessage'];
-            }
-            if ($this->_options['publishMessageClass']) {
-                $pc = $this->_options['publishMessageClass'];
-                $publisher = $this->_options['publisher'];
-                $message = new $pc($message, $this->lastComment);
-                $publisher->$publish($pc);
-            } else {
-                $publisher = $this->_options['publisher'];
-                $publisher->$publish($message, $this->lastComment);
+        if ($this->_docParser) {
+            try {
+                $this->lastParsedComment =
+                    $this->_docParser->parse($this->lastComment, $this);
+            } catch (Exception $e) {
+                
             }
         }
     }
@@ -369,11 +308,6 @@ class PHP_Parser_Tokenizer {
                                 (PHP_Parser_Core::tokenName(PHP_Parser_Core::$transTable[$this->tokens[$this->pos[0]]])) .
                                 ')' ." : {$this->tokens[$this->pos][1]}\n";
             }
-            static $T_DOC_COMMENT = false;
-            
-            if (!$T_DOC_COMMENT) {
-                $T_DOC_COMMENT = defined('T_DOC_COMMENT') ? constant('T_DOC_COMMENT') : 10000;
-            }
 
             switch ($this->tokens[$this->pos][0]) {
             
@@ -386,14 +320,14 @@ class PHP_Parser_Tokenizer {
                     continue;
                 
                 // comments - store for phpdoc
-                case $T_DOC_COMMENT;
+                case T_DOC_COMMENT;
                 
                 
                 case T_COMMENT:
                     $this->lastComment = '';
                     $this->lastCommentToken = -1;
                     $this->lastCommentLine = -1;
-                    if (substr($this->tokens[$this->pos][1],0,2) == '/*') {
+                    if (substr($this->tokens[$this->pos][1], 0, 3) == '/**') {
                         $this->_handleDocumentation();
                     }
                     $this->line += substr_count ($this->tokens[$this->pos][1], "\n");

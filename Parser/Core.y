@@ -1130,8 +1130,8 @@ w_variable(A) ::= variable(B). {A = B;}
 rw_variable(A) ::= variable(B). {A = B;}
 
 variable(A) ::= base_variable_with_function_calls(BASE) T_OBJECT_OPERATOR object_property(PROP) method_or_not(IS_METHOD) variable_properties(VARP). {
-    A = new PHP_Parser_CoreyyToken((string) BASE . '->' . (string) PROP .
-        (string) IS_METHOD . (string) VARP, array());
+    A = new PHP_Parser_CoreyyToken(BASE->string . '->' . PROP->string .
+        IS_METHOD->string . VARP->string, array());
     A[] = BASE;
     if (is_array(PROP)) {
         A[] = PROP;
@@ -1171,7 +1171,7 @@ variable_without_objects(A) ::= simple_indirect_reference(I) reference_variable(
 }
 
 static_member(A) ::= fully_qualified_class_name(CLASS) T_PAAMAYIM_NEKUDOTAYIM variable_without_objects(VAR). {
-    A = new PHP_Parser_CoreyyToken(CLASS . '::' . (string) VAR, array(
+    A = new PHP_Parser_CoreyyToken(CLASS . '::' . VAR->string, array(
         array(
             'usedclass' => CLASS,
         )
@@ -1189,19 +1189,19 @@ base_variable(A) ::= simple_indirect_reference(I) reference_variable(B). {
 base_variable(A) ::= static_member(B). {A = B;}
 	
 reference_variable(A) ::= reference_variable(REF) LBRACKET dim_offset(DIM) RBRACKET. {
-    A = new PHP_Parser_CoreyyToken((string) REF . '[' . (string) DIM . ']', array());
+    A = new PHP_Parser_CoreyyToken(REF->string . '[' . DIM->string . ']', array());
     A[] = REF;
     A[] = DIM;
 }
 reference_variable(A) ::= reference_variable(REF) LCURLY expr(DIM) RCURLY. {
-    A = new PHP_Parser_CoreyyToken((string) REF . '{' . (string) DIM . '}', array());
+    A = new PHP_Parser_CoreyyToken(REF->string . '{' . DIM->string . '}', array());
     A[] = REF;
     A[] = DIM;
 }
 reference_variable(A) ::= compound_variable(B). {A = new PHP_Parser_CoreyyToken(B);}
 
 compound_variable(A) ::= T_VARIABLE(B). {A = B;}
-compound_variable(A) ::= DOLLAR LCURLY expr(B) RCURLY. {A = new PHP_Parser_CoreyyToken('${' . (string) B . '}', B);}
+compound_variable(A) ::= DOLLAR LCURLY expr(B) RCURLY. {A = new PHP_Parser_CoreyyToken('${' . B->string . '}', B);}
 
 dim_offset(A) ::= expr(B). {A = new PHP_Parser_CoreyyToken(B);}
 dim_offset(A) ::= . {A = new PHP_Parser_CoreyyToken('');}
@@ -1406,7 +1406,7 @@ class_constant(A) ::= fully_qualified_class_name(B) T_PAAMAYIM_NEKUDOTAYIM T_STR
 
 fully_qualified_class_name(A) ::= T_STRING(B). {A = B;}
 
-function_call(A) ::= T_STRING(B) LPAREN function_call_parameter_list(C) RPAREN. {A = new PHP_Parser_CoreyyToken(B . '(' . (string) C . ')', C);}
+function_call(A) ::= T_STRING(B) LPAREN function_call_parameter_list(C) RPAREN. {A = new PHP_Parser_CoreyyToken(B . '(' . C->string . ')', C);}
 function_call(A) ::= fully_qualified_class_name(CLAS) T_PAAMAYIM_NEKUDOTAYIM T_STRING(FUNC) LPAREN function_call_parameter_list(PL) RPAREN. {
     A = new PHP_Parser_CoreyyToken(CLAS . '::' . FUNC . '(' . PL->string . ')',
             PL);
@@ -1421,7 +1421,7 @@ function_call(A) ::= fully_qualified_class_name(CLAS) T_PAAMAYIM_NEKUDOTAYIM T_S
     );
 }
 function_call(A) ::= fully_qualified_class_name(CLAS) T_PAAMAYIM_NEKUDOTAYIM variable_without_objects(V) LPAREN function_call_parameter_list(PL) RPAREN. {
-    A = new PHP_Parser_CoreyyToken(CLAS . '::' . (string) V . '(' . PL->string . ')', V);
+    A = new PHP_Parser_CoreyyToken(CLAS . '::' . V->string . '(' . PL->string . ')', V);
     A[] = PL;
     A[] = array(
         'uses' => 'class',
@@ -1429,7 +1429,7 @@ function_call(A) ::= fully_qualified_class_name(CLAS) T_PAAMAYIM_NEKUDOTAYIM var
     );
 }
 function_call(A) ::= variable_without_objects(B) LPAREN function_call_parameter_list(PL) RPAREN. {
-    A = new PHP_Parser_CoreyyToken((string) B . '(' . PL->string . ')', B);
+    A = new PHP_Parser_CoreyyToken(B->string . '(' . PL->string . ')', B);
     A[] = PL;
 }
 
