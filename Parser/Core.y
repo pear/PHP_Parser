@@ -1284,7 +1284,18 @@ base_variable(A) ::= simple_indirect_reference(I) reference_variable(B). {
 base_variable(A) ::= static_member(B). {A = B;}
     
 reference_variable(A) ::= reference_variable(REF) LBRACKET dim_offset(DIM) RBRACKET. {
-    A = new PHP_Parser_CoreyyToken(REF->string . '[' . DIM->string . ']', array());
+    if (in_array(REF->string, array('$_GET', '$_POST', '$GLOBALS', '$_COOKIE', '$_REQUEST',
+        '$_ENV', '$_FILES', '$_SERVER', '$HTTP_COOKIE_VARS', '$HTTP_ENV_VARS',
+        '$HTTP_POST_FILES', '$HTTP_POST_VARS', '$HTTP_SERVER_VARS'))) {
+        A = new PHP_Parser_CoreyyToken(REF->string . '[' . DIM->string . ']',
+        array(
+            array(
+            'superglobal' => REF->string,
+            'contents' => REF->string . '[' . DIM->string . ']'
+        )));
+    } else {
+        A = new PHP_Parser_CoreyyToken(REF->string . '[' . DIM->string . ']', array());
+    }
     A[] = REF;
     A[] = DIM;
 }
@@ -1407,7 +1418,18 @@ encaps_list(A) ::= . {A = new PHP_Parser_CoreyyToken('');}
 
 encaps_var(A) ::= T_VARIABLE(B). {A = new PHP_Parser_CoreyyToken(B);}
 encaps_var(A) ::= T_VARIABLE(B) LBRACKET T_STRING|T_NUM_STRING|T_VARIABLE(C) RBRACKET. {
-    A = new PHP_Parser_CoreyyToken(B . '[' . C . ']');
+    if (in_array(B, array('$_GET', '$_POST', '$GLOBALS', '$_COOKIE', '$_REQUEST',
+        '$_ENV', '$_FILES', '$_SERVER', '$HTTP_COOKIE_VARS', '$HTTP_ENV_VARS',
+        '$HTTP_POST_FILES', '$HTTP_POST_VARS', '$HTTP_SERVER_VARS'))) {
+        A = new PHP_Parser_CoreyyToken(B . '[' . C . ']',
+        array(
+            array(
+            'superglobal' => B,
+            'contents' => C
+        )));
+    } else {
+        A = new PHP_Parser_CoreyyToken(B . '[' . C . ']');
+    }
 }
 encaps_var(A) ::= T_VARIABLE(B) T_OBJECT_OPERATOR T_STRING(C). {
     A = new PHP_Parser_CoreyyToken(B . '->' . C);
