@@ -1,6 +1,6 @@
 <?php
-require_once 'PHP/DocblockParser.php';
-require_once 'PHP/DocblockParser/Tokenizer.php';
+require_once 'PHP/Parser/DocblockParser.php';
+require_once 'PHP/Parser/DocblockParser/Tokenizer.php';
 /**
  * Basic PHP_Parser docblock parsing mechanism.
  *
@@ -14,12 +14,12 @@ class PHP_Parser_Docblock_Parser
     private $_parser;
     function __construct($data, $processInternal = false)
     {
-        $this->_parser = new PHP_DocblockParser($this->_lex, $processInternal);
+        $this->_parser = new PHP_Parser_DocblockParser($this->_lex, $processInternal);
     }
 
     function parse($data, PHP_Parser_Tokenizer $tokenizer)
     {
-        $this->_lex = new PHP_DocblockParser_Tokenizer($data);
+        $this->_lex = new PHP_Parser_DocblockParser_Tokenizer($data);
         while ($this->_lex->advance()) {
             $this->_parser->doParse($this->_lex->token, $this->_lex->getValue());
         }

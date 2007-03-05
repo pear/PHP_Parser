@@ -2,11 +2,11 @@
 PHP_Parser: test global variables
 --SKIPIF--
 <?php
-$fp = @fopen('PHP/DocblockParser.php', 'r', true);
+$fp = @fopen('PHP/Parser/DocblockParser.php', 'r', true);
 if ($fp) {
     fclose($fp);
 } else {
-    echo 'skip no PHP_DocblockParser';
+    echo 'skip no PHP_Parser_DocblockParser';
 }
 ?>
 --FILE--
