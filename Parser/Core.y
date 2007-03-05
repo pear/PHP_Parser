@@ -161,14 +161,14 @@ unticked_statement(A) ::= T_DO statement(B) T_WHILE LPAREN expr(C) RPAREN SEMI. 
     A[] = C;
 }
 unticked_statement(A) ::= T_FOR 
-			LPAREN
-				for_expr(B)
-			SEMI 
-				for_expr(C)
-			SEMI
-				for_expr(D)
-			RPAREN
-			for_statement(E). {
+            LPAREN
+                for_expr(B)
+            SEMI 
+                for_expr(C)
+            SEMI
+                for_expr(D)
+            RPAREN
+            for_statement(E). {
     A = new PHP_Parser_CoreyyToken('');
     A[] = B;
     A[] = C;
@@ -211,14 +211,14 @@ unticked_statement(A) ::= T_UNSET LPAREN unset_variables(B) RPAREN SEMI. {
     A = new PHP_Parser_CoreyyToken('', B);
 }
 unticked_statement(A) ::= T_FOREACH LPAREN variable(B) T_AS 
-		foreach_variable foreach_optional_arg RPAREN
-		foreach_statement(C). {
+        foreach_variable foreach_optional_arg RPAREN
+        foreach_statement(C). {
     A = new PHP_Parser_CoreyyToken('', B);
     A[] = C;
 }
 unticked_statement(A) ::= T_FOREACH LPAREN expr_without_variable(B) T_AS 
-		variable foreach_optional_arg RPAREN
-		foreach_statement(C). {
+        variable foreach_optional_arg RPAREN
+        foreach_statement(C). {
     A = new PHP_Parser_CoreyyToken('', B);
     A[] = C;
 }
@@ -228,11 +228,11 @@ unticked_statement(A) ::= T_DECLARE LPAREN declare_list(B) RPAREN declare_statem
 }
 unticked_statement ::= SEMI.
 unticked_statement(A) ::= T_TRY LCURLY inner_statement_list(B) RCURLY
-		T_CATCH LPAREN
-		fully_qualified_class_name(C)
-		T_VARIABLE RPAREN
-		LCURLY inner_statement_list(D) RCURLY
-		additional_catches(E). {
+        T_CATCH LPAREN
+        fully_qualified_class_name(C)
+        T_VARIABLE RPAREN
+        LCURLY inner_statement_list(D) RCURLY
+        additional_catches(E). {
     A = new PHP_Parser_CoreyyToken('');
     A[] = array('catches' => C);
     A[] = B;
@@ -293,10 +293,11 @@ class_declaration_statement(A) ::= unticked_class_declaration_statement(B). {
 
 get_func_line(A) ::= T_FUNCTION. {A = $this->lex->line;}
 unticked_function_declaration_statement(A) ::=
-		get_func_line(LINE) is_reference(ref) T_STRING(funcname) LPAREN parameter_list(params) RPAREN
-		LCURLY inner_statement_list(funcinfo) RCURLY. {
-	A = new PHP_Parser_CoreyyToken('function ' . (ref ? '&' : '') .
-	   funcname . '(' . params->string . ')');
+        get_func_line(LINE) is_reference(ref) T_STRING(funcname) LPAREN parameter_list(params) RPAREN
+        LCURLY inner_statement_list(funcinfo) RCURLY. {
+    A = new PHP_Parser_CoreyyToken('function ' . (ref ? '&' : '') .
+       funcname . '(' . params->string . ')');
+    list($doc, $parsed, $line) = $this->lex->getLastComment();
     A[] = array(
         'type' => 'function',
         'startline' => LINE,
@@ -305,6 +306,9 @@ unticked_function_declaration_statement(A) ::=
         'name' => funcname,
         'parameters' => params->metadata,
         'info' => funcinfo->metadata,
+        'doc' => $doc,
+        'parseddoc' => $parsed,
+        'docline' => $line,
     );
     $this->functions[funcname][] = array(
         'type' => 'function',
@@ -314,57 +318,74 @@ unticked_function_declaration_statement(A) ::=
         'name' => funcname,
         'parameters' => params->metadata,
         'info' => funcinfo->metadata,
+        'doc' => $doc,
+        'parseddoc' => $parsed,
+        'docline' => $line,
     );
 }
 
 unticked_class_declaration_statement(A) ::=
-		class_entry_type(classtype) T_STRING(C) extends_from(ext)
-			implements_list(impl)
-			LCURLY
-				class_statement_list(cinfo)
-			RCURLY. {
-	A = new PHP_Parser_CoreyyToken('', array(
-	   'type' => classtype['type'],
+        class_entry_type(classtype) T_STRING(C) extends_from(ext)
+            implements_list(impl)
+            LCURLY
+                class_statement_list(cinfo)
+            RCURLY. {
+    list($doc, $parsed, $line) = $this->lex->getLastComment();
+    A = new PHP_Parser_CoreyyToken('', array(
+       'type' => classtype['type'],
        'startline' => classtype['line'],
        'endline' => $this->lex->line,
-	   'modifiers' => classtype['modifiers'],
-	   'name' => C,
-	   'extends' => ext->metadata,
-	   'implements' => impl->metadata,
-	   'info' => cinfo->metadata,
-	));
-	$this->classes[C][] = array(
-	   'type' => classtype['type'],
+       'modifiers' => classtype['modifiers'],
+       'name' => C,
+       'extends' => ext->metadata,
+       'implements' => impl->metadata,
+       'info' => cinfo->metadata,
+       'doc' => $doc,
+       'parseddoc' => $parsed,
+       'docline' => $line,
+    ));
+    $this->classes[C][] = array(
+       'type' => classtype['type'],
        'startline' => classtype['line'],
        'endline' => $this->lex->line,
-	   'modifiers' => classtype['modifiers'],
-	   'name' => C,
-	   'extends' => ext->metadata,
-	   'implements' => impl->metadata,
-	   'info' => cinfo->metadata,
-	);
+       'modifiers' => classtype['modifiers'],
+       'name' => C,
+       'extends' => ext->metadata,
+       'implements' => impl->metadata,
+       'info' => cinfo->metadata,
+       'doc' => $doc,
+       'parseddoc' => $parsed,
+       'docline' => $line,
+    );
 }
 unticked_class_declaration_statement(A) ::=
-		interface_entry(LINE) T_STRING(B)
-			interface_extends_list(C)
-			LCURLY
-				class_statement_list(D)
-			RCURLY. {
+        interface_entry(LINE) T_STRING(B)
+            interface_extends_list(C)
+            LCURLY
+                class_statement_list(D)
+            RCURLY. {
+    list($doc, $parsed, $line) = $this->lex->getLastComment();
     A = new PHP_Parser_CoreyyToken('', array(
-	   'type' => 'interface',
+       'type' => 'interface',
        'startline' => LINE,
        'endline' => $this->lex->line,
-	   'name' => B,
-	   'extends' => C->metadata,
-	   'info' => D->metadata,
+       'name' => B,
+       'extends' => C->metadata,
+       'info' => D->metadata,
+       'doc' => $doc,
+       'parseddoc' => $parsed,
+       'docline' => $line,
     ));
     $this->interfaces[B][] = array(
-	   'type' => 'interface',
+       'type' => 'interface',
        'startline' => LINE,
        'endline' => $this->lex->line,
-	   'name' => B,
-	   'extends' => C->metadata,
-	   'info' => D->metadata,
+       'name' => B,
+       'extends' => C->metadata,
+       'info' => D->metadata,
+       'doc' => $doc,
+       'parseddoc' => $parsed,
+       'docline' => $line,
     );
 }
 
@@ -402,12 +423,16 @@ expr_without_variable(A) ::= T_LIST LPAREN assignment_list(B) RPAREN EQUALS expr
 }
 expr_without_variable(A) ::= variable(VAR) EQUALS expr(E). {
     if ($this->lex->globalSearch(VAR->string)) {
+        list($doc, $parsed, $line) = $this->lex->getLastComment();
         A = new PHP_Parser_CoreyyToken(VAR->string . ' = ' . E->string,
             array(
                 'type' => 'global',
                 'name' => VAR->string,
                 'line' => $this->lex->line,
                 'default' => E->string,
+                'doc' => $doc,
+                'parseddoc' => $parsed,
+                'docline' => $line,
             ));
         A[] = VAR;
         A[] = E;
@@ -416,6 +441,9 @@ expr_without_variable(A) ::= variable(VAR) EQUALS expr(E). {
                 'name' => VAR->string,
                 'line' => $this->lex->line,
                 'default' => E->string,
+                'doc' => $doc,
+                'parseddoc' => $parsed,
+                'docline' => $line,
             );
     } else {
         A = new PHP_Parser_CoreyyToken(VAR->string . ' = ' . E->string, VAR);
@@ -424,15 +452,29 @@ expr_without_variable(A) ::= variable(VAR) EQUALS expr(E). {
 }
 expr_without_variable(A) ::= variable(VAR) EQUALS AMPERSAND variable(E).{
     if ($this->lex->globalSearch(VAR->string)) {
+        list($doc, $parsed, $line) = $this->lex->getLastComment();
         A = new PHP_Parser_CoreyyToken(VAR->string . ' = ' . E->string,
             array(
                 'type' => 'global',
                 'name' => VAR->string,
                 'line' => $this->lex->line,
                 'default' => '&' . E->string,
+                'doc' => $doc,
+                'parseddoc' => $parsed,
+                'docline' => $line,
             ));
         A[] = VAR;
         A[] = E;
+        $this->globals[VAR->string][] = 
+            array(
+                'type' => 'global',
+                'name' => VAR->string,
+                'line' => $this->lex->line,
+                'default' => '&' . E->string,
+                'doc' => $doc,
+                'parseddoc' => $parsed,
+                'docline' => $line,
+            );
     } else {
         A = new PHP_Parser_CoreyyToken(VAR->string . ' = &' . E->string, VAR);
         A[] = E;
@@ -442,14 +484,28 @@ expr_without_variable(A) ::= variable(VAR) EQUALS AMPERSAND variable(E).{
 expr_without_variable(A) ::= variable(VAR) EQUALS AMPERSAND T_NEW class_name_reference(CL) ctor_arguments(ARGS). {
     $c = is_string(CL) ? CL : CL->string;
     if ($this->lex->globalSearch(VAR->string)) {
+        list($doc, $parsed, $line) = $this->lex->getLastComment();
         A = new PHP_Parser_CoreyyToken(VAR->string . ' = &new ' . $c . ARGS->string,
             array(
                 'type' => 'global',
                 'name' => VAR->string,
                 'line' => $this->lex->line,
                 'default' => '&new ' . CL->string . ARGS->string,
+                'doc' => $doc,
+                'parseddoc' => $parsed,
+                'docline' => $line,
             ));
         A[] = VAR;
+        $this->globals[VAR->string][] =
+            array(
+                'type' => 'global',
+                'name' => VAR->string,
+                'line' => $this->lex->line,
+                'default' => '&new ' . CL->string . ARGS->string,
+                'doc' => $doc,
+                'parseddoc' => $parsed,
+                'docline' => $line,
+            );
     } else {
         A = new PHP_Parser_CoreyyToken(VAR->string . ' = &new ' . $c . ARGS->string, VAR);
     }
@@ -654,8 +710,8 @@ expr_without_variable(A) ::= LPAREN expr(B) RPAREN. {
     A = new PHP_Parser_CoreyyToken('(' . B->string . ')', B);
 }
 expr_without_variable(A) ::= expr(B) QUESTION
-		expr(C) COLON
-		expr(D). {
+        expr(C) COLON
+        expr(D). {
     A = new PHP_Parser_CoreyyToken(B->string . ' ? ' . C->string . ' : ' . D->string, B);
     A[] = C;
     A[] = D;
@@ -712,14 +768,14 @@ exit_expr(A) ::= LPAREN expr(B) RPAREN. {A = new PHP_Parser_CoreyyToken('(' . B-
 exit_expr(A) ::= . {A = new PHP_Parser_CoreyyToken('');}
 
 common_scalar(A) ::=
-		T_LNUMBER
-	   |T_DNUMBER
-	   |T_CONSTANT_ENCAPSED_STRING
-	   |T_LINE
-	   |T_FILE
-	   |T_CLASS_C
-	   |T_METHOD_C
-	   |T_FUNC_C(B). {A = B;}
+        T_LNUMBER
+       |T_DNUMBER
+       |T_CONSTANT_ENCAPSED_STRING
+       |T_LINE
+       |T_FILE
+       |T_CLASS_C
+       |T_METHOD_C
+       |T_FUNC_C(B). {A = B;}
 
 /* compile-time evaluated scalars */
 static_scalar(A) ::= common_scalar(B). {A = B;}
@@ -1003,6 +1059,9 @@ class_statement(A) ::= variable_modifiers(mod) class_variable_declaration(B) SEM
             'line' => $item['line'],
             'default' => $item['default'],
             'modifiers' => mod,
+            'doc' => $item['doc'],
+            'parseddoc' => $item['parseddoc'],
+            'docline' => $item['docline'],
         );
     }
     A = new PHP_Parser_CoreyyToken('', $a);
@@ -1015,21 +1074,30 @@ class_statement(A) ::= class_constant_declaration(B) SEMI. {
             'name' => $item['name'],
             'line' => $item['line'],
             'value' => $item['value'],
+            'doc' => $item['doc'],
+            'parseddoc' => $item['parseddoc'],
+            'docline' => $item['docline'],
         );
     }
     A = new PHP_Parser_CoreyyToken('', $a);
 }
-get_method_line(A) ::= T_FUNCTION. {A = $this->lex->line;}
+get_method_line(A) ::= T_FUNCTION. {
+    A = array($this->lex->line, $lastcom);
+}
 class_statement(A) ::= method_modifiers(mod) get_method_line(LINE) is_reference T_STRING(B) LPAREN parameter_list(params) RPAREN method_body(M). {
+    list($doc, $parsed, $line) = LINE[1];
     A = new PHP_Parser_CoreyyToken('', array(
             array(
                 'type' => 'method',
                 'name' => B,
-                'startline' => LINE,
+                'startline' => LINE[0],
                 'endline' => $this->lex->line,
                 'parameters' => params->metadata,
                 'modifiers' => mod,
-                'info' => M->metadata
+                'info' => M->metadata,
+                'doc' => $doc,
+                'parseddoc' => $parsed,
+                'docline' => $line,
             )
         ));
 }
@@ -1058,52 +1126,79 @@ get_variable_line(A) ::= T_VARIABLE(B). {
     A = array(B, $this->lex->line);
 }
 
-class_variable_declaration(A) ::= class_variable_declaration(list) COMMA get_variable_line(var). {
-    A = list;
+class_variable_declaration(A) ::= class_variable_declaration(LIST) COMMA get_variable_line(var). {
+    list($doc, $parsed, $line) = $this->lex->getLastComment();
+    A = LIST;
     A[] = array(
         'name' => var[0],
         'default' => null,
         'line' => var[1],
+        'doc' => $doc,
+        'parseddoc' => $parsed,
+        'docline' => $line,
     );
 }
-class_variable_declaration(A) ::= class_variable_declaration(list) COMMA get_variable_line(var) EQUALS static_scalar(val). {
-    A = list;
+class_variable_declaration(A) ::= class_variable_declaration(LIST) COMMA get_variable_line(var) EQUALS static_scalar(val). {
+    list($doc, $parsed, $line) = $this->lex->getLastComment();
+    A = LIST;
     A[] = array(
         'name' => var[0],
         'default' => val,
-        'line' => var[1]
+        'line' => var[1],
+        'doc' => $doc,
+        'parseddoc' => $parsed,
+        'docline' => $line,
     );
 }
 class_variable_declaration(A) ::= T_VARIABLE(B). {
+    list($doc, $parsed, $line) = $this->lex->getLastComment();
     A = array(
             array(
                 'name' => B,
                 'default' => null,
                 'line' => $this->lex->line,
+                'doc' => $doc,
+                'parseddoc' => $parsed,
+                'docline' => $line,
             )
         );
 }
 class_variable_declaration(A) ::= get_variable_line(var) EQUALS static_scalar(val). {
+    list($doc, $parsed, $line) = $this->lex->getLastComment();
     A = array(
             array(
                 'name' => var[0],
                 'default' => val,
                 'line' => var[1],
+                'doc' => $doc,
+                'parseddoc' => $parsed,
+                'docline' => $line,
             )
         );
 }
 
 get_constant_line(A) ::= T_STRING(B). {
-    A = array(B, $this->lex->line);
+    $doc = $this->lex->getLastComment();
+    A = array(B, $this->lex->line, $doc);
 }
 
-class_constant_declaration(A) ::= class_constant_declaration(list) COMMA get_constant_line(n) EQUALS static_scalar(v). {
-    A = list;
-    A[] = array('name' => n[0], 'value' => v, 'line' => n[1]);
+class_constant_declaration(A) ::= class_constant_declaration(LIST) COMMA get_constant_line(n) EQUALS static_scalar(v). {
+    A = LIST;
+    list($doc, $parsed, $line) = n[2];
+    A[] = array('name' => n[0], 'value' => v, 'line' => n[1],
+       'doc' => $doc,
+       'parseddoc' => $parsed,
+       'docline' => $line,
+    );
 }
 class_constant_declaration(A) ::= T_CONST get_constant_line(n) EQUALS static_scalar(v). {
+    list($doc, $parsed, $line) = n[2];
     A = array(
-        array('name' => n[0], 'value' => v, 'line' => n[1])
+        array('name' => n[0], 'value' => v, 'line' => n[1],
+           'doc' => $doc,
+           'parseddoc' => $parsed,
+           'docline' => $line,
+        )
     );
 }
 
@@ -1187,7 +1282,7 @@ base_variable(A) ::= simple_indirect_reference(I) reference_variable(B). {
     A = new PHP_Parser_CoreyyToken(I . B->string, B);
 }
 base_variable(A) ::= static_member(B). {A = B;}
-	
+    
 reference_variable(A) ::= reference_variable(REF) LBRACKET dim_offset(DIM) RBRACKET. {
     A = new PHP_Parser_CoreyyToken(REF->string . '[' . DIM->string . ']', array());
     A[] = REF;
@@ -1333,63 +1428,91 @@ internal_functions_in_yacc(A) ::= T_ISSET LPAREN isset_variables(B) RPAREN. {
 internal_functions_in_yacc(A) ::= T_EMPTY LPAREN variable(B) RPAREN. {
     A = new PHP_Parser_CoreyyToken('empty(' . B->string . ')', B);
 }
-get_include_line(A) ::= T_INCLUDE. {A=$this->lex->line;}
+get_include_line(A) ::= T_INCLUDE. {A=array($this->lex->line, $this->lex->getLastComment());}
 internal_functions_in_yacc(A) ::= get_include_line(LINE) expr(B). {
     A = new PHP_Parser_CoreyyToken('include ' . B->string, B);
+    list($doc, $parsed, $line) = LINE[1];
     A[] = array(
         'type' => 'include',
         'file' => B->string,
-        'line' => LINE,
+        'line' => LINE[0],
+        'doc' => $doc,
+        'parseddoc' => $parsed,
+        'docline' => $line,
     );
     $this->includes[] = array(
         'type' => 'include',
         'file' => B->string,
-        'line' => LINE,
+        'line' => LINE[0],
+        'doc' => $doc,
+        'parseddoc' => $parsed,
+        'docline' => $line,
     );
 }
 get_include_once_line(A) ::= T_INCLUDE_ONCE. {A=$this->lex->line;}
 internal_functions_in_yacc(A) ::= get_include_once_line(LINE) expr(B). {
     A = new PHP_Parser_CoreyyToken('include_once ' . B->string, B);
+    list($doc, $parsed, $line) = LINE[1];
     A[] = array(
         'type' => 'include_once',
         'file' => B->string,
-        'line' => LINE,
+        'line' => LINE[0],
+        'doc' => $doc,
+        'parseddoc' => $parsed,
+        'docline' => $line,
     );
     $this->includes[] = array(
         'type' => 'include_once',
         'file' => B->string,
-        'line' => LINE,
+        'line' => LINE[0],
+        'doc' => $doc,
+        'parseddoc' => $parsed,
+        'docline' => $line,
     );
 }
 internal_functions_in_yacc(A) ::= T_EVAL LPAREN expr(B) RPAREN. {
     A = new PHP_Parser_CoreyyToken('eval ' . B->string, B);
 }
-get_require_line(A) ::= T_REQUIRE. {A=$this->lex->line;}
+get_require_line(A) ::= T_REQUIRE. {A=array($this->lex->line, $this->lex->getLastComment());}
 internal_functions_in_yacc(A) ::= get_require_line(LINE) expr(B). {
+    list($doc, $parsed, $line) = LINE[1];
     A = new PHP_Parser_CoreyyToken('require ' . B->string, B);
     A[] = array(
         'type' => 'require',
         'file' => B->string,
-        'line' => LINE,
+        'line' => LINE[0],
+        'doc' => $doc,
+        'parseddoc' => $parsed,
+        'docline' => $line,
     );
     $this->includes[] = array(
         'type' => 'require',
         'file' => B->string,
-        'line' => LINE,
+        'line' => LINE[0],
+        'doc' => $doc,
+        'parseddoc' => $parsed,
+        'docline' => $line,
     );
 }
-get_require_once_line(A) ::= T_REQUIRE_ONCE. {A=$this->lex->line;}
+get_require_once_line(A) ::= T_REQUIRE_ONCE. {A=array($this->lex->line,$this->lex->getLastComment());}
 internal_functions_in_yacc(A) ::= get_require_once_line(LINE) expr(B). {
+    list($doc, $parsed, $line) = LINE[1];
     A = new PHP_Parser_CoreyyToken('require_once ' . B->string, B);
     A[] = array(
         'type' => 'require_once',
         'file' => B->string,
-        'line' => LINE,
+        'line' => LINE[0],
+        'doc' => $doc,
+        'parseddoc' => $parsed,
+        'docline' => $line,
     );
     $this->includes[] = array(
         'type' => 'require_once',
         'file' => B->string,
-        'line' => LINE,
+        'line' => LINE[0],
+        'doc' => $doc,
+        'parseddoc' => $parsed,
+        'docline' => $line,
     );
 }
 

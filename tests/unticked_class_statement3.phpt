@@ -21,7 +21,7 @@ var_dump($b->globals);
 --EXPECT--
 array(1) {
   [0]=>
-  array(6) {
+  array(9) {
     ["type"]=>
     string(9) "interface"
     ["startline"]=>
@@ -36,7 +36,7 @@ array(1) {
     ["info"]=>
     array(3) {
       [0]=>
-      array(4) {
+      array(7) {
         ["type"]=>
         string(5) "const"
         ["name"]=>
@@ -45,9 +45,15 @@ array(1) {
         int(12)
         ["value"]=>
         string(1) "1"
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [1]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -67,9 +73,15 @@ array(1) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [2]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -122,8 +134,20 @@ array(1) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
 }
 array(0) {
@@ -132,7 +156,7 @@ array(1) {
   ["blah"]=>
   array(1) {
     [0]=>
-    array(6) {
+    array(9) {
       ["type"]=>
       string(9) "interface"
       ["startline"]=>
@@ -147,7 +171,7 @@ array(1) {
       ["info"]=>
       array(3) {
         [0]=>
-        array(4) {
+        array(7) {
           ["type"]=>
           string(5) "const"
           ["name"]=>
@@ -156,9 +180,15 @@ array(1) {
           int(12)
           ["value"]=>
           string(1) "1"
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [1]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -178,9 +208,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [2]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -233,8 +269,20 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
   }
 }

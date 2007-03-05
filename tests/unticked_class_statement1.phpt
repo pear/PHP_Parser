@@ -21,7 +21,7 @@ var_dump($b->globals);
 --EXPECT--
 array(7) {
   [0]=>
-  array(8) {
+  array(11) {
     ["type"]=>
     string(5) "class"
     ["startline"]=>
@@ -42,9 +42,15 @@ array(7) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    NULL
+    ["parseddoc"]=>
+    NULL
+    ["docline"]=>
+    NULL
   }
   [1]=>
-  array(8) {
+  array(11) {
     ["type"]=>
     string(5) "class"
     ["startline"]=>
@@ -67,9 +73,15 @@ array(7) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [2]=>
-  array(8) {
+  array(11) {
     ["type"]=>
     string(5) "class"
     ["startline"]=>
@@ -92,9 +104,15 @@ array(7) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [3]=>
-  array(8) {
+  array(11) {
     ["type"]=>
     string(5) "class"
     ["startline"]=>
@@ -117,9 +135,15 @@ array(7) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [4]=>
-  array(8) {
+  array(11) {
     ["type"]=>
     string(5) "class"
     ["startline"]=>
@@ -142,9 +166,15 @@ array(7) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [5]=>
-  array(8) {
+  array(11) {
     ["type"]=>
     string(5) "class"
     ["startline"]=>
@@ -169,9 +199,15 @@ array(7) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [6]=>
-  array(8) {
+  array(11) {
     ["type"]=>
     string(5) "class"
     ["startline"]=>
@@ -192,7 +228,7 @@ array(7) {
     ["info"]=>
     array(42) {
       [0]=>
-      array(5) {
+      array(8) {
         ["type"]=>
         string(3) "var"
         ["name"]=>
@@ -206,9 +242,15 @@ array(7) {
           [0]=>
           string(6) "public"
         }
+        ["doc"]=>
+        string(0) ""
+        ["parseddoc"]=>
+        bool(false)
+        ["docline"]=>
+        int(-1)
       }
       [1]=>
-      array(5) {
+      array(8) {
         ["type"]=>
         string(3) "var"
         ["name"]=>
@@ -222,9 +264,15 @@ array(7) {
           [0]=>
           string(6) "public"
         }
+        ["doc"]=>
+        string(0) ""
+        ["parseddoc"]=>
+        bool(false)
+        ["docline"]=>
+        int(-1)
       }
       [2]=>
-      array(5) {
+      array(8) {
         ["type"]=>
         string(3) "var"
         ["name"]=>
@@ -238,9 +286,15 @@ array(7) {
           [0]=>
           string(6) "public"
         }
+        ["doc"]=>
+        string(0) ""
+        ["parseddoc"]=>
+        bool(false)
+        ["docline"]=>
+        int(-1)
       }
       [3]=>
-      array(5) {
+      array(8) {
         ["type"]=>
         string(3) "var"
         ["name"]=>
@@ -256,9 +310,15 @@ array(7) {
           [1]=>
           string(6) "public"
         }
+        ["doc"]=>
+        string(0) ""
+        ["parseddoc"]=>
+        bool(false)
+        ["docline"]=>
+        int(-1)
       }
       [4]=>
-      array(5) {
+      array(8) {
         ["type"]=>
         string(3) "var"
         ["name"]=>
@@ -274,9 +334,15 @@ array(7) {
           [1]=>
           string(9) "protected"
         }
+        ["doc"]=>
+        string(0) ""
+        ["parseddoc"]=>
+        bool(false)
+        ["docline"]=>
+        int(-1)
       }
       [5]=>
-      array(5) {
+      array(8) {
         ["type"]=>
         string(3) "var"
         ["name"]=>
@@ -292,9 +358,15 @@ array(7) {
           [1]=>
           string(5) "final"
         }
+        ["doc"]=>
+        string(0) ""
+        ["parseddoc"]=>
+        bool(false)
+        ["docline"]=>
+        int(-1)
       }
       [6]=>
-      array(5) {
+      array(8) {
         ["type"]=>
         string(3) "var"
         ["name"]=>
@@ -310,9 +382,15 @@ array(7) {
           [1]=>
           string(8) "abstract"
         }
+        ["doc"]=>
+        string(0) ""
+        ["parseddoc"]=>
+        bool(false)
+        ["docline"]=>
+        int(-1)
       }
       [7]=>
-      array(5) {
+      array(8) {
         ["type"]=>
         string(3) "var"
         ["name"]=>
@@ -328,9 +406,15 @@ array(7) {
           [1]=>
           string(7) "private"
         }
+        ["doc"]=>
+        string(0) ""
+        ["parseddoc"]=>
+        bool(false)
+        ["docline"]=>
+        int(-1)
       }
       [8]=>
-      array(5) {
+      array(8) {
         ["type"]=>
         string(3) "var"
         ["name"]=>
@@ -346,9 +430,15 @@ array(7) {
           [1]=>
           string(7) "private"
         }
+        ["doc"]=>
+        string(0) ""
+        ["parseddoc"]=>
+        bool(false)
+        ["docline"]=>
+        int(-1)
       }
       [9]=>
-      array(5) {
+      array(8) {
         ["type"]=>
         string(3) "var"
         ["name"]=>
@@ -364,9 +454,15 @@ array(7) {
           [1]=>
           string(6) "public"
         }
+        ["doc"]=>
+        string(0) ""
+        ["parseddoc"]=>
+        bool(false)
+        ["docline"]=>
+        int(-1)
       }
       [10]=>
-      array(5) {
+      array(8) {
         ["type"]=>
         string(3) "var"
         ["name"]=>
@@ -382,9 +478,15 @@ array(7) {
           [1]=>
           string(6) "public"
         }
+        ["doc"]=>
+        string(0) ""
+        ["parseddoc"]=>
+        bool(false)
+        ["docline"]=>
+        int(-1)
       }
       [11]=>
-      array(4) {
+      array(7) {
         ["type"]=>
         string(5) "const"
         ["name"]=>
@@ -393,9 +495,15 @@ array(7) {
         int(54)
         ["value"]=>
         string(13) "array(1 => 2)"
+        ["doc"]=>
+        string(0) ""
+        ["parseddoc"]=>
+        bool(false)
+        ["docline"]=>
+        int(-1)
       }
       [12]=>
-      array(4) {
+      array(7) {
         ["type"]=>
         string(5) "const"
         ["name"]=>
@@ -404,9 +512,15 @@ array(7) {
         int(56)
         ["value"]=>
         string(1) "1"
+        ["doc"]=>
+        string(0) ""
+        ["parseddoc"]=>
+        bool(false)
+        ["docline"]=>
+        int(-1)
       }
       [13]=>
-      array(4) {
+      array(7) {
         ["type"]=>
         string(5) "const"
         ["name"]=>
@@ -415,9 +529,15 @@ array(7) {
         int(56)
         ["value"]=>
         string(7) "'matey'"
+        ["doc"]=>
+        string(0) ""
+        ["parseddoc"]=>
+        bool(false)
+        ["docline"]=>
+        int(-1)
       }
       [14]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -437,9 +557,15 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [15]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -459,9 +585,15 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [16]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -481,9 +613,15 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [17]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -513,9 +651,15 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [18]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -546,9 +690,15 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [19]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -579,9 +729,15 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [20]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -612,9 +768,15 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [21]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -645,9 +807,15 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [22]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -678,9 +846,15 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [23]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -711,9 +885,15 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [24]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -744,9 +924,15 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [25]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -777,9 +963,15 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [26]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -810,9 +1002,15 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [27]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -843,9 +1041,15 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [28]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -876,9 +1080,15 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [29]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -909,9 +1119,15 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [30]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -953,9 +1169,15 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [31]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -997,9 +1219,15 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [32]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -1041,9 +1269,15 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [33]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -1085,9 +1319,15 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [34]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -1129,9 +1369,15 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [35]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -1173,9 +1419,15 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [36]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -1217,9 +1469,15 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [37]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -1261,9 +1519,15 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [38]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -1305,9 +1569,15 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [39]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -1349,9 +1619,15 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [40]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -1393,9 +1669,15 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
       [41]=>
-      array(7) {
+      array(10) {
         ["type"]=>
         string(6) "method"
         ["name"]=>
@@ -1437,15 +1719,27 @@ array(7) {
         ["info"]=>
         array(0) {
         }
+        ["doc"]=>
+        NULL
+        ["parseddoc"]=>
+        NULL
+        ["docline"]=>
+        NULL
       }
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
 }
 array(1) {
   ["foo"]=>
   array(7) {
     [0]=>
-    array(8) {
+    array(11) {
       ["type"]=>
       string(5) "class"
       ["startline"]=>
@@ -1466,9 +1760,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      NULL
+      ["parseddoc"]=>
+      NULL
+      ["docline"]=>
+      NULL
     }
     [1]=>
-    array(8) {
+    array(11) {
       ["type"]=>
       string(5) "class"
       ["startline"]=>
@@ -1491,9 +1791,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [2]=>
-    array(8) {
+    array(11) {
       ["type"]=>
       string(5) "class"
       ["startline"]=>
@@ -1516,9 +1822,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [3]=>
-    array(8) {
+    array(11) {
       ["type"]=>
       string(5) "class"
       ["startline"]=>
@@ -1541,9 +1853,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [4]=>
-    array(8) {
+    array(11) {
       ["type"]=>
       string(5) "class"
       ["startline"]=>
@@ -1566,9 +1884,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [5]=>
-    array(8) {
+    array(11) {
       ["type"]=>
       string(5) "class"
       ["startline"]=>
@@ -1593,9 +1917,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [6]=>
-    array(8) {
+    array(11) {
       ["type"]=>
       string(5) "class"
       ["startline"]=>
@@ -1616,7 +1946,7 @@ array(1) {
       ["info"]=>
       array(42) {
         [0]=>
-        array(5) {
+        array(8) {
           ["type"]=>
           string(3) "var"
           ["name"]=>
@@ -1630,9 +1960,15 @@ array(1) {
             [0]=>
             string(6) "public"
           }
+          ["doc"]=>
+          string(0) ""
+          ["parseddoc"]=>
+          bool(false)
+          ["docline"]=>
+          int(-1)
         }
         [1]=>
-        array(5) {
+        array(8) {
           ["type"]=>
           string(3) "var"
           ["name"]=>
@@ -1646,9 +1982,15 @@ array(1) {
             [0]=>
             string(6) "public"
           }
+          ["doc"]=>
+          string(0) ""
+          ["parseddoc"]=>
+          bool(false)
+          ["docline"]=>
+          int(-1)
         }
         [2]=>
-        array(5) {
+        array(8) {
           ["type"]=>
           string(3) "var"
           ["name"]=>
@@ -1662,9 +2004,15 @@ array(1) {
             [0]=>
             string(6) "public"
           }
+          ["doc"]=>
+          string(0) ""
+          ["parseddoc"]=>
+          bool(false)
+          ["docline"]=>
+          int(-1)
         }
         [3]=>
-        array(5) {
+        array(8) {
           ["type"]=>
           string(3) "var"
           ["name"]=>
@@ -1680,9 +2028,15 @@ array(1) {
             [1]=>
             string(6) "public"
           }
+          ["doc"]=>
+          string(0) ""
+          ["parseddoc"]=>
+          bool(false)
+          ["docline"]=>
+          int(-1)
         }
         [4]=>
-        array(5) {
+        array(8) {
           ["type"]=>
           string(3) "var"
           ["name"]=>
@@ -1698,9 +2052,15 @@ array(1) {
             [1]=>
             string(9) "protected"
           }
+          ["doc"]=>
+          string(0) ""
+          ["parseddoc"]=>
+          bool(false)
+          ["docline"]=>
+          int(-1)
         }
         [5]=>
-        array(5) {
+        array(8) {
           ["type"]=>
           string(3) "var"
           ["name"]=>
@@ -1716,9 +2076,15 @@ array(1) {
             [1]=>
             string(5) "final"
           }
+          ["doc"]=>
+          string(0) ""
+          ["parseddoc"]=>
+          bool(false)
+          ["docline"]=>
+          int(-1)
         }
         [6]=>
-        array(5) {
+        array(8) {
           ["type"]=>
           string(3) "var"
           ["name"]=>
@@ -1734,9 +2100,15 @@ array(1) {
             [1]=>
             string(8) "abstract"
           }
+          ["doc"]=>
+          string(0) ""
+          ["parseddoc"]=>
+          bool(false)
+          ["docline"]=>
+          int(-1)
         }
         [7]=>
-        array(5) {
+        array(8) {
           ["type"]=>
           string(3) "var"
           ["name"]=>
@@ -1752,9 +2124,15 @@ array(1) {
             [1]=>
             string(7) "private"
           }
+          ["doc"]=>
+          string(0) ""
+          ["parseddoc"]=>
+          bool(false)
+          ["docline"]=>
+          int(-1)
         }
         [8]=>
-        array(5) {
+        array(8) {
           ["type"]=>
           string(3) "var"
           ["name"]=>
@@ -1770,9 +2148,15 @@ array(1) {
             [1]=>
             string(7) "private"
           }
+          ["doc"]=>
+          string(0) ""
+          ["parseddoc"]=>
+          bool(false)
+          ["docline"]=>
+          int(-1)
         }
         [9]=>
-        array(5) {
+        array(8) {
           ["type"]=>
           string(3) "var"
           ["name"]=>
@@ -1788,9 +2172,15 @@ array(1) {
             [1]=>
             string(6) "public"
           }
+          ["doc"]=>
+          string(0) ""
+          ["parseddoc"]=>
+          bool(false)
+          ["docline"]=>
+          int(-1)
         }
         [10]=>
-        array(5) {
+        array(8) {
           ["type"]=>
           string(3) "var"
           ["name"]=>
@@ -1806,9 +2196,15 @@ array(1) {
             [1]=>
             string(6) "public"
           }
+          ["doc"]=>
+          string(0) ""
+          ["parseddoc"]=>
+          bool(false)
+          ["docline"]=>
+          int(-1)
         }
         [11]=>
-        array(4) {
+        array(7) {
           ["type"]=>
           string(5) "const"
           ["name"]=>
@@ -1817,9 +2213,15 @@ array(1) {
           int(54)
           ["value"]=>
           string(13) "array(1 => 2)"
+          ["doc"]=>
+          string(0) ""
+          ["parseddoc"]=>
+          bool(false)
+          ["docline"]=>
+          int(-1)
         }
         [12]=>
-        array(4) {
+        array(7) {
           ["type"]=>
           string(5) "const"
           ["name"]=>
@@ -1828,9 +2230,15 @@ array(1) {
           int(56)
           ["value"]=>
           string(1) "1"
+          ["doc"]=>
+          string(0) ""
+          ["parseddoc"]=>
+          bool(false)
+          ["docline"]=>
+          int(-1)
         }
         [13]=>
-        array(4) {
+        array(7) {
           ["type"]=>
           string(5) "const"
           ["name"]=>
@@ -1839,9 +2247,15 @@ array(1) {
           int(56)
           ["value"]=>
           string(7) "'matey'"
+          ["doc"]=>
+          string(0) ""
+          ["parseddoc"]=>
+          bool(false)
+          ["docline"]=>
+          int(-1)
         }
         [14]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -1861,9 +2275,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [15]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -1883,9 +2303,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [16]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -1905,9 +2331,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [17]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -1937,9 +2369,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [18]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -1970,9 +2408,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [19]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -2003,9 +2447,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [20]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -2036,9 +2486,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [21]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -2069,9 +2525,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [22]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -2102,9 +2564,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [23]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -2135,9 +2603,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [24]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -2168,9 +2642,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [25]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -2201,9 +2681,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [26]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -2234,9 +2720,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [27]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -2267,9 +2759,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [28]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -2300,9 +2798,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [29]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -2333,9 +2837,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [30]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -2377,9 +2887,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [31]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -2421,9 +2937,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [32]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -2465,9 +2987,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [33]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -2509,9 +3037,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [34]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -2553,9 +3087,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [35]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -2597,9 +3137,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [36]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -2641,9 +3187,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [37]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -2685,9 +3237,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [38]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -2729,9 +3287,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [39]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -2773,9 +3337,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [40]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -2817,9 +3387,15 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
         [41]=>
-        array(7) {
+        array(10) {
           ["type"]=>
           string(6) "method"
           ["name"]=>
@@ -2861,8 +3437,20 @@ array(1) {
           ["info"]=>
           array(0) {
           }
+          ["doc"]=>
+          NULL
+          ["parseddoc"]=>
+          NULL
+          ["docline"]=>
+          NULL
         }
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
   }
 }

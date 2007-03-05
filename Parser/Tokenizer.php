@@ -126,7 +126,7 @@ class PHP_Parser_Tokenizer {
     */ 
     
     var $lastCommentLine; 
-    
+
     /**
     * The string of the last Comment Token
     *
@@ -135,6 +135,15 @@ class PHP_Parser_Tokenizer {
     */ 
     
     var $lastComment;
+
+    /**
+    * The string of the last Comment Token
+    *
+    * @var string
+    * @access public
+    */ 
+    
+    var $lastParsedComment;
     
     /**
      * String of global variable to search for
@@ -248,20 +257,22 @@ class PHP_Parser_Tokenizer {
     *
     * 
     *
-    * @return   array  ($commmentstring and $tokenPosition)
+    * @return   array  array('comment' => $commmentstring, 'parsed' => $parsed, 'line' => $linenumber)
     * @access   public
     */
     
     function getLastComment()
     {
         $com = $this->lastComment;
+        $last = $this->lastParsedComment;
         $tok = $this->lastCommentToken;
         $line = $this->lastCommentLine;
         $this->lastComment = '';
+        $this->lastParsedComment = false;
         $this->lastCommentToken = -1;
         $this->lastCommentLine = -1;
        
-        return array($com, $tok, $line);
+        return array($com, $last, $line);
     }
     
     /**
@@ -279,7 +290,7 @@ class PHP_Parser_Tokenizer {
                 $this->lastParsedComment =
                     $this->_docParser->parse($this->lastComment, $this);
             } catch (Exception $e) {
-                
+                $this->lastParsedComment = false;
             }
         }
     }
@@ -321,21 +332,16 @@ class PHP_Parser_Tokenizer {
                 
                 // comments - store for phpdoc
                 case T_DOC_COMMENT;
-                
-                
                 case T_COMMENT:
-                    $this->lastComment = '';
-                    $this->lastCommentToken = -1;
-                    $this->lastCommentLine = -1;
                     if (substr($this->tokens[$this->pos][1], 0, 3) == '/**') {
+                        $this->lastComment = '';
+                        $this->lastCommentToken = -1;
+                        $this->lastCommentLine = -1;
                         $this->_handleDocumentation();
                     }
                     $this->line += substr_count ($this->tokens[$this->pos][1], "\n");
                     $this->pos++;
                     continue;
-                    
-                    $this->_handleDocumentation();
-                // ... continues into m/l skipeed tags..
                 
                 // large 
                 case T_OPEN_TAG:
@@ -351,11 +357,6 @@ class PHP_Parser_Tokenizer {
                 
                 //--- begin returnable values--
                 
-                // end statement - clear any comment details.
-                case 59; // ord(';'):
-                    $this->lastComment = '';
-                    $this->lastCommentToken = -1;
-                    
                 // everything else!
                 default:
                     $this->line += substr_count ($this->tokens[$this->pos][1], "\n");

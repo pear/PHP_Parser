@@ -5181,7 +5181,6 @@ static public $yy_action = array(
         45 => 45,
         48 => 48,
         57 => 48,
-        216 => 48,
         49 => 49,
         50 => 50,
         51 => 51,
@@ -5322,6 +5321,7 @@ static public $yy_action = array(
         211 => 211,
         214 => 214,
         215 => 215,
+        216 => 216,
         217 => 217,
         219 => 219,
         221 => 221,
@@ -5329,11 +5329,11 @@ static public $yy_action = array(
         224 => 224,
         226 => 226,
         227 => 227,
-        232 => 227,
         228 => 228,
         229 => 229,
         230 => 230,
         231 => 231,
+        232 => 232,
         233 => 233,
         234 => 234,
         235 => 235,
@@ -5381,13 +5381,13 @@ static public $yy_action = array(
         309 => 309,
         310 => 310,
         311 => 311,
-        313 => 311,
         316 => 311,
-        318 => 311,
         312 => 312,
+        313 => 313,
         314 => 314,
         315 => 315,
         317 => 317,
+        318 => 318,
         319 => 319,
         322 => 322,
         324 => 324,
@@ -5553,8 +5553,9 @@ static public $yy_action = array(
 #line 5558 "Core.php"
 #line 297 "Core.y"
     function yy_r49(){
-	$this->_retvalue = new PHP_Parser_CoreyyToken('function ' . ($this->yystack[$this->yyidx + -7]->minor ? '&' : '') .
-	   $this->yystack[$this->yyidx + -6]->minor . '(' . $this->yystack[$this->yyidx + -4]->minor->string . ')');
+    $this->_retvalue = new PHP_Parser_CoreyyToken('function ' . ($this->yystack[$this->yyidx + -7]->minor ? '&' : '') .
+       $this->yystack[$this->yyidx + -6]->minor . '(' . $this->yystack[$this->yyidx + -4]->minor->string . ')');
+    list($doc, $parsed, $line) = $this->lex->getLastComment();
     $this->_retvalue[] = array(
         'type' => 'function',
         'startline' => $this->yystack[$this->yyidx + -8]->minor,
@@ -5563,6 +5564,9 @@ static public $yy_action = array(
         'name' => $this->yystack[$this->yyidx + -6]->minor,
         'parameters' => $this->yystack[$this->yyidx + -4]->minor->metadata,
         'info' => $this->yystack[$this->yyidx + -1]->minor->metadata,
+        'doc' => $doc,
+        'parseddoc' => $parsed,
+        'docline' => $line,
     );
     $this->functions[$this->yystack[$this->yyidx + -6]->minor][] = array(
         'type' => 'function',
@@ -5572,93 +5576,114 @@ static public $yy_action = array(
         'name' => $this->yystack[$this->yyidx + -6]->minor,
         'parameters' => $this->yystack[$this->yyidx + -4]->minor->metadata,
         'info' => $this->yystack[$this->yyidx + -1]->minor->metadata,
+        'doc' => $doc,
+        'parseddoc' => $parsed,
+        'docline' => $line,
     );
     }
-#line 5582 "Core.php"
-#line 325 "Core.y"
+#line 5589 "Core.php"
+#line 332 "Core.y"
     function yy_r50(){
-	$this->_retvalue = new PHP_Parser_CoreyyToken('', array(
-	   'type' => $this->yystack[$this->yyidx + -6]->minor['type'],
-       'startline' => $this->yystack[$this->yyidx + -6]->minor['line'],
-       'endline' => $this->lex->line,
-	   'modifiers' => $this->yystack[$this->yyidx + -6]->minor['modifiers'],
-	   'name' => $this->yystack[$this->yyidx + -5]->minor,
-	   'extends' => $this->yystack[$this->yyidx + -4]->minor->metadata,
-	   'implements' => $this->yystack[$this->yyidx + -3]->minor->metadata,
-	   'info' => $this->yystack[$this->yyidx + -1]->minor->metadata,
-	));
-	$this->classes[$this->yystack[$this->yyidx + -5]->minor][] = array(
-	   'type' => $this->yystack[$this->yyidx + -6]->minor['type'],
-       'startline' => $this->yystack[$this->yyidx + -6]->minor['line'],
-       'endline' => $this->lex->line,
-	   'modifiers' => $this->yystack[$this->yyidx + -6]->minor['modifiers'],
-	   'name' => $this->yystack[$this->yyidx + -5]->minor,
-	   'extends' => $this->yystack[$this->yyidx + -4]->minor->metadata,
-	   'implements' => $this->yystack[$this->yyidx + -3]->minor->metadata,
-	   'info' => $this->yystack[$this->yyidx + -1]->minor->metadata,
-	);
-    }
-#line 5606 "Core.php"
-#line 352 "Core.y"
-    function yy_r51(){
+    list($doc, $parsed, $line) = $this->lex->getLastComment();
     $this->_retvalue = new PHP_Parser_CoreyyToken('', array(
-	   'type' => 'interface',
+       'type' => $this->yystack[$this->yyidx + -6]->minor['type'],
+       'startline' => $this->yystack[$this->yyidx + -6]->minor['line'],
+       'endline' => $this->lex->line,
+       'modifiers' => $this->yystack[$this->yyidx + -6]->minor['modifiers'],
+       'name' => $this->yystack[$this->yyidx + -5]->minor,
+       'extends' => $this->yystack[$this->yyidx + -4]->minor->metadata,
+       'implements' => $this->yystack[$this->yyidx + -3]->minor->metadata,
+       'info' => $this->yystack[$this->yyidx + -1]->minor->metadata,
+       'doc' => $doc,
+       'parseddoc' => $parsed,
+       'docline' => $line,
+    ));
+    $this->classes[$this->yystack[$this->yyidx + -5]->minor][] = array(
+       'type' => $this->yystack[$this->yyidx + -6]->minor['type'],
+       'startline' => $this->yystack[$this->yyidx + -6]->minor['line'],
+       'endline' => $this->lex->line,
+       'modifiers' => $this->yystack[$this->yyidx + -6]->minor['modifiers'],
+       'name' => $this->yystack[$this->yyidx + -5]->minor,
+       'extends' => $this->yystack[$this->yyidx + -4]->minor->metadata,
+       'implements' => $this->yystack[$this->yyidx + -3]->minor->metadata,
+       'info' => $this->yystack[$this->yyidx + -1]->minor->metadata,
+       'doc' => $doc,
+       'parseddoc' => $parsed,
+       'docline' => $line,
+    );
+    }
+#line 5620 "Core.php"
+#line 366 "Core.y"
+    function yy_r51(){
+    list($doc, $parsed, $line) = $this->lex->getLastComment();
+    $this->_retvalue = new PHP_Parser_CoreyyToken('', array(
+       'type' => 'interface',
        'startline' => $this->yystack[$this->yyidx + -5]->minor,
        'endline' => $this->lex->line,
-	   'name' => $this->yystack[$this->yyidx + -4]->minor,
-	   'extends' => $this->yystack[$this->yyidx + -3]->minor->metadata,
-	   'info' => $this->yystack[$this->yyidx + -1]->minor->metadata,
+       'name' => $this->yystack[$this->yyidx + -4]->minor,
+       'extends' => $this->yystack[$this->yyidx + -3]->minor->metadata,
+       'info' => $this->yystack[$this->yyidx + -1]->minor->metadata,
+       'doc' => $doc,
+       'parseddoc' => $parsed,
+       'docline' => $line,
     ));
     $this->interfaces[$this->yystack[$this->yyidx + -4]->minor][] = array(
-	   'type' => 'interface',
+       'type' => 'interface',
        'startline' => $this->yystack[$this->yyidx + -5]->minor,
        'endline' => $this->lex->line,
-	   'name' => $this->yystack[$this->yyidx + -4]->minor,
-	   'extends' => $this->yystack[$this->yyidx + -3]->minor->metadata,
-	   'info' => $this->yystack[$this->yyidx + -1]->minor->metadata,
+       'name' => $this->yystack[$this->yyidx + -4]->minor,
+       'extends' => $this->yystack[$this->yyidx + -3]->minor->metadata,
+       'info' => $this->yystack[$this->yyidx + -1]->minor->metadata,
+       'doc' => $doc,
+       'parseddoc' => $parsed,
+       'docline' => $line,
     );
     }
-#line 5626 "Core.php"
-#line 371 "Core.y"
+#line 5647 "Core.php"
+#line 392 "Core.y"
     function yy_r52(){ $this->_retvalue = new PHP_Parser_CoreyyToken('', array('type' => 'class', 'modifiers' => array(), 'line' => $this->lex->line));     }
-#line 5629 "Core.php"
-#line 372 "Core.y"
+#line 5650 "Core.php"
+#line 393 "Core.y"
     function yy_r53(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('', array('type' => 'class', 'modifiers' => array('abstract'), 'line' => $this->lex->line));
     }
-#line 5634 "Core.php"
-#line 375 "Core.y"
+#line 5655 "Core.php"
+#line 396 "Core.y"
     function yy_r54(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('', array('type' => 'class', 'modifiers' => array('final'), 'line' => $this->lex->line));
     }
-#line 5639 "Core.php"
-#line 379 "Core.y"
+#line 5660 "Core.php"
+#line 400 "Core.y"
     function yy_r55(){$this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + 0]->minor, array($this->yystack[$this->yyidx + 0]->minor));    }
-#line 5642 "Core.php"
-#line 390 "Core.y"
+#line 5663 "Core.php"
+#line 411 "Core.y"
     function yy_r62(){$this->_retvalue = new PHP_Parser_CoreyyToken('', array($this->yystack[$this->yyidx + 0]->minor));    }
-#line 5645 "Core.php"
-#line 391 "Core.y"
+#line 5666 "Core.php"
+#line 412 "Core.y"
     function yy_r63(){
     $this->_retvalue = $this->yystack[$this->yyidx + -2]->minor;
     $this->_retvalue[] = array($this->yystack[$this->yyidx + 0]->minor);
     }
-#line 5651 "Core.php"
-#line 399 "Core.y"
+#line 5672 "Core.php"
+#line 420 "Core.y"
     function yy_r66(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('list(' . $this->yystack[$this->yyidx + -3]->minor->string . ') = ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -3]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5657 "Core.php"
-#line 403 "Core.y"
+#line 5678 "Core.php"
+#line 424 "Core.y"
     function yy_r67(){
     if ($this->lex->globalSearch($this->yystack[$this->yyidx + -2]->minor->string)) {
+        list($doc, $parsed, $line) = $this->lex->getLastComment();
         $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' = ' . $this->yystack[$this->yyidx + 0]->minor->string,
             array(
                 'type' => 'global',
                 'name' => $this->yystack[$this->yyidx + -2]->minor->string,
                 'line' => $this->lex->line,
                 'default' => $this->yystack[$this->yyidx + 0]->minor->string,
+                'doc' => $doc,
+                'parseddoc' => $parsed,
+                'docline' => $line,
             ));
         $this->_retvalue[] = $this->yystack[$this->yyidx + -2]->minor;
         $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
@@ -5667,43 +5692,74 @@ static public $yy_action = array(
                 'name' => $this->yystack[$this->yyidx + -2]->minor->string,
                 'line' => $this->lex->line,
                 'default' => $this->yystack[$this->yyidx + 0]->minor->string,
+                'doc' => $doc,
+                'parseddoc' => $parsed,
+                'docline' => $line,
             );
     } else {
         $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' = ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
         $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
     }
-#line 5681 "Core.php"
-#line 425 "Core.y"
+#line 5712 "Core.php"
+#line 456 "Core.y"
     function yy_r68(){
     if ($this->lex->globalSearch($this->yystack[$this->yyidx + -3]->minor->string)) {
+        list($doc, $parsed, $line) = $this->lex->getLastComment();
         $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -3]->minor->string . ' = ' . $this->yystack[$this->yyidx + 0]->minor->string,
             array(
                 'type' => 'global',
                 'name' => $this->yystack[$this->yyidx + -3]->minor->string,
                 'line' => $this->lex->line,
                 'default' => '&' . $this->yystack[$this->yyidx + 0]->minor->string,
+                'doc' => $doc,
+                'parseddoc' => $parsed,
+                'docline' => $line,
             ));
         $this->_retvalue[] = $this->yystack[$this->yyidx + -3]->minor;
         $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
+        $this->globals[$this->yystack[$this->yyidx + -3]->minor->string][] = 
+            array(
+                'type' => 'global',
+                'name' => $this->yystack[$this->yyidx + -3]->minor->string,
+                'line' => $this->lex->line,
+                'default' => '&' . $this->yystack[$this->yyidx + 0]->minor->string,
+                'doc' => $doc,
+                'parseddoc' => $parsed,
+                'docline' => $line,
+            );
     } else {
         $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -3]->minor->string . ' = &' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -3]->minor);
         $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
     }
-#line 5699 "Core.php"
-#line 442 "Core.y"
+#line 5747 "Core.php"
+#line 490 "Core.y"
     function yy_r69(){
     $c = is_string($this->yystack[$this->yyidx + -1]->minor) ? $this->yystack[$this->yyidx + -1]->minor : $this->yystack[$this->yyidx + -1]->minor->string;
     if ($this->lex->globalSearch($this->yystack[$this->yyidx + -5]->minor->string)) {
+        list($doc, $parsed, $line) = $this->lex->getLastComment();
         $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -5]->minor->string . ' = &new ' . $c . $this->yystack[$this->yyidx + 0]->minor->string,
             array(
                 'type' => 'global',
                 'name' => $this->yystack[$this->yyidx + -5]->minor->string,
                 'line' => $this->lex->line,
                 'default' => '&new ' . $this->yystack[$this->yyidx + -1]->minor->string . $this->yystack[$this->yyidx + 0]->minor->string,
+                'doc' => $doc,
+                'parseddoc' => $parsed,
+                'docline' => $line,
             ));
         $this->_retvalue[] = $this->yystack[$this->yyidx + -5]->minor;
+        $this->globals[$this->yystack[$this->yyidx + -5]->minor->string][] =
+            array(
+                'type' => 'global',
+                'name' => $this->yystack[$this->yyidx + -5]->minor->string,
+                'line' => $this->lex->line,
+                'default' => '&new ' . $this->yystack[$this->yyidx + -1]->minor->string . $this->yystack[$this->yyidx + 0]->minor->string,
+                'doc' => $doc,
+                'parseddoc' => $parsed,
+                'docline' => $line,
+            );
     } else {
         $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -5]->minor->string . ' = &new ' . $c . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -5]->minor);
     }
@@ -5712,8 +5768,8 @@ static public $yy_action = array(
     }
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5720 "Core.php"
-#line 461 "Core.y"
+#line 5785 "Core.php"
+#line 526 "Core.y"
     function yy_r70(){
     $b = is_string($this->yystack[$this->yyidx + -1]->minor) ? $this->yystack[$this->yyidx + -1]->minor : $this->yystack[$this->yyidx + -1]->minor->string;
     $this->_retvalue = new PHP_Parser_CoreyyToken('new ' . $b . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -1]->minor);
@@ -5722,263 +5778,263 @@ static public $yy_action = array(
         $this->_retvalue[] = array('uses' => 'class', 'name' => trim($this->yystack[$this->yyidx + -1]->minor));
     }
     }
-#line 5730 "Core.php"
-#line 469 "Core.y"
+#line 5795 "Core.php"
+#line 534 "Core.y"
     function yy_r71(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('clone ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + 0]->minor);
     }
-#line 5735 "Core.php"
-#line 472 "Core.y"
+#line 5800 "Core.php"
+#line 537 "Core.y"
     function yy_r72(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' += ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5741 "Core.php"
-#line 476 "Core.y"
+#line 5806 "Core.php"
+#line 541 "Core.y"
     function yy_r73(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' -= ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5747 "Core.php"
-#line 481 "Core.y"
+#line 5812 "Core.php"
+#line 546 "Core.y"
     function yy_r74(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' *= ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5753 "Core.php"
-#line 486 "Core.y"
+#line 5818 "Core.php"
+#line 551 "Core.y"
     function yy_r75(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' /= ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5759 "Core.php"
-#line 491 "Core.y"
+#line 5824 "Core.php"
+#line 556 "Core.y"
     function yy_r76(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' .= ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5765 "Core.php"
-#line 496 "Core.y"
+#line 5830 "Core.php"
+#line 561 "Core.y"
     function yy_r77(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' %= ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5771 "Core.php"
-#line 501 "Core.y"
+#line 5836 "Core.php"
+#line 566 "Core.y"
     function yy_r78(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' &= ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5777 "Core.php"
-#line 506 "Core.y"
+#line 5842 "Core.php"
+#line 571 "Core.y"
     function yy_r79(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' |= ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5783 "Core.php"
-#line 511 "Core.y"
+#line 5848 "Core.php"
+#line 576 "Core.y"
     function yy_r80(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' ^= ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5789 "Core.php"
-#line 516 "Core.y"
+#line 5854 "Core.php"
+#line 581 "Core.y"
     function yy_r81(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' <<= ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5795 "Core.php"
-#line 521 "Core.y"
+#line 5860 "Core.php"
+#line 586 "Core.y"
     function yy_r82(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' >>= ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5801 "Core.php"
-#line 526 "Core.y"
+#line 5866 "Core.php"
+#line 591 "Core.y"
     function yy_r83(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -1]->minor->string . '++', $this->yystack[$this->yyidx + -1]->minor);
     }
-#line 5806 "Core.php"
-#line 529 "Core.y"
+#line 5871 "Core.php"
+#line 594 "Core.y"
     function yy_r84(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('++' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + 0]->minor);
     }
-#line 5811 "Core.php"
-#line 532 "Core.y"
+#line 5876 "Core.php"
+#line 597 "Core.y"
     function yy_r85(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -1]->minor->string . '--', $this->yystack[$this->yyidx + -1]->minor);
     }
-#line 5816 "Core.php"
-#line 535 "Core.y"
+#line 5881 "Core.php"
+#line 600 "Core.y"
     function yy_r86(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('--' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + 0]->minor);
     }
-#line 5821 "Core.php"
-#line 538 "Core.y"
+#line 5886 "Core.php"
+#line 603 "Core.y"
     function yy_r87(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' || ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5827 "Core.php"
-#line 542 "Core.y"
+#line 5892 "Core.php"
+#line 607 "Core.y"
     function yy_r88(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' && ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5833 "Core.php"
-#line 546 "Core.y"
+#line 5898 "Core.php"
+#line 611 "Core.y"
     function yy_r89(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' OR ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5839 "Core.php"
-#line 550 "Core.y"
+#line 5904 "Core.php"
+#line 615 "Core.y"
     function yy_r90(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' AND ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5845 "Core.php"
-#line 554 "Core.y"
+#line 5910 "Core.php"
+#line 619 "Core.y"
     function yy_r91(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' XOR ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5851 "Core.php"
-#line 558 "Core.y"
+#line 5916 "Core.php"
+#line 623 "Core.y"
     function yy_r92(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' | ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5857 "Core.php"
-#line 562 "Core.y"
+#line 5922 "Core.php"
+#line 627 "Core.y"
     function yy_r93(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' & ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5863 "Core.php"
-#line 566 "Core.y"
+#line 5928 "Core.php"
+#line 631 "Core.y"
     function yy_r94(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' ^ ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5869 "Core.php"
-#line 570 "Core.y"
+#line 5934 "Core.php"
+#line 635 "Core.y"
     function yy_r95(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' . ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5875 "Core.php"
-#line 574 "Core.y"
+#line 5940 "Core.php"
+#line 639 "Core.y"
     function yy_r96(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' + ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5881 "Core.php"
-#line 578 "Core.y"
+#line 5946 "Core.php"
+#line 643 "Core.y"
     function yy_r97(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' - ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5887 "Core.php"
-#line 582 "Core.y"
+#line 5952 "Core.php"
+#line 647 "Core.y"
     function yy_r98(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' * ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5893 "Core.php"
-#line 586 "Core.y"
+#line 5958 "Core.php"
+#line 651 "Core.y"
     function yy_r99(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' / ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5899 "Core.php"
-#line 590 "Core.y"
+#line 5964 "Core.php"
+#line 655 "Core.y"
     function yy_r100(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' % ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5905 "Core.php"
-#line 594 "Core.y"
+#line 5970 "Core.php"
+#line 659 "Core.y"
     function yy_r101(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' << ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5911 "Core.php"
-#line 598 "Core.y"
+#line 5976 "Core.php"
+#line 663 "Core.y"
     function yy_r102(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' >> ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5917 "Core.php"
-#line 602 "Core.y"
+#line 5982 "Core.php"
+#line 667 "Core.y"
     function yy_r103(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('+' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + 0]->minor);
     }
-#line 5922 "Core.php"
-#line 605 "Core.y"
+#line 5987 "Core.php"
+#line 670 "Core.y"
     function yy_r104(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('-' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + 0]->minor);
     }
-#line 5927 "Core.php"
-#line 608 "Core.y"
+#line 5992 "Core.php"
+#line 673 "Core.y"
     function yy_r105(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('!' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + 0]->minor);
     }
-#line 5932 "Core.php"
-#line 611 "Core.y"
+#line 5997 "Core.php"
+#line 676 "Core.y"
     function yy_r106(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('~' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + 0]->minor);
     }
-#line 5937 "Core.php"
-#line 614 "Core.y"
+#line 6002 "Core.php"
+#line 679 "Core.y"
     function yy_r107(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' === ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5943 "Core.php"
-#line 618 "Core.y"
+#line 6008 "Core.php"
+#line 683 "Core.y"
     function yy_r108(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' !== ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5949 "Core.php"
-#line 622 "Core.y"
+#line 6014 "Core.php"
+#line 687 "Core.y"
     function yy_r109(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' == ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5955 "Core.php"
-#line 626 "Core.y"
+#line 6020 "Core.php"
+#line 691 "Core.y"
     function yy_r110(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' != ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5961 "Core.php"
-#line 630 "Core.y"
+#line 6026 "Core.php"
+#line 695 "Core.y"
     function yy_r111(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' < ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5967 "Core.php"
-#line 634 "Core.y"
+#line 6032 "Core.php"
+#line 699 "Core.y"
     function yy_r112(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' <= ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5973 "Core.php"
-#line 638 "Core.y"
+#line 6038 "Core.php"
+#line 703 "Core.y"
     function yy_r113(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' > ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5979 "Core.php"
-#line 642 "Core.y"
+#line 6044 "Core.php"
+#line 707 "Core.y"
     function yy_r114(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' >= ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 5985 "Core.php"
-#line 646 "Core.y"
+#line 6050 "Core.php"
+#line 711 "Core.y"
     function yy_r115(){
     $c = is_string($this->yystack[$this->yyidx + 0]->minor) ? $this->yystack[$this->yyidx + 0]->minor : $this->yystack[$this->yyidx + 0]->minor->string;
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' instanceof ' . $c, $this->yystack[$this->yyidx + -2]->minor);
@@ -5986,192 +6042,192 @@ static public $yy_action = array(
         $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
     }
-#line 5994 "Core.php"
-#line 653 "Core.y"
+#line 6059 "Core.php"
+#line 718 "Core.y"
     function yy_r116(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('(' . $this->yystack[$this->yyidx + -1]->minor->string . ')', $this->yystack[$this->yyidx + -1]->minor);
     }
-#line 5999 "Core.php"
-#line 658 "Core.y"
+#line 6064 "Core.php"
+#line 723 "Core.y"
     function yy_r117(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -4]->minor->string . ' ? ' . $this->yystack[$this->yyidx + -2]->minor->string . ' : ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -4]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + -2]->minor;
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 6006 "Core.php"
-#line 664 "Core.y"
+#line 6071 "Core.php"
+#line 729 "Core.y"
     function yy_r119(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('(int) ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + 0]->minor);
     }
-#line 6011 "Core.php"
-#line 667 "Core.y"
+#line 6076 "Core.php"
+#line 732 "Core.y"
     function yy_r120(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('(double) ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + 0]->minor);
     }
-#line 6016 "Core.php"
-#line 670 "Core.y"
+#line 6081 "Core.php"
+#line 735 "Core.y"
     function yy_r121(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('(string) ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + 0]->minor);
     }
-#line 6021 "Core.php"
-#line 673 "Core.y"
+#line 6086 "Core.php"
+#line 738 "Core.y"
     function yy_r122(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('(array) ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + 0]->minor);
     }
-#line 6026 "Core.php"
-#line 676 "Core.y"
+#line 6091 "Core.php"
+#line 741 "Core.y"
     function yy_r123(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('(object) ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + 0]->minor);
     }
-#line 6031 "Core.php"
-#line 679 "Core.y"
+#line 6096 "Core.php"
+#line 744 "Core.y"
     function yy_r124(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('(binary) ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + 0]->minor);
     }
-#line 6036 "Core.php"
-#line 682 "Core.y"
+#line 6101 "Core.php"
+#line 747 "Core.y"
     function yy_r125(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('(bool) ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + 0]->minor);
     }
-#line 6041 "Core.php"
-#line 685 "Core.y"
+#line 6106 "Core.php"
+#line 750 "Core.y"
     function yy_r126(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('(unset) ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + 0]->minor);
     }
-#line 6046 "Core.php"
-#line 688 "Core.y"
+#line 6111 "Core.php"
+#line 753 "Core.y"
     function yy_r127(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('exit ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + 0]->minor);
     }
-#line 6051 "Core.php"
-#line 691 "Core.y"
+#line 6116 "Core.php"
+#line 756 "Core.y"
     function yy_r128(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('@' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + 0]->minor);
     }
-#line 6056 "Core.php"
-#line 694 "Core.y"
+#line 6121 "Core.php"
+#line 759 "Core.y"
     function yy_r129(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + 0]->minor);
     }
-#line 6061 "Core.php"
-#line 697 "Core.y"
+#line 6126 "Core.php"
+#line 762 "Core.y"
     function yy_r130(){
     $this->lex->stopTrackingWhitespace();
     $this->_retvalue = new PHP_Parser_CoreyyToken('array(' . $this->yystack[$this->yyidx + -1]->minor->string . ')', $this->yystack[$this->yyidx + -1]->minor);
     }
-#line 6067 "Core.php"
-#line 701 "Core.y"
+#line 6132 "Core.php"
+#line 766 "Core.y"
     function yy_r131(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('`' . $this->yystack[$this->yyidx + -1]->minor->string . '`');
     }
-#line 6072 "Core.php"
-#line 704 "Core.y"
+#line 6137 "Core.php"
+#line 769 "Core.y"
     function yy_r132(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('print ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + 0]->minor);
     }
-#line 6077 "Core.php"
-#line 708 "Core.y"
+#line 6142 "Core.php"
+#line 773 "Core.y"
     function yy_r133(){$this->lex->trackWhitespace();    }
-#line 6080 "Core.php"
-#line 710 "Core.y"
+#line 6145 "Core.php"
+#line 775 "Core.y"
     function yy_r134(){$this->_retvalue = new PHP_Parser_CoreyyToken('()');    }
-#line 6083 "Core.php"
-#line 711 "Core.y"
+#line 6148 "Core.php"
+#line 776 "Core.y"
     function yy_r135(){$this->_retvalue = new PHP_Parser_CoreyyToken('(' . $this->yystack[$this->yyidx + -1]->minor->string . ')', $this->yystack[$this->yyidx + -1]->minor);    }
-#line 6086 "Core.php"
-#line 728 "Core.y"
+#line 6151 "Core.php"
+#line 793 "Core.y"
     function yy_r141(){$this->_retvalue = '-' . $this->yystack[$this->yyidx + 0]->minor;    }
-#line 6089 "Core.php"
-#line 729 "Core.y"
+#line 6154 "Core.php"
+#line 794 "Core.y"
     function yy_r142(){
     $this->_retvalue = $this->yystack[$this->yyidx + -3]->minor . $this->yystack[$this->yyidx + -2]->minor . $this->yystack[$this->yyidx + -1]->minor . $this->yystack[$this->yyidx + 0]->minor;
     // have to do all because of nested arrays
     $this->lex->stopTrackingWhitespace(); // we only need whitespace for
                                           // array default values
     }
-#line 6097 "Core.php"
-#line 737 "Core.y"
+#line 6162 "Core.php"
+#line 802 "Core.y"
     function yy_r144(){
     $this->lex->trackWhitespace();
     $this->_retvalue = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 6103 "Core.php"
-#line 743 "Core.y"
+#line 6168 "Core.php"
+#line 808 "Core.y"
     function yy_r146(){
     $this->_retvalue = $this->yystack[$this->yyidx + -1]->minor . $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 6108 "Core.php"
-#line 746 "Core.y"
+#line 6173 "Core.php"
+#line 811 "Core.y"
     function yy_r147(){$this->_retvalue = '';    }
-#line 6111 "Core.php"
-#line 748 "Core.y"
+#line 6176 "Core.php"
+#line 813 "Core.y"
     function yy_r148(){
     $this->_retvalue = $this->yystack[$this->yyidx + -4]->minor . $this->yystack[$this->yyidx + -3]->minor . $this->yystack[$this->yyidx + -2]->minor . $this->yystack[$this->yyidx + -1]->minor . $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 6116 "Core.php"
-#line 751 "Core.y"
+#line 6181 "Core.php"
+#line 816 "Core.y"
     function yy_r149(){
     $this->_retvalue = $this->yystack[$this->yyidx + -2]->minor . $this->yystack[$this->yyidx + -1]->minor . $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 6121 "Core.php"
-#line 759 "Core.y"
+#line 6186 "Core.php"
+#line 824 "Core.y"
     function yy_r152(){
     $this->_retvalue = $this->yystack[$this->yyidx + -2]->minor . '::' . $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 6126 "Core.php"
-#line 763 "Core.y"
+#line 6191 "Core.php"
+#line 828 "Core.y"
     function yy_r153(){
     $this->_retvalue = new PHP_Parser_CoreyyToken(' => ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + 0]->minor);
     }
-#line 6131 "Core.php"
-#line 769 "Core.y"
+#line 6196 "Core.php"
+#line 834 "Core.y"
     function yy_r156(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('&' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + 0]->minor);
     }
-#line 6136 "Core.php"
-#line 774 "Core.y"
+#line 6201 "Core.php"
+#line 839 "Core.y"
     function yy_r158(){$this->_retvalue = $this->yystack[$this->yyidx + -2]->minor;    }
-#line 6139 "Core.php"
-#line 783 "Core.y"
+#line 6204 "Core.php"
+#line 848 "Core.y"
     function yy_r163(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor . ' = ' . $this->yystack[$this->yyidx + 0]->minor, array('declare' => $this->yystack[$this->yyidx + -2]->minor, 'default' => $this->yystack[$this->yyidx + 0]->minor));
     }
-#line 6144 "Core.php"
-#line 786 "Core.y"
+#line 6209 "Core.php"
+#line 851 "Core.y"
     function yy_r164(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -4]->minor->string . ', ' . $this->yystack[$this->yyidx + -2]->minor . ' = ' . $this->yystack[$this->yyidx + 0]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + -4]->minor;
     $this->_retvalue[] = array('declare' => $this->yystack[$this->yyidx + -2]->minor, 'default' => $this->yystack[$this->yyidx + 0]->minor);
     }
-#line 6151 "Core.php"
-#line 797 "Core.y"
+#line 6216 "Core.php"
+#line 862 "Core.y"
     function yy_r169(){
     $this->_retvalue = $this->yystack[$this->yyidx + -4]->minor;
     $this->_retvalue[] = $this->yystack[$this->yyidx + -2]->minor;
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 6158 "Core.php"
-#line 802 "Core.y"
+#line 6223 "Core.php"
+#line 867 "Core.y"
     function yy_r170(){
     $this->_retvalue = $this->yystack[$this->yyidx + -3]->minor;
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 6164 "Core.php"
-#line 813 "Core.y"
+#line 6229 "Core.php"
+#line 878 "Core.y"
     function yy_r175(){
     $this->_retvalue = $this->yystack[$this->yyidx + -5]->minor;
     $this->_retvalue[] = $this->yystack[$this->yyidx + -2]->minor;
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 6171 "Core.php"
-#line 820 "Core.y"
+#line 6236 "Core.php"
+#line 885 "Core.y"
     function yy_r177(){
     $this->_retvalue = $this->yystack[$this->yyidx + -6]->minor;
     $this->_retvalue[] = $this->yystack[$this->yyidx + -3]->minor;
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 6178 "Core.php"
-#line 836 "Core.y"
+#line 6243 "Core.php"
+#line 901 "Core.y"
     function yy_r185(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -1]->minor . $this->yystack[$this->yyidx + 0]->minor, array(
             array(
@@ -6182,8 +6238,8 @@ static public $yy_action = array(
             )
         ));
     }
-#line 6190 "Core.php"
-#line 846 "Core.y"
+#line 6255 "Core.php"
+#line 911 "Core.y"
     function yy_r186(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor . '&' . $this->yystack[$this->yyidx + 0]->minor, array(
             array(
@@ -6194,8 +6250,8 @@ static public $yy_action = array(
             )
         ));
     }
-#line 6202 "Core.php"
-#line 856 "Core.y"
+#line 6267 "Core.php"
+#line 921 "Core.y"
     function yy_r187(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -4]->minor . '&' . $this->yystack[$this->yyidx + -2]->minor . ' = ' . $this->yystack[$this->yyidx + 0]->minor, array(
             array(
@@ -6206,8 +6262,8 @@ static public $yy_action = array(
             )
         ));
     }
-#line 6214 "Core.php"
-#line 866 "Core.y"
+#line 6279 "Core.php"
+#line 931 "Core.y"
     function yy_r188(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -3]->minor . $this->yystack[$this->yyidx + -2]->minor . ' = ' . $this->yystack[$this->yyidx + 0]->minor, array(
             array(
@@ -6218,8 +6274,8 @@ static public $yy_action = array(
             )
         ));
     }
-#line 6226 "Core.php"
-#line 876 "Core.y"
+#line 6291 "Core.php"
+#line 941 "Core.y"
     function yy_r189(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -3]->minor->string . ', ' . $this->yystack[$this->yyidx + -1]->minor . $this->yystack[$this->yyidx + 0]->minor, $this->yystack[$this->yyidx + -3]->minor);
     $this->_retvalue[] = 
@@ -6230,8 +6286,8 @@ static public $yy_action = array(
             'default' => null,
         );
     }
-#line 6238 "Core.php"
-#line 886 "Core.y"
+#line 6303 "Core.php"
+#line 951 "Core.y"
     function yy_r190(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -4]->minor->string . ', ' . $this->yystack[$this->yyidx + -2]->minor . '&' . $this->yystack[$this->yyidx + 0]->minor, $this->yystack[$this->yyidx + -4]->minor);
     $this->_retvalue[] = 
@@ -6242,8 +6298,8 @@ static public $yy_action = array(
             'default' => null,
         );
     }
-#line 6250 "Core.php"
-#line 896 "Core.y"
+#line 6315 "Core.php"
+#line 961 "Core.y"
     function yy_r191(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -6]->minor->string . ', ' . $this->yystack[$this->yyidx + -4]->minor . $this->yystack[$this->yyidx + -2]->minor . ' = ' . $this->yystack[$this->yyidx + 0]->minor, $this->yystack[$this->yyidx + -6]->minor);
     $this->_retvalue[] = 
@@ -6254,8 +6310,8 @@ static public $yy_action = array(
             'default' => $this->yystack[$this->yyidx + 0]->minor,
         );
     }
-#line 6262 "Core.php"
-#line 906 "Core.y"
+#line 6327 "Core.php"
+#line 971 "Core.y"
     function yy_r192(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -5]->minor->string . ', ' . $this->yystack[$this->yyidx + -3]->minor . $this->yystack[$this->yyidx + -2]->minor . ' = ' . $this->yystack[$this->yyidx + 0]->minor, $this->yystack[$this->yyidx + -5]->minor);
     $this->_retvalue[] = 
@@ -6266,11 +6322,11 @@ static public $yy_action = array(
             'default' => $this->yystack[$this->yyidx + 0]->minor,
         );
     }
-#line 6274 "Core.php"
-#line 924 "Core.y"
+#line 6339 "Core.php"
+#line 989 "Core.y"
     function yy_r197(){$this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + 0]->minor);    }
-#line 6277 "Core.php"
-#line 926 "Core.y"
+#line 6342 "Core.php"
+#line 991 "Core.y"
     function yy_r199(){
     if ($this->yystack[$this->yyidx + 0]->minor instanceof PHP_Parser_CoreyyToken) {
         $b = $this->yystack[$this->yyidx + 0]->minor->string;
@@ -6278,8 +6334,8 @@ static public $yy_action = array(
         $b = (string) $this->yystack[$this->yyidx + 0]->minor;
     }
     $this->_retvalue = new PHP_Parser_CoreyyToken('&' . $b, $this->yystack[$this->yyidx + 0]->minor);    }
-#line 6286 "Core.php"
-#line 933 "Core.y"
+#line 6351 "Core.php"
+#line 998 "Core.y"
     function yy_r200(){
     if ($this->yystack[$this->yyidx + 0]->minor instanceof PHP_Parser_CoreyyToken) {
         $b = $this->yystack[$this->yyidx + 0]->minor->string;
@@ -6289,8 +6345,8 @@ static public $yy_action = array(
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ', ' . $b, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 6297 "Core.php"
-#line 951 "Core.y"
+#line 6362 "Core.php"
+#line 1016 "Core.y"
     function yy_r202(){
     if ($this->yystack[$this->yyidx + 0]->minor instanceof PHP_Parser_CoreyyToken) {
         $b = $this->yystack[$this->yyidx + 0]->minor->string;
@@ -6300,49 +6356,49 @@ static public $yy_action = array(
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -3]->minor->string . ', &' . $b, $this->yystack[$this->yyidx + -3]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 6308 "Core.php"
-#line 961 "Core.y"
+#line 6373 "Core.php"
+#line 1026 "Core.y"
     function yy_r203(){
     $this->_retvalue = $this->yystack[$this->yyidx + -2]->minor;
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 6314 "Core.php"
-#line 967 "Core.y"
+#line 6379 "Core.php"
+#line 1032 "Core.y"
     function yy_r205(){$this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + 0]->minor, array('global' => $this->yystack[$this->yyidx + 0]->minor));    }
-#line 6317 "Core.php"
-#line 968 "Core.y"
+#line 6382 "Core.php"
+#line 1033 "Core.y"
     function yy_r206(){$this->_retvalue = new PHP_Parser_CoreyyToken('$' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + 0]->minor);    }
-#line 6320 "Core.php"
-#line 969 "Core.y"
+#line 6385 "Core.php"
+#line 1034 "Core.y"
     function yy_r207(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('${' . $this->yystack[$this->yyidx + -1]->minor->string . '}', $this->yystack[$this->yyidx + -1]->minor);
     }
-#line 6325 "Core.php"
-#line 974 "Core.y"
+#line 6390 "Core.php"
+#line 1039 "Core.y"
     function yy_r208(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('');
     $this->_retvalue[] = $this->yystack[$this->yyidx + -2]->minor;
     $this->_retvalue[] = array('static' => $this->yystack[$this->yyidx + 0]->minor, 'default' => null);
     }
-#line 6332 "Core.php"
-#line 979 "Core.y"
+#line 6397 "Core.php"
+#line 1044 "Core.y"
     function yy_r209(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('');
     $this->_retvalue[] = $this->yystack[$this->yyidx + -4]->minor;
     $this->_retvalue[] = array('static' => $this->yystack[$this->yyidx + -2]->minor, 'default' => $this->yystack[$this->yyidx + 0]->minor);
     }
-#line 6339 "Core.php"
-#line 984 "Core.y"
+#line 6404 "Core.php"
+#line 1049 "Core.y"
     function yy_r210(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('', array('static' => $this->yystack[$this->yyidx + 0]->minor, 'default' => null));
     }
-#line 6344 "Core.php"
-#line 987 "Core.y"
+#line 6409 "Core.php"
+#line 1052 "Core.y"
     function yy_r211(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('', array('static' => $this->yystack[$this->yyidx + -2]->minor, 'default' => $this->yystack[$this->yyidx + 0]->minor));
     }
-#line 6349 "Core.php"
-#line 997 "Core.y"
+#line 6414 "Core.php"
+#line 1062 "Core.y"
     function yy_r214(){
     $a = array();
     foreach ($this->yystack[$this->yyidx + -1]->minor as $item) {
@@ -6352,12 +6408,15 @@ static public $yy_action = array(
             'line' => $item['line'],
             'default' => $item['default'],
             'modifiers' => $this->yystack[$this->yyidx + -2]->minor,
+            'doc' => $item['doc'],
+            'parseddoc' => $item['parseddoc'],
+            'docline' => $item['docline'],
         );
     }
     $this->_retvalue = new PHP_Parser_CoreyyToken('', $a);
     }
-#line 6364 "Core.php"
-#line 1010 "Core.y"
+#line 6432 "Core.php"
+#line 1078 "Core.y"
     function yy_r215(){
     $a = array();
     foreach ($this->yystack[$this->yyidx + -1]->minor as $item) {
@@ -6366,109 +6425,153 @@ static public $yy_action = array(
             'name' => $item['name'],
             'line' => $item['line'],
             'value' => $item['value'],
+            'doc' => $item['doc'],
+            'parseddoc' => $item['parseddoc'],
+            'docline' => $item['docline'],
         );
     }
     $this->_retvalue = new PHP_Parser_CoreyyToken('', $a);
     }
-#line 6378 "Core.php"
-#line 1023 "Core.y"
+#line 6449 "Core.php"
+#line 1093 "Core.y"
+    function yy_r216(){
+    $this->_retvalue = array($this->lex->line, $lastcom);
+    }
+#line 6454 "Core.php"
+#line 1096 "Core.y"
     function yy_r217(){
+    list($doc, $parsed, $line) = $this->yystack[$this->yyidx + -6]->minor[1];
     $this->_retvalue = new PHP_Parser_CoreyyToken('', array(
             array(
                 'type' => 'method',
                 'name' => $this->yystack[$this->yyidx + -4]->minor,
-                'startline' => $this->yystack[$this->yyidx + -6]->minor,
+                'startline' => $this->yystack[$this->yyidx + -6]->minor[0],
                 'endline' => $this->lex->line,
                 'parameters' => $this->yystack[$this->yyidx + -2]->minor->metadata,
                 'modifiers' => $this->yystack[$this->yyidx + -7]->minor,
-                'info' => $this->yystack[$this->yyidx + 0]->minor->metadata
+                'info' => $this->yystack[$this->yyidx + 0]->minor->metadata,
+                'doc' => $doc,
+                'parseddoc' => $parsed,
+                'docline' => $line,
             )
         ));
     }
-#line 6393 "Core.php"
-#line 1039 "Core.y"
+#line 6473 "Core.php"
+#line 1116 "Core.y"
     function yy_r219(){
     $this->_retvalue = $this->yystack[$this->yyidx + -1]->minor;
     }
-#line 6398 "Core.php"
-#line 1044 "Core.y"
+#line 6478 "Core.php"
+#line 1121 "Core.y"
     function yy_r221(){$this->_retvalue = array('public');    }
-#line 6401 "Core.php"
-#line 1049 "Core.y"
+#line 6481 "Core.php"
+#line 1126 "Core.y"
     function yy_r224(){$this->_retvalue = array($this->yystack[$this->yyidx + 0]->minor);    }
-#line 6404 "Core.php"
-#line 1055 "Core.y"
+#line 6484 "Core.php"
+#line 1132 "Core.y"
     function yy_r226(){$this->_retvalue = strtolower($this->yystack[$this->yyidx + 0]->minor);    }
-#line 6407 "Core.php"
-#line 1057 "Core.y"
+#line 6487 "Core.php"
+#line 1134 "Core.y"
     function yy_r227(){
     $this->_retvalue = array($this->yystack[$this->yyidx + 0]->minor, $this->lex->line);
     }
-#line 6412 "Core.php"
-#line 1061 "Core.y"
+#line 6492 "Core.php"
+#line 1138 "Core.y"
     function yy_r228(){
+    list($doc, $parsed, $line) = $this->lex->getLastComment();
     $this->_retvalue = $this->yystack[$this->yyidx + -2]->minor;
     $this->_retvalue[] = array(
         'name' => $this->yystack[$this->yyidx + 0]->minor[0],
         'default' => null,
         'line' => $this->yystack[$this->yyidx + 0]->minor[1],
+        'doc' => $doc,
+        'parseddoc' => $parsed,
+        'docline' => $line,
     );
     }
-#line 6422 "Core.php"
-#line 1069 "Core.y"
+#line 6506 "Core.php"
+#line 1150 "Core.y"
     function yy_r229(){
+    list($doc, $parsed, $line) = $this->lex->getLastComment();
     $this->_retvalue = $this->yystack[$this->yyidx + -4]->minor;
     $this->_retvalue[] = array(
         'name' => $this->yystack[$this->yyidx + -2]->minor[0],
         'default' => $this->yystack[$this->yyidx + 0]->minor,
-        'line' => $this->yystack[$this->yyidx + -2]->minor[1]
+        'line' => $this->yystack[$this->yyidx + -2]->minor[1],
+        'doc' => $doc,
+        'parseddoc' => $parsed,
+        'docline' => $line,
     );
     }
-#line 6432 "Core.php"
-#line 1077 "Core.y"
+#line 6520 "Core.php"
+#line 1162 "Core.y"
     function yy_r230(){
+    list($doc, $parsed, $line) = $this->lex->getLastComment();
     $this->_retvalue = array(
             array(
                 'name' => $this->yystack[$this->yyidx + 0]->minor,
                 'default' => null,
                 'line' => $this->lex->line,
+                'doc' => $doc,
+                'parseddoc' => $parsed,
+                'docline' => $line,
             )
         );
     }
-#line 6443 "Core.php"
-#line 1086 "Core.y"
+#line 6535 "Core.php"
+#line 1175 "Core.y"
     function yy_r231(){
+    list($doc, $parsed, $line) = $this->lex->getLastComment();
     $this->_retvalue = array(
             array(
                 'name' => $this->yystack[$this->yyidx + -2]->minor[0],
                 'default' => $this->yystack[$this->yyidx + 0]->minor,
                 'line' => $this->yystack[$this->yyidx + -2]->minor[1],
+                'doc' => $doc,
+                'parseddoc' => $parsed,
+                'docline' => $line,
             )
         );
     }
-#line 6454 "Core.php"
-#line 1100 "Core.y"
+#line 6550 "Core.php"
+#line 1189 "Core.y"
+    function yy_r232(){
+    $doc = $this->lex->getLastComment();
+    $this->_retvalue = array($this->yystack[$this->yyidx + 0]->minor, $this->lex->line, $doc);
+    }
+#line 6556 "Core.php"
+#line 1194 "Core.y"
     function yy_r233(){
     $this->_retvalue = $this->yystack[$this->yyidx + -4]->minor;
-    $this->_retvalue[] = array('name' => $this->yystack[$this->yyidx + -2]->minor[0], 'value' => $this->yystack[$this->yyidx + 0]->minor, 'line' => $this->yystack[$this->yyidx + -2]->minor[1]);
-    }
-#line 6460 "Core.php"
-#line 1104 "Core.y"
-    function yy_r234(){
-    $this->_retvalue = array(
-        array('name' => $this->yystack[$this->yyidx + -2]->minor[0], 'value' => $this->yystack[$this->yyidx + 0]->minor, 'line' => $this->yystack[$this->yyidx + -2]->minor[1])
+    list($doc, $parsed, $line) = $this->yystack[$this->yyidx + -2]->minor[2];
+    $this->_retvalue[] = array('name' => $this->yystack[$this->yyidx + -2]->minor[0], 'value' => $this->yystack[$this->yyidx + 0]->minor, 'line' => $this->yystack[$this->yyidx + -2]->minor[1],
+       'doc' => $doc,
+       'parseddoc' => $parsed,
+       'docline' => $line,
     );
     }
-#line 6467 "Core.php"
-#line 1110 "Core.y"
+#line 6567 "Core.php"
+#line 1203 "Core.y"
+    function yy_r234(){
+    list($doc, $parsed, $line) = $this->yystack[$this->yyidx + -2]->minor[2];
+    $this->_retvalue = array(
+        array('name' => $this->yystack[$this->yyidx + -2]->minor[0], 'value' => $this->yystack[$this->yyidx + 0]->minor, 'line' => $this->yystack[$this->yyidx + -2]->minor[1],
+           'doc' => $doc,
+           'parseddoc' => $parsed,
+           'docline' => $line,
+        )
+    );
+    }
+#line 6579 "Core.php"
+#line 1214 "Core.y"
     function yy_r235(){$this->_retvalue = $this->yystack[$this->yyidx + -2]->minor;$this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;    }
-#line 6470 "Core.php"
-#line 1122 "Core.y"
+#line 6582 "Core.php"
+#line 1226 "Core.y"
     function yy_r241(){
     $this->_retvalue = '(' . $this->yystack[$this->yyidx + -1]->minor . ')';
     }
-#line 6475 "Core.php"
-#line 1132 "Core.y"
+#line 6587 "Core.php"
+#line 1236 "Core.y"
     function yy_r245(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -4]->minor->string . '->' . $this->yystack[$this->yyidx + -2]->minor->string .
         $this->yystack[$this->yyidx + -1]->minor->string . $this->yystack[$this->yyidx + 0]->minor->string, array());
@@ -6490,24 +6593,24 @@ static public $yy_action = array(
     }
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 6498 "Core.php"
-#line 1158 "Core.y"
+#line 6610 "Core.php"
+#line 1262 "Core.y"
     function yy_r249(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('->' . $this->yystack[$this->yyidx + -1]->minor->string . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -1]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 6504 "Core.php"
-#line 1163 "Core.y"
+#line 6616 "Core.php"
+#line 1267 "Core.y"
     function yy_r250(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('(' . $this->yystack[$this->yyidx + -1]->minor . ')', $this->yystack[$this->yyidx + -1]->minor);
     }
-#line 6509 "Core.php"
-#line 1169 "Core.y"
+#line 6621 "Core.php"
+#line 1273 "Core.y"
     function yy_r253(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -1]->minor . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + 0]->minor);
     }
-#line 6514 "Core.php"
-#line 1173 "Core.y"
+#line 6626 "Core.php"
+#line 1277 "Core.y"
     function yy_r254(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor . '::' . $this->yystack[$this->yyidx + 0]->minor->string, array(
         array(
@@ -6516,232 +6619,266 @@ static public $yy_action = array(
     ));
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 6524 "Core.php"
-#line 1191 "Core.y"
+#line 6636 "Core.php"
+#line 1295 "Core.y"
     function yy_r260(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -3]->minor->string . '[' . $this->yystack[$this->yyidx + -1]->minor->string . ']', array());
     $this->_retvalue[] = $this->yystack[$this->yyidx + -3]->minor;
     $this->_retvalue[] = $this->yystack[$this->yyidx + -1]->minor;
     }
-#line 6531 "Core.php"
-#line 1196 "Core.y"
+#line 6643 "Core.php"
+#line 1300 "Core.y"
     function yy_r261(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -3]->minor->string . '{' . $this->yystack[$this->yyidx + -1]->minor->string . '}', array());
     $this->_retvalue[] = $this->yystack[$this->yyidx + -3]->minor;
     $this->_retvalue[] = $this->yystack[$this->yyidx + -1]->minor;
     }
-#line 6538 "Core.php"
-#line 1204 "Core.y"
+#line 6650 "Core.php"
+#line 1308 "Core.y"
     function yy_r264(){$this->_retvalue = new PHP_Parser_CoreyyToken('${' . $this->yystack[$this->yyidx + -1]->minor->string . '}', $this->yystack[$this->yyidx + -1]->minor);    }
-#line 6541 "Core.php"
-#line 1212 "Core.y"
+#line 6653 "Core.php"
+#line 1316 "Core.y"
     function yy_r269(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -3]->minor->string . '[' . $this->yystack[$this->yyidx + -1]->minor->string . ']', $this->yystack[$this->yyidx + -3]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + -1]->minor;
     }
-#line 6547 "Core.php"
-#line 1216 "Core.y"
+#line 6659 "Core.php"
+#line 1320 "Core.y"
     function yy_r270(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -3]->minor->string . '{' . $this->yystack[$this->yyidx + -1]->minor->string . '}', $this->yystack[$this->yyidx + -3]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + -1]->minor;
     }
-#line 6553 "Core.php"
-#line 1223 "Core.y"
+#line 6665 "Core.php"
+#line 1327 "Core.y"
     function yy_r273(){$this->_retvalue = new PHP_Parser_CoreyyToken('{' . $this->yystack[$this->yyidx + -1]->minor->string . '}', $this->yystack[$this->yyidx + -1]->minor);    }
-#line 6556 "Core.php"
-#line 1225 "Core.y"
+#line 6668 "Core.php"
+#line 1329 "Core.y"
     function yy_r274(){$this->_retvalue = '$';    }
-#line 6559 "Core.php"
-#line 1226 "Core.y"
+#line 6671 "Core.php"
+#line 1330 "Core.y"
     function yy_r275(){$this->_retvalue = $this->yystack[$this->yyidx + -1]->minor . '$';    }
-#line 6562 "Core.php"
-#line 1228 "Core.y"
+#line 6674 "Core.php"
+#line 1332 "Core.y"
     function yy_r276(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ', ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 6568 "Core.php"
-#line 1235 "Core.y"
+#line 6680 "Core.php"
+#line 1339 "Core.y"
     function yy_r279(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('list(' . $this->yystack[$this->yyidx + -1]->minor->string . ')', $this->yystack[$this->yyidx + -1]->minor);
     }
-#line 6573 "Core.php"
-#line 1240 "Core.y"
+#line 6685 "Core.php"
+#line 1344 "Core.y"
     function yy_r281(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -1]->minor->string . $this->yystack[$this->yyidx + 0]->minor, $this->yystack[$this->yyidx + -1]->minor);
     }
-#line 6578 "Core.php"
-#line 1245 "Core.y"
+#line 6690 "Core.php"
+#line 1349 "Core.y"
     function yy_r283(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -3]->minor->string . ' => &' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -3]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 6584 "Core.php"
-#line 1253 "Core.y"
+#line 6696 "Core.php"
+#line 1357 "Core.y"
     function yy_r286(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -4]->minor->string . ', ' . $this->yystack[$this->yyidx + -2]->minor->string . ' => ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -4]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + -2]->minor;
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 6591 "Core.php"
-#line 1262 "Core.y"
+#line 6703 "Core.php"
+#line 1366 "Core.y"
     function yy_r288(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . ' => ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -2]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 6597 "Core.php"
-#line 1266 "Core.y"
+#line 6709 "Core.php"
+#line 1370 "Core.y"
     function yy_r289(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -5]->minor->string . ', ' . $this->yystack[$this->yyidx + -3]->minor->string . ' => &' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -5]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + -3]->minor;
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 6604 "Core.php"
-#line 1271 "Core.y"
+#line 6716 "Core.php"
+#line 1375 "Core.y"
     function yy_r290(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -3]->minor->string . ', &' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -3]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 6610 "Core.php"
-#line 1277 "Core.y"
+#line 6722 "Core.php"
+#line 1381 "Core.y"
     function yy_r291(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -1]->minor->string . $this->yystack[$this->yyidx + 0]->minor, $this->yystack[$this->yyidx + -1]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 6616 "Core.php"
-#line 1296 "Core.y"
+#line 6728 "Core.php"
+#line 1400 "Core.y"
     function yy_r297(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -1]->minor->string . '[', $this->yystack[$this->yyidx + -1]->minor);
     }
-#line 6621 "Core.php"
-#line 1299 "Core.y"
+#line 6733 "Core.php"
+#line 1403 "Core.y"
     function yy_r298(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -1]->minor->string . ']', $this->yystack[$this->yyidx + -1]->minor);
     }
-#line 6626 "Core.php"
-#line 1302 "Core.y"
+#line 6738 "Core.php"
+#line 1406 "Core.y"
     function yy_r299(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -1]->minor->string . '{', $this->yystack[$this->yyidx + -1]->minor);
     }
-#line 6631 "Core.php"
-#line 1305 "Core.y"
+#line 6743 "Core.php"
+#line 1409 "Core.y"
     function yy_r300(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -1]->minor->string . '}', $this->yystack[$this->yyidx + -1]->minor);
     }
-#line 6636 "Core.php"
-#line 1308 "Core.y"
+#line 6748 "Core.php"
+#line 1412 "Core.y"
     function yy_r301(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -1]->minor->string . '->', $this->yystack[$this->yyidx + -1]->minor);
     }
-#line 6641 "Core.php"
-#line 1314 "Core.y"
+#line 6753 "Core.php"
+#line 1418 "Core.y"
     function yy_r304(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -3]->minor . '[' . $this->yystack[$this->yyidx + -1]->minor . ']');
     }
-#line 6646 "Core.php"
-#line 1317 "Core.y"
+#line 6758 "Core.php"
+#line 1421 "Core.y"
     function yy_r305(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor . '->' . $this->yystack[$this->yyidx + 0]->minor);
     }
-#line 6651 "Core.php"
-#line 1323 "Core.y"
+#line 6763 "Core.php"
+#line 1427 "Core.y"
     function yy_r307(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('${' . $this->yystack[$this->yyidx + -4]->minor . '[' . $this->yystack[$this->yyidx + -2]->minor->string . ']}', $this->yystack[$this->yyidx + -2]->minor);
     }
-#line 6656 "Core.php"
-#line 1326 "Core.y"
+#line 6768 "Core.php"
+#line 1430 "Core.y"
     function yy_r308(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('{' . $this->yystack[$this->yyidx + -1]->minor->string, '}', $this->yystack[$this->yyidx + -1]->minor);
     }
-#line 6661 "Core.php"
-#line 1330 "Core.y"
+#line 6773 "Core.php"
+#line 1434 "Core.y"
     function yy_r309(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('isset(' . $this->yystack[$this->yyidx + -1]->minor->string . ')', $this->yystack[$this->yyidx + -1]->minor);
     }
-#line 6666 "Core.php"
-#line 1333 "Core.y"
+#line 6778 "Core.php"
+#line 1437 "Core.y"
     function yy_r310(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('empty(' . $this->yystack[$this->yyidx + -1]->minor->string . ')', $this->yystack[$this->yyidx + -1]->minor);
     }
-#line 6671 "Core.php"
-#line 1336 "Core.y"
-    function yy_r311(){$this->_retvalue=$this->lex->line;    }
-#line 6674 "Core.php"
-#line 1337 "Core.y"
+#line 6783 "Core.php"
+#line 1440 "Core.y"
+    function yy_r311(){$this->_retvalue=array($this->lex->line, $this->lex->getLastComment());    }
+#line 6786 "Core.php"
+#line 1441 "Core.y"
     function yy_r312(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('include ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + 0]->minor);
+    list($doc, $parsed, $line) = $this->yystack[$this->yyidx + -1]->minor[1];
     $this->_retvalue[] = array(
         'type' => 'include',
         'file' => $this->yystack[$this->yyidx + 0]->minor->string,
-        'line' => $this->yystack[$this->yyidx + -1]->minor,
+        'line' => $this->yystack[$this->yyidx + -1]->minor[0],
+        'doc' => $doc,
+        'parseddoc' => $parsed,
+        'docline' => $line,
     );
     $this->includes[] = array(
         'type' => 'include',
         'file' => $this->yystack[$this->yyidx + 0]->minor->string,
-        'line' => $this->yystack[$this->yyidx + -1]->minor,
+        'line' => $this->yystack[$this->yyidx + -1]->minor[0],
+        'doc' => $doc,
+        'parseddoc' => $parsed,
+        'docline' => $line,
     );
     }
-#line 6689 "Core.php"
-#line 1351 "Core.y"
+#line 6808 "Core.php"
+#line 1461 "Core.y"
+    function yy_r313(){$this->_retvalue=$this->lex->line;    }
+#line 6811 "Core.php"
+#line 1462 "Core.y"
     function yy_r314(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('include_once ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + 0]->minor);
+    list($doc, $parsed, $line) = $this->yystack[$this->yyidx + -1]->minor[1];
     $this->_retvalue[] = array(
         'type' => 'include_once',
         'file' => $this->yystack[$this->yyidx + 0]->minor->string,
-        'line' => $this->yystack[$this->yyidx + -1]->minor,
+        'line' => $this->yystack[$this->yyidx + -1]->minor[0],
+        'doc' => $doc,
+        'parseddoc' => $parsed,
+        'docline' => $line,
     );
     $this->includes[] = array(
         'type' => 'include_once',
         'file' => $this->yystack[$this->yyidx + 0]->minor->string,
-        'line' => $this->yystack[$this->yyidx + -1]->minor,
+        'line' => $this->yystack[$this->yyidx + -1]->minor[0],
+        'doc' => $doc,
+        'parseddoc' => $parsed,
+        'docline' => $line,
     );
     }
-#line 6704 "Core.php"
-#line 1364 "Core.y"
+#line 6833 "Core.php"
+#line 1482 "Core.y"
     function yy_r315(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('eval ' . $this->yystack[$this->yyidx + -1]->minor->string, $this->yystack[$this->yyidx + -1]->minor);
     }
-#line 6709 "Core.php"
-#line 1368 "Core.y"
+#line 6838 "Core.php"
+#line 1486 "Core.y"
     function yy_r317(){
+    list($doc, $parsed, $line) = $this->yystack[$this->yyidx + -1]->minor[1];
     $this->_retvalue = new PHP_Parser_CoreyyToken('require ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + 0]->minor);
     $this->_retvalue[] = array(
         'type' => 'require',
         'file' => $this->yystack[$this->yyidx + 0]->minor->string,
-        'line' => $this->yystack[$this->yyidx + -1]->minor,
+        'line' => $this->yystack[$this->yyidx + -1]->minor[0],
+        'doc' => $doc,
+        'parseddoc' => $parsed,
+        'docline' => $line,
     );
     $this->includes[] = array(
         'type' => 'require',
         'file' => $this->yystack[$this->yyidx + 0]->minor->string,
-        'line' => $this->yystack[$this->yyidx + -1]->minor,
+        'line' => $this->yystack[$this->yyidx + -1]->minor[0],
+        'doc' => $doc,
+        'parseddoc' => $parsed,
+        'docline' => $line,
     );
     }
-#line 6724 "Core.php"
-#line 1382 "Core.y"
+#line 6860 "Core.php"
+#line 1506 "Core.y"
+    function yy_r318(){$this->_retvalue=array($this->lex->line,$this->lex->getLastComment());    }
+#line 6863 "Core.php"
+#line 1507 "Core.y"
     function yy_r319(){
+    list($doc, $parsed, $line) = $this->yystack[$this->yyidx + -1]->minor[1];
     $this->_retvalue = new PHP_Parser_CoreyyToken('require_once ' . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + 0]->minor);
     $this->_retvalue[] = array(
         'type' => 'require_once',
         'file' => $this->yystack[$this->yyidx + 0]->minor->string,
-        'line' => $this->yystack[$this->yyidx + -1]->minor,
+        'line' => $this->yystack[$this->yyidx + -1]->minor[0],
+        'doc' => $doc,
+        'parseddoc' => $parsed,
+        'docline' => $line,
     );
     $this->includes[] = array(
         'type' => 'require_once',
         'file' => $this->yystack[$this->yyidx + 0]->minor->string,
-        'line' => $this->yystack[$this->yyidx + -1]->minor,
+        'line' => $this->yystack[$this->yyidx + -1]->minor[0],
+        'doc' => $doc,
+        'parseddoc' => $parsed,
+        'docline' => $line,
     );
     }
-#line 6739 "Core.php"
-#line 1402 "Core.y"
+#line 6885 "Core.php"
+#line 1534 "Core.y"
     function yy_r322(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor . '::' . $this->yystack[$this->yyidx + 0]->minor, array('usedclass' => $this->yystack[$this->yyidx + -2]->minor));
     $this->_retvalue[] = array('usedclassconstant' => $this->yystack[$this->yyidx + -2]->minor . '::' . $this->yystack[$this->yyidx + 0]->minor);
     }
-#line 6745 "Core.php"
-#line 1409 "Core.y"
+#line 6891 "Core.php"
+#line 1541 "Core.y"
     function yy_r324(){$this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -3]->minor . '(' . $this->yystack[$this->yyidx + -1]->minor->string . ')', $this->yystack[$this->yyidx + -1]->minor);    }
-#line 6748 "Core.php"
-#line 1410 "Core.y"
+#line 6894 "Core.php"
+#line 1542 "Core.y"
     function yy_r325(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -5]->minor . '::' . $this->yystack[$this->yyidx + -3]->minor . '(' . $this->yystack[$this->yyidx + -1]->minor->string . ')',
             $this->yystack[$this->yyidx + -1]->minor);
@@ -6755,8 +6892,8 @@ static public $yy_action = array(
         'name' => trim($this->yystack[$this->yyidx + -3]->minor),
     );
     }
-#line 6763 "Core.php"
-#line 1423 "Core.y"
+#line 6909 "Core.php"
+#line 1555 "Core.y"
     function yy_r326(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -5]->minor . '::' . $this->yystack[$this->yyidx + -3]->minor->string . '(' . $this->yystack[$this->yyidx + -1]->minor->string . ')', $this->yystack[$this->yyidx + -3]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + -1]->minor;
@@ -6765,55 +6902,55 @@ static public $yy_action = array(
         'name' => trim($this->yystack[$this->yyidx + -5]->minor),
     );
     }
-#line 6773 "Core.php"
-#line 1431 "Core.y"
+#line 6919 "Core.php"
+#line 1563 "Core.y"
     function yy_r327(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -3]->minor->string . '(' . $this->yystack[$this->yyidx + -1]->minor->string . ')', $this->yystack[$this->yyidx + -3]->minor);
     $this->_retvalue[] = $this->yystack[$this->yyidx + -1]->minor;
     }
-#line 6779 "Core.php"
-#line 1440 "Core.y"
+#line 6925 "Core.php"
+#line 1572 "Core.y"
     function yy_r332(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('"' . $this->yystack[$this->yyidx + -1]->minor->string . '"', $this->yystack[$this->yyidx + -1]->minor);
     }
-#line 6784 "Core.php"
-#line 1443 "Core.y"
+#line 6930 "Core.php"
+#line 1575 "Core.y"
     function yy_r333(){
     $this->_retvalue = new PHP_Parser_CoreyyToken("'" . $this->yystack[$this->yyidx + -1]->minor->string . "'", $this->yystack[$this->yyidx + -1]->minor);
     }
-#line 6789 "Core.php"
-#line 1446 "Core.y"
+#line 6935 "Core.php"
+#line 1578 "Core.y"
     function yy_r334(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -2]->minor->string . $this->yystack[$this->yyidx + -1]->minor->string . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -1]->minor);
     }
-#line 6794 "Core.php"
-#line 1453 "Core.y"
+#line 6940 "Core.php"
+#line 1585 "Core.y"
     function yy_r337(){
     $this->_retvalue = new PHP_Parser_CoreyyToken($this->yystack[$this->yyidx + -3]->minor->string . '->' . $this->yystack[$this->yyidx + -1]->minor->string . $this->yystack[$this->yyidx + 0]->minor->string, $this->yystack[$this->yyidx + -3]->minor);
     $this->_retvalue[] = array('usedmember' => array($this->yystack[$this->yyidx + -3]->minor->string, $this->yystack[$this->yyidx + -1]->minor->string));
     $this->_retvalue[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 6801 "Core.php"
-#line 1460 "Core.y"
+#line 6947 "Core.php"
+#line 1592 "Core.y"
     function yy_r339(){
     $this->_retvalue = $this->yystack[$this->yyidx + -1]->minor;
     $this->yystack[$this->yyidx + -1]->minor[] = $this->yystack[$this->yyidx + 0]->minor;
     }
-#line 6807 "Core.php"
-#line 1466 "Core.y"
+#line 6953 "Core.php"
+#line 1598 "Core.y"
     function yy_r341(){
     $this->_retvalue = new PHP_Parser_CoreyyToken('->' . $this->yystack[$this->yyidx + 0]->minor->string, array('usedmember' => $this->yystack[$this->yyidx + 0]->minor->string));
     }
-#line 6812 "Core.php"
-#line 1475 "Core.y"
+#line 6958 "Core.php"
+#line 1607 "Core.y"
     function yy_r344(){$this->_retvalue = ',';    }
-#line 6815 "Core.php"
-#line 1487 "Core.y"
+#line 6961 "Core.php"
+#line 1619 "Core.y"
     function yy_r350(){$this->_retvalue = true;    }
-#line 6818 "Core.php"
-#line 1488 "Core.y"
+#line 6964 "Core.php"
+#line 1620 "Core.y"
     function yy_r351(){$this->_retvalue = false;    }
-#line 6821 "Core.php"
+#line 6967 "Core.php"
 
     /**
      * placeholder for the left hand side in a reduce operation.
@@ -6942,7 +7079,7 @@ static public $yy_action = array(
     }
     throw new Exception('Unexpected ' . $this->tokenName($yymajor) . '(' . $TOKEN
         . '), expected one of: ' . implode(',', $expect));
-#line 6951 "Core.php"
+#line 7097 "Core.php"
     }
 
     /**
@@ -6962,7 +7099,7 @@ static public $yy_action = array(
         ** parser accepts */
 #line 120 "Core.y"
 
-#line 6972 "Core.php"
+#line 7118 "Core.php"
     }
 
     /**

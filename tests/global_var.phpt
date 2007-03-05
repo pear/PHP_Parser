@@ -37,7 +37,7 @@ var_dump($b->globals);
 --EXPECT--
 array(1) {
   [0]=>
-  array(4) {
+  array(7) {
     ["type"]=>
     string(6) "global"
     ["name"]=>
@@ -46,6 +46,32 @@ array(1) {
     int(6)
     ["default"]=>
     string(11) ""holy crap""
+    ["doc"]=>
+    string(48) "/**
+ * @global string $GLOBALS['hi there']
+ */"
+    ["parseddoc"]=>
+    array(2) {
+      ["desc"]=>
+      string(3) "
+ "
+      ["tags"]=>
+      array(1) {
+        ["global"]=>
+        array(1) {
+          [0]=>
+          array(2) {
+            ["tag"]=>
+            string(6) "global"
+            ["text"]=>
+            string(30) " string $GLOBALS['hi there']
+"
+          }
+        }
+      }
+    }
+    ["docline"]=>
+    int(3)
   }
 }
 array(0) {
@@ -60,7 +86,7 @@ array(1) {
   ["$GLOBALS['hi there']"]=>
   array(1) {
     [0]=>
-    array(4) {
+    array(7) {
       ["type"]=>
       string(6) "global"
       ["name"]=>
@@ -69,6 +95,32 @@ array(1) {
       int(6)
       ["default"]=>
       string(11) ""holy crap""
+      ["doc"]=>
+      string(48) "/**
+ * @global string $GLOBALS['hi there']
+ */"
+      ["parseddoc"]=>
+      array(2) {
+        ["desc"]=>
+        string(3) "
+ "
+        ["tags"]=>
+        array(1) {
+          ["global"]=>
+          array(1) {
+            [0]=>
+            array(2) {
+              ["tag"]=>
+              string(6) "global"
+              ["text"]=>
+              string(30) " string $GLOBALS['hi there']
+"
+            }
+          }
+        }
+      }
+      ["docline"]=>
+      int(3)
     }
   }
 }

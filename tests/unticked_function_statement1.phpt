@@ -21,7 +21,7 @@ var_dump($b->globals);
 --EXPECT--
 array(26) {
   [0]=>
-  array(7) {
+  array(10) {
     ["type"]=>
     string(8) "function"
     ["startline"]=>
@@ -38,9 +38,15 @@ array(26) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    NULL
+    ["parseddoc"]=>
+    NULL
+    ["docline"]=>
+    NULL
   }
   [1]=>
-  array(7) {
+  array(10) {
     ["type"]=>
     string(8) "function"
     ["startline"]=>
@@ -57,9 +63,15 @@ array(26) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [2]=>
-  array(7) {
+  array(10) {
     ["type"]=>
     string(8) "function"
     ["startline"]=>
@@ -87,9 +99,15 @@ array(26) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [3]=>
-  array(7) {
+  array(10) {
     ["type"]=>
     string(8) "function"
     ["startline"]=>
@@ -117,9 +135,15 @@ array(26) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [4]=>
-  array(7) {
+  array(10) {
     ["type"]=>
     string(8) "function"
     ["startline"]=>
@@ -147,9 +171,15 @@ array(26) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [5]=>
-  array(7) {
+  array(10) {
     ["type"]=>
     string(8) "function"
     ["startline"]=>
@@ -177,9 +207,15 @@ array(26) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [6]=>
-  array(7) {
+  array(10) {
     ["type"]=>
     string(8) "function"
     ["startline"]=>
@@ -207,9 +243,15 @@ array(26) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [7]=>
-  array(7) {
+  array(10) {
     ["type"]=>
     string(8) "function"
     ["startline"]=>
@@ -237,9 +279,15 @@ array(26) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [8]=>
-  array(7) {
+  array(10) {
     ["type"]=>
     string(8) "function"
     ["startline"]=>
@@ -267,9 +315,15 @@ array(26) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [9]=>
-  array(7) {
+  array(10) {
     ["type"]=>
     string(8) "function"
     ["startline"]=>
@@ -297,9 +351,15 @@ array(26) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [10]=>
-  array(7) {
+  array(10) {
     ["type"]=>
     string(8) "function"
     ["startline"]=>
@@ -327,9 +387,15 @@ array(26) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [11]=>
-  array(7) {
+  array(10) {
     ["type"]=>
     string(8) "function"
     ["startline"]=>
@@ -357,9 +423,15 @@ array(26) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [12]=>
-  array(7) {
+  array(10) {
     ["type"]=>
     string(8) "function"
     ["startline"]=>
@@ -387,9 +459,15 @@ array(26) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [13]=>
-  array(7) {
+  array(10) {
     ["type"]=>
     string(8) "function"
     ["startline"]=>
@@ -417,9 +495,15 @@ array(26) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [14]=>
-  array(7) {
+  array(10) {
     ["type"]=>
     string(8) "function"
     ["startline"]=>
@@ -458,9 +542,15 @@ array(26) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [15]=>
-  array(7) {
+  array(10) {
     ["type"]=>
     string(8) "function"
     ["startline"]=>
@@ -499,9 +589,15 @@ array(26) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [16]=>
-  array(7) {
+  array(10) {
     ["type"]=>
     string(8) "function"
     ["startline"]=>
@@ -540,9 +636,15 @@ array(26) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [17]=>
-  array(7) {
+  array(10) {
     ["type"]=>
     string(8) "function"
     ["startline"]=>
@@ -581,9 +683,15 @@ array(26) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [18]=>
-  array(7) {
+  array(10) {
     ["type"]=>
     string(8) "function"
     ["startline"]=>
@@ -622,9 +730,15 @@ array(26) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [19]=>
-  array(7) {
+  array(10) {
     ["type"]=>
     string(8) "function"
     ["startline"]=>
@@ -663,9 +777,15 @@ array(26) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [20]=>
-  array(7) {
+  array(10) {
     ["type"]=>
     string(8) "function"
     ["startline"]=>
@@ -704,9 +824,15 @@ array(26) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [21]=>
-  array(7) {
+  array(10) {
     ["type"]=>
     string(8) "function"
     ["startline"]=>
@@ -745,9 +871,15 @@ array(26) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [22]=>
-  array(7) {
+  array(10) {
     ["type"]=>
     string(8) "function"
     ["startline"]=>
@@ -786,9 +918,15 @@ array(26) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [23]=>
-  array(7) {
+  array(10) {
     ["type"]=>
     string(8) "function"
     ["startline"]=>
@@ -827,9 +965,15 @@ array(26) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [24]=>
-  array(7) {
+  array(10) {
     ["type"]=>
     string(8) "function"
     ["startline"]=>
@@ -868,9 +1012,15 @@ array(26) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
   [25]=>
-  array(7) {
+  array(10) {
     ["type"]=>
     string(8) "function"
     ["startline"]=>
@@ -909,6 +1059,12 @@ array(26) {
     ["info"]=>
     array(0) {
     }
+    ["doc"]=>
+    string(0) ""
+    ["parseddoc"]=>
+    bool(false)
+    ["docline"]=>
+    int(-1)
   }
 }
 array(0) {
@@ -919,7 +1075,7 @@ array(1) {
   ["test"]=>
   array(26) {
     [0]=>
-    array(7) {
+    array(10) {
       ["type"]=>
       string(8) "function"
       ["startline"]=>
@@ -936,9 +1092,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      NULL
+      ["parseddoc"]=>
+      NULL
+      ["docline"]=>
+      NULL
     }
     [1]=>
-    array(7) {
+    array(10) {
       ["type"]=>
       string(8) "function"
       ["startline"]=>
@@ -955,9 +1117,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [2]=>
-    array(7) {
+    array(10) {
       ["type"]=>
       string(8) "function"
       ["startline"]=>
@@ -985,9 +1153,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [3]=>
-    array(7) {
+    array(10) {
       ["type"]=>
       string(8) "function"
       ["startline"]=>
@@ -1015,9 +1189,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [4]=>
-    array(7) {
+    array(10) {
       ["type"]=>
       string(8) "function"
       ["startline"]=>
@@ -1045,9 +1225,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [5]=>
-    array(7) {
+    array(10) {
       ["type"]=>
       string(8) "function"
       ["startline"]=>
@@ -1075,9 +1261,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [6]=>
-    array(7) {
+    array(10) {
       ["type"]=>
       string(8) "function"
       ["startline"]=>
@@ -1105,9 +1297,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [7]=>
-    array(7) {
+    array(10) {
       ["type"]=>
       string(8) "function"
       ["startline"]=>
@@ -1135,9 +1333,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [8]=>
-    array(7) {
+    array(10) {
       ["type"]=>
       string(8) "function"
       ["startline"]=>
@@ -1165,9 +1369,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [9]=>
-    array(7) {
+    array(10) {
       ["type"]=>
       string(8) "function"
       ["startline"]=>
@@ -1195,9 +1405,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [10]=>
-    array(7) {
+    array(10) {
       ["type"]=>
       string(8) "function"
       ["startline"]=>
@@ -1225,9 +1441,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [11]=>
-    array(7) {
+    array(10) {
       ["type"]=>
       string(8) "function"
       ["startline"]=>
@@ -1255,9 +1477,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [12]=>
-    array(7) {
+    array(10) {
       ["type"]=>
       string(8) "function"
       ["startline"]=>
@@ -1285,9 +1513,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [13]=>
-    array(7) {
+    array(10) {
       ["type"]=>
       string(8) "function"
       ["startline"]=>
@@ -1315,9 +1549,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [14]=>
-    array(7) {
+    array(10) {
       ["type"]=>
       string(8) "function"
       ["startline"]=>
@@ -1356,9 +1596,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [15]=>
-    array(7) {
+    array(10) {
       ["type"]=>
       string(8) "function"
       ["startline"]=>
@@ -1397,9 +1643,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [16]=>
-    array(7) {
+    array(10) {
       ["type"]=>
       string(8) "function"
       ["startline"]=>
@@ -1438,9 +1690,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [17]=>
-    array(7) {
+    array(10) {
       ["type"]=>
       string(8) "function"
       ["startline"]=>
@@ -1479,9 +1737,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [18]=>
-    array(7) {
+    array(10) {
       ["type"]=>
       string(8) "function"
       ["startline"]=>
@@ -1520,9 +1784,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [19]=>
-    array(7) {
+    array(10) {
       ["type"]=>
       string(8) "function"
       ["startline"]=>
@@ -1561,9 +1831,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [20]=>
-    array(7) {
+    array(10) {
       ["type"]=>
       string(8) "function"
       ["startline"]=>
@@ -1602,9 +1878,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [21]=>
-    array(7) {
+    array(10) {
       ["type"]=>
       string(8) "function"
       ["startline"]=>
@@ -1643,9 +1925,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [22]=>
-    array(7) {
+    array(10) {
       ["type"]=>
       string(8) "function"
       ["startline"]=>
@@ -1684,9 +1972,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [23]=>
-    array(7) {
+    array(10) {
       ["type"]=>
       string(8) "function"
       ["startline"]=>
@@ -1725,9 +2019,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [24]=>
-    array(7) {
+    array(10) {
       ["type"]=>
       string(8) "function"
       ["startline"]=>
@@ -1766,9 +2066,15 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
     [25]=>
-    array(7) {
+    array(10) {
       ["type"]=>
       string(8) "function"
       ["startline"]=>
@@ -1807,6 +2113,12 @@ array(1) {
       ["info"]=>
       array(0) {
       }
+      ["doc"]=>
+      string(0) ""
+      ["parseddoc"]=>
+      bool(false)
+      ["docline"]=>
+      int(-1)
     }
   }
 }

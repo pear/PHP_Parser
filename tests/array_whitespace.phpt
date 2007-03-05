@@ -21,7 +21,7 @@ var_dump($b->globals);
 --EXPECT--
 array(1) {
   [0]=>
-  array(7) {
+  array(10) {
     ["type"]=>
     string(8) "function"
     ["startline"]=>
@@ -70,6 +70,12 @@ array(1) {
         string(4) "Test"
       }
     }
+    ["doc"]=>
+    NULL
+    ["parseddoc"]=>
+    NULL
+    ["docline"]=>
+    NULL
   }
 }
 array(0) {
@@ -80,7 +86,7 @@ array(1) {
   ["test1"]=>
   array(1) {
     [0]=>
-    array(7) {
+    array(10) {
       ["type"]=>
       string(8) "function"
       ["startline"]=>
@@ -129,6 +135,12 @@ array(1) {
           string(4) "Test"
         }
       }
+      ["doc"]=>
+      NULL
+      ["parseddoc"]=>
+      NULL
+      ["docline"]=>
+      NULL
     }
   }
 }
