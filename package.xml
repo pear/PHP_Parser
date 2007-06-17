@@ -51,9 +51,9 @@ hooks into parsing to catch information.
   <email>alan@akbkhome.com</email>
   <active>no</active>
  </developer>
- <date>2007-03-05</date>
+ <date>2007-06-17</date>
  <version>
-  <release>0.2.0</release>
+  <release>0.2.1</release>
   <api>0.2.0</api>
  </version>
  <stability>
@@ -62,29 +62,21 @@ hooks into parsing to catch information.
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
-  Third development release.
-  
-  **All backwards compatibility is broken**
-  Now that PHP_ParserGenerator exists, this can be used as a
-  way to generate specific parsers.  This parser is customized for
-  usage in meta-data extraction, and requires PHP 5.0.0 or newer
+ * fix Bug #11174: Parser.php installed to root of PEAR directory [cellog]
  </notes>
  <contents>
-  <dir name="/">
+  <dir name="/" baseinstalldir="PHP">
    <dir name="docs">
     <dir name="tutorials">
      <dir name="PHP_Parser">
-      <file baseinstalldir="PHP" name="PHP_Parser_MsgServer.cls" role="doc" />
+      <file name="PHP_Parser_MsgServer.cls" role="doc" />
      </dir> <!-- /docs/tutorials/PHP_Parser -->
     </dir> <!-- /docs/tutorials -->
    </dir> <!-- /docs -->
    <dir name="examples">
-    <file baseinstalldir="PHP" name="test.php" role="doc" />
+    <file name="test.php" role="doc" />
    </dir> <!-- /examples -->
-   <dir baseinstalldir="PHP" name="Parser">
-    <dir baseinstalldir="PHP" name="Docblock">
-     <file name="Parser.php" role="php" />
-    </dir> <!-- /Parser/Docblock -->
+   <dir name="Parser">
     <file name="Core.y" role="data" />
     <file name="Core.php" role="php" />
     <file name="Tokenizer.php" role="php" />
@@ -152,6 +144,21 @@ things will change internally.
   Now that PHP_ParserGenerator exists, this can be used as a
   way to generate specific parsers.  This parser is customized for
   usage in meta-data extraction, and requires PHP 5.0.0 or newer
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>0.2.1</release>
+    <api>0.2.0</api>
+   </version>
+   <stability>
+    <release>alpha</release>
+    <api>alpha</api>
+   </stability>
+   <date>2007-03-05</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+ * fix Bug #11174: Parser.php installed to root of PEAR directory [cellog]
    </notes>
   </release>
  </changelog>
