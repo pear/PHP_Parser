@@ -30,7 +30,7 @@ class PHP_Parser_CoreyyToken implements ArrayAccess
 
     function __toString()
     {
-        return $this->_string;
+        return $this->string;
     }
 
     function offsetExists($offset)
