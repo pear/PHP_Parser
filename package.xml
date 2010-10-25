@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<package packagerversion="1.5.1" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
-http://pear.php.net/dtd/tasks-1.0.xsd
-http://pear.php.net/dtd/package-2.0
-http://pear.php.net/dtd/package-2.0.xsd">
+<package packagerversion="1.9.1" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
  <name>PHP_Parser</name>
  <channel>pear.php.net</channel>
  <summary>A PHP Grammar Parser</summary>
@@ -37,8 +34,7 @@ in PHP as of PHP 6:
 The output can be customized to return an array, return
 objects of user-specified classes, and can also be
 customized to publish each element as it is parsed, allowing
-hooks into parsing to catch information.
- </description>
+hooks into parsing to catch information.</description>
  <lead>
   <name>Greg Beaver</name>
   <user>cellog</user>
@@ -51,9 +47,10 @@ hooks into parsing to catch information.
   <email>alan@akbkhome.com</email>
   <active>no</active>
  </developer>
- <date>2007-06-17</date>
+ <date>2010-10-25</date>
+ <time>23:33:57</time>
  <version>
-  <release>0.2.1</release>
+  <release>0.2.2</release>
   <api>0.2.0</api>
  </version>
  <stability>
@@ -62,35 +59,45 @@ hooks into parsing to catch information.
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
- * fix Bug #11174: Parser.php installed to root of PEAR directory [cellog]
+Automatically built QA release
+Bug #17671 The PHP_Parser_CoreyyToken bad __toString method - jespino
  </notes>
  <contents>
-  <dir name="/" baseinstalldir="PHP">
-   <dir name="docs">
-    <dir name="tutorials">
-     <dir name="PHP_Parser">
-      <file name="PHP_Parser_MsgServer.cls" role="doc" />
-     </dir> <!-- /docs/tutorials/PHP_Parser -->
-    </dir> <!-- /docs/tutorials -->
-   </dir> <!-- /docs -->
-   <dir name="examples">
-    <file name="test.php" role="doc" />
-   </dir> <!-- /examples -->
-   <dir name="Parser">
-    <file name="Core.y" role="data" />
-    <file name="Core.php" role="php" />
-    <file name="Tokenizer.php" role="php" />
-   </dir> <!-- /Parser -->
-   <dir name="tests">
-    <dir name="files">
-     <file name="basic.inc" role="test" />
-     <file name="unticked_statement1.inc" role="test" />
-    </dir> <!-- /tests/files -->
-    <file name="basic.phpt" role="test" />
-    <file name="unticked_statement1.phpt" role="test" />
-   </dir> <!-- /tests -->
-   <file name="Parser.php" role="php" />
-  </dir> <!-- / -->
+  <dir baseinstalldir="PHP" name="/">
+   <file baseinstalldir="PHP" md5sum="08dabd985d44c615832566a932d63c6a" name="docs/examples/test1.php" role="doc" />
+   <file baseinstalldir="PHP" md5sum="382d2b1762646f192c8c80777997c51f" name="docs/examples/test2.php" role="doc" />
+   <file baseinstalldir="PHP" md5sum="04a401dadbdd657d8c6bab28216d4c63" name="docs/tutorials/PHP_Parser/PHP_Parser_MsgServer.cls" role="doc" />
+   <file baseinstalldir="PHP" md5sum="00d1795d47ceb4a49c1b5342c81f07e1" name="examples/test.php" role="doc" />
+   <file baseinstalldir="PHP" md5sum="fd18c02ee22ab99838d2de89e37d7157" name="Parser/Core.out" role="data" />
+   <file baseinstalldir="PHP" md5sum="a552cd91e83ef8ef030f0f1444ec27fe" name="Parser/Core.php" role="php" />
+   <file baseinstalldir="PHP" md5sum="82c8f3163c90e5e7edcb79c974c6a454" name="Parser/Core.y" role="data" />
+   <file baseinstalldir="PHP" md5sum="8077849500f657e253e576606e53bb42" name="Parser/MsgServer.php" role="php" />
+   <file baseinstalldir="PHP" md5sum="bc16f9c8bdd691cb642d4e83ea7fc4e2" name="Parser/Tokenizer.php" role="php" />
+   <file baseinstalldir="PHP" md5sum="74c72fab6ae6d72cd8ff721c019ac8d0" name="Parser/DocBlock/Parser.php" role="php" />
+   <file baseinstalldir="PHP" md5sum="544474c2450e82d757cb087c805ef598" name="Parser/Tokenizer/Structure.php" role="php" />
+   <file baseinstalldir="PHP" md5sum="104fb8e3335786fed22a8cc6596f2c03" name="tests/array_whitespace.phpt" role="test" />
+   <file baseinstalldir="PHP" md5sum="d6b7e93676d6c3333e789da3e4bda36d" name="tests/basic.phpt" role="test" />
+   <file baseinstalldir="PHP" md5sum="007cc75a0c5914de4c6f03e97de0a127" name="tests/global_var.phpt" role="test" />
+   <file baseinstalldir="PHP" md5sum="b55e0aaac9428bae701c49177a332a0a" name="tests/superglobal.phpt" role="test" />
+   <file baseinstalldir="PHP" md5sum="e8a6296b001f332db2d1602b24a19863" name="tests/unticked_class_statement1.phpt" role="test" />
+   <file baseinstalldir="PHP" md5sum="f865f85208ea32e606743ced7ba5a037" name="tests/unticked_class_statement2.phpt" role="test" />
+   <file baseinstalldir="PHP" md5sum="4dfe1e41ac66602f2e38e54a43175e99" name="tests/unticked_class_statement3.phpt" role="test" />
+   <file baseinstalldir="PHP" md5sum="aec273848a74b76dbafdd73e062a6707" name="tests/unticked_function_statement1.phpt" role="test" />
+   <file baseinstalldir="PHP" md5sum="6875857f997fb2f060fee792a3c351eb" name="tests/unticked_function_statement2.phpt" role="test" />
+   <file baseinstalldir="PHP" md5sum="cc1ba4ec82c209c2eb89373234f9f53f" name="tests/unticked_statement1.phpt" role="test" />
+   <file baseinstalldir="PHP" md5sum="eb2eab48243ae27474a4fdde9814c4f5" name="tests/files/array_whitespace.inc" role="test" />
+   <file baseinstalldir="PHP" md5sum="e40ef5265dd4213fdcbfeb0735e1b8b0" name="tests/files/basic.inc" role="test" />
+   <file baseinstalldir="PHP" md5sum="f3a27319a94296fb7fb015f8af1f78d0" name="tests/files/unticked_class_statement1.inc" role="test" />
+   <file baseinstalldir="PHP" md5sum="adb82477f0da55f614f5e694705dc181" name="tests/files/unticked_class_statement2.inc" role="test" />
+   <file baseinstalldir="PHP" md5sum="14ad48483f9827cfe01b21d57ed65be4" name="tests/files/unticked_class_statement3.inc" role="test" />
+   <file baseinstalldir="PHP" md5sum="93b74203d725970ff12de6f7f9b94203" name="tests/files/unticked_function_statement1.inc" role="test" />
+   <file baseinstalldir="PHP" md5sum="5a4d0b3a6b685d560f1611623eadafc9" name="tests/files/unticked_function_statement2.inc" role="test" />
+   <file baseinstalldir="PHP" md5sum="682d478faef14c4f3c7840bd6aa624bc" name="tests/files/unticked_statement1.inc" role="test" />
+   <file baseinstalldir="PHP" md5sum="db814f799eb665e9d88a33f60a4b3832" name="generatePackage.xml.php" role="php" />
+   <file baseinstalldir="PHP" md5sum="0b27745db063d995e9e43654dbbdaffa" name="Parser.php" role="php" />
+   <file baseinstalldir="PHP" md5sum="b01bfc4b0375bf4f64c282d5bacfe9a5" name="skeleton.php" role="php" />
+   <file baseinstalldir="PHP" md5sum="3d42b69e3f37322f0f46fc1622a0eff8" name="test_jay.sh" role="data" />
+  </dir>
  </contents>
  <dependencies>
   <required>
@@ -121,7 +128,8 @@ hooks into parsing to catch information.
    </stability>
    <date>2003-10-22</date>
    <license uri="http://www.php.net/license">PHP License</license>
-   <notes>Initial development release.  Not even alpha yet.
+   <notes>
+Initial development release.  Not even alpha yet.
 
 This release is only to show people the beginnings of the project.  Tons of
 things will change internally.
@@ -138,7 +146,8 @@ things will change internally.
    </stability>
    <date>2007-03-05</date>
    <license uri="http://www.php.net/license">PHP License</license>
-   <notes>Third development release.
+   <notes>
+Third development release.
   
   **All backwards compatibility is broken**
   Now that PHP_ParserGenerator exists, this can be used as a
@@ -158,7 +167,23 @@ things will change internally.
    <date>2007-03-05</date>
    <license uri="http://www.php.net/license">PHP License</license>
    <notes>
- * fix Bug #11174: Parser.php installed to root of PEAR directory [cellog]
+* fix Bug #11174: Parser.php installed to root of PEAR directory [cellog]
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>0.2.2</release>
+    <api>0.2.0</api>
+   </version>
+   <stability>
+    <release>alpha</release>
+    <api>alpha</api>
+   </stability>
+   <date>2010-10-25</date>
+   <license uri="http://www.php.net/license">PHP License</license>
+   <notes>
+Automatically built QA release
+Bug #17671 The PHP_Parser_CoreyyToken bad __toString method - jespino
    </notes>
   </release>
  </changelog>
