@@ -173,13 +173,13 @@ MainClass::test();
      <simpara>
       Anonymous interaction through a well-defined API keeps the need for
       redundant modifications to a minimum
-     </simpara
+     </simpara>
     </listitem>
     <listitem>
      <simpara>
       Classes with new functionality can be swapped in and out without any
       modification to the original code in a program
-     </simpara
+     </simpara>
     </listitem>
     <listitem>
      <simpara>
@@ -188,7 +188,7 @@ MainClass::test();
       For instance, a new CMS could be installed and work right off the bat
       with existing code written for the old CMS
      </simpara>
-    <listitem>
+    </listitem>
    </itemizedlist>
   </para>
  </refsect1>
