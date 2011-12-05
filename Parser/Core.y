@@ -1082,7 +1082,7 @@ class_statement(A) ::= class_constant_declaration(B) SEMI. {
     A = new PHP_Parser_CoreyyToken('', $a);
 }
 get_method_line(A) ::= T_FUNCTION. {
-    A = array($this->lex->line, $lastcom);
+    A = array($this->lex->line);
 }
 class_statement(A) ::= method_modifiers(mod) get_method_line(LINE) is_reference T_STRING(B) LPAREN parameter_list(params) RPAREN method_body(M). {
     list($doc, $parsed, $line) = LINE[1];

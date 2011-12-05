@@ -6435,7 +6435,7 @@ static public $yy_action = array(
 #line 6440 "Core.php"
 #line 1084 "Core.y"
     function yy_r216(){
-    $this->_retvalue = array($this->lex->line, $lastcom);
+    $this->_retvalue = array($this->lex->line);
     }
 #line 6445 "Core.php"
 #line 1087 "Core.y"
