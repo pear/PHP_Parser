@@ -29,5 +29,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "*"
+    },
+    "suggest": {
+        "pear/php_parser_docblockparser": "Install optionally via your project's composer.json"
     }
 }
